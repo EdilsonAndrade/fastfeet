@@ -3,7 +3,7 @@
 <html lang="en">
 
 <head>
-    <title>Code coverage report for controllers/RecipientController.js</title>
+    <title>Code coverage report for controllers/DeliveryManController.js</title>
     <meta charset="utf-8" />
     <link rel="stylesheet" href="../prettify.css" />
     <link rel="stylesheet" href="../base.css" />
@@ -19,7 +19,7 @@
 <body>
 <div class='wrapper'>
     <div class='pad1'>
-        <h1><a href="../index.html">All files</a> / <a href="index.html">controllers</a> RecipientController.js</h1>
+        <h1><a href="../index.html">All files</a> / <a href="index.html">controllers</a> DeliveryManController.js</h1>
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
@@ -30,9 +30,9 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">60% </span>
+                <span class="strong">65% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>12/20</span>
+                <span class='fraction'>13/20</span>
             </div>
         
             
@@ -105,9 +105,7 @@
 <a name='L46'></a><a href='#L46'>46</a>
 <a name='L47'></a><a href='#L47'>47</a>
 <a name='L48'></a><a href='#L48'>48</a>
-<a name='L49'></a><a href='#L49'>49</a>
-<a name='L50'></a><a href='#L50'>50</a>
-<a name='L51'></a><a href='#L51'>51</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">3x</span>
+<a name='L49'></a><a href='#L49'>49</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -116,10 +114,6 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">5x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -132,22 +126,24 @@
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -158,55 +154,53 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import * as Yup from 'yup';<span class="cstat-no" title="statement not covered" ><span class="cstat-no" title="statement not covered" ><span class="cstat-no" title="statement not covered" ><span class="cstat-no" title="statement not covered" ><span class="cstat-no" title="statement not covered" ><span class="cstat-no" title="statement not covered" ><span class="cstat-no" title="statement not covered" ><span class="branch-1 cbranch-no" title="branch not covered" ><span class="missing-if-branch" title="else path not taken" >E</span></span></span></span></span></span></span></span></span>
-import Recipient from '../models/Recipient';
+import DeliveryMan from '../models/DeliveryMan';
 &nbsp;
-class RecipientController {
+class DeliveryManController {
   async store(req, res) {
     const schema = Yup.object().shape({
       name: Yup.string().required(),
-      addressLine: Yup.string().required(),
-      state: Yup.string().required(),
-      zipCode: Yup.string().required(),
-      number: Yup.string().required(),
-      city: Yup.string().required(),
+      email: Yup.string().required(),
     });
     if (!(await schema.isValid(req.body))) {
       return res.status(401).json({ error: 'Validation failed' });
     }
 &nbsp;
-    const recipient = await Recipient.create(req.body);
-    return res.json(recipient);
+    const deliveryMan = await DeliveryMan.create(req.body);
+    return res.json(deliveryMan);
   }
 &nbsp;
   async update(req, res) {
-    const { recipientId } = req.params;
-    const recipient = await Recipient.findByPk(recipientId);
-    if (!recipient) {
-      return res.status(401).json({ error: 'Recipient does not exist' });
+    const { deliveryManId } = req.params;
+    const deliveryMan = await DeliveryMan.findByPk(deliveryManId);
+    <span class="missing-if-branch" title="else path not taken" >E</span>if (!deliveryMan) {
+      return res.status(401).json({ error: 'DeliveryMan does not exist' });
     }
-    const updatedRecipient = await recipient.update(req.body);
+    const updatedRecipient = <span class="cstat-no" title="statement not covered" >await deliveryMan.update(req.body);</span>
 &nbsp;
-    return res.json(updatedRecipient);
+<span class="cstat-no" title="statement not covered" >    return res.json(updatedRecipient);</span>
   }
 &nbsp;
   async delete(req, res) {
-    const { recipientId } = req.params;
-    const recipient = await Recipient.findByPk(recipientId);
-    <span class="missing-if-branch" title="else path not taken" >E</span>if (!recipient || <span class="branch-1 cbranch-no" title="branch not covered" >recipient === {})</span> {
-      return res.status(401).json({ error: 'Recipient does not exist' });
-    }
-<span class="cstat-no" title="statement not covered" >    await recipient.destroy(req.body);</span>
+    const { deliveryManId } = req.params;
 &nbsp;
-<span class="cstat-no" title="statement not covered" >    return res.json({ message: 'Recipient deleted success' });</span>
+    const deliveryMan = await DeliveryMan.findByPk(deliveryManId);
+&nbsp;
+    if (!deliveryMan || deliveryMan === {}) {
+      return res.status(401).json({ error: 'DeliveryMan does not exist' });
+    }
+    await deliveryMan.destroy(req.body);
+&nbsp;
+    return res.json({ message: 'DeliveryMan deleted success' });
   }
 &nbsp;
   async index(req, res) {
-    const recipients = await Recipient.findAll();
-    return res.json(recipients);
+    const deliveryMen = await DeliveryMan.findAll();
+    return res.json(deliveryMen);
   }
 }
 &nbsp;
-export default new RecipientController();
+export default new DeliveryManController();
 &nbsp;</pre></td></tr></table></pre>
 
                 <div class='push'></div><!-- for sticky footer -->

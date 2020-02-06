@@ -3,26 +3,10 @@ import app from '../../src/app';
 import truncate from '../utils/truncate';
 import factory from '../factories';
 
+
 describe('Recipient', () => {
   beforeEach(async () => {
     await truncate();
-  });
-
-  let body = '';
-
-  beforeAll(async () => {
-    await request(app)
-      .post('/users')
-      .send({
-        name: 'Distribuidora FastFeet',
-        email: 'admin@fastfeet.com',
-        password: '123456',
-      });
-
-    const response = await request(app)
-      .post('/sessions')
-      .send({ email: 'admin@fastfeet.com', password: '123456' });
-    body = response.body;
   });
 
 
@@ -32,17 +16,19 @@ describe('Recipient', () => {
     const response = await request(app)
       .post('/recipients', recipient);
 
-    const { message } = response.body;
+    const { error } = response.body;
 
-    expect(message).toBe('User not authorized');
+    expect(error).toBe('User not authorized');
   });
 
   it('should create recipient ', async () => {
     const recipient = await factory.attrs('Recipient');
+    const user = await factory.create('User');
+
 
     const response = await request(app)
       .post('/recipients')
-      .set('Authorization', `bearer ${body.token}`)
+      .set('Authorization', `Bearer ${user.generateToken().token}`)
       .send(recipient);
 
     expect(response.body).toHaveProperty('id');
@@ -52,12 +38,12 @@ describe('Recipient', () => {
     const recipient = await factory.create('Recipient', {
       number: '1234',
     });
-
+    const user = await factory.create('User');
     const { name } = recipient;
 
     const response = await request(app)
       .post('/recipients')
-      .set('Authorization', `bearer ${body.token}`)
+      .set('Authorization', `Bearer ${user.generateToken().token}`)
       .send({ name });
 
     const { error } = response.body;
@@ -67,16 +53,16 @@ describe('Recipient', () => {
 
   it('should update recipient', async () => {
     const recipient = await factory.attrs('Recipient');
-
+    const user = await factory.create('User');
     const response = await request(app)
       .post('/recipients')
-      .set('Authorization', `bearer ${body.token}`)
+      .set('Authorization', `Bearer ${user.generateToken().token}`)
       .send(recipient);
 
     const { id } = response.body;
     const updatedRecipient = await request(app)
       .put(`/recipients/${id}`)
-      .set('Authorization', `bearer ${body.token}`)
+      .set('Authorization', `Bearer ${user.generateToken().token}`)
       .send({ name: 'Edilson Recipient' });
 
     const { name } = updatedRecipient.body;
@@ -85,51 +71,46 @@ describe('Recipient', () => {
   });
 
   it('should error recipient does not exist', async () => {
+    const user = await factory.create('User');
     const updatedRecipient = await request(app)
       .put('/recipients/0')
-      .set('Authorization', `bearer ${body.token}`)
+      .set('Authorization', `Bearer ${user.generateToken().token}`)
       .send({ name: 'Edilson Recipient' });
 
     expect(updatedRecipient.body.error).toBe('Recipient does not exist');
   });
 
   it('should delete recipient', async () => {
-    const recipient = await factory.attrs('Recipient');
+    const recipient = await factory.create('Recipient');
 
+    const user = await factory.create('User');
 
-    const response = await request(app)
-      .post('/recipients')
-      .set('Authorization', `bearer ${body.token}`)
-      .send(recipient);
-
-    const { id } = response.body;
-
+    const { id } = recipient;
     const deleted = await request(app)
       .delete(`/recipients/${id}`)
-      .set('Authorization', `bearer ${body.token}`);
+      .set('Authorization', `Bearer ${user.generateToken().token}`);
 
     expect(deleted.body.message).toBe('Recipient deleted success');
   });
 
   it('should list recipients', async () => {
     let recipient = await factory.attrs('Recipient');
-
-
+    const user = await factory.create('User');
     await request(app)
       .post('/recipients')
-      .set('Authorization', `bearer ${body.token}`)
+      .set('Authorization', `Bearer ${user.generateToken().token}`)
       .send(recipient);
 
     recipient = await factory.attrs('Recipient');
 
     await request(app)
       .post('/recipients')
-      .set('Authorization', `bearer ${body.token}`)
+      .set('Authorization', `Bearer ${user.generateToken().token}`)
       .send(recipient);
 
     const recipients = await request(app)
       .get('/recipients')
-      .set('Authorization', `bearer ${body.token}`);
+      .set('Authorization', `Bearer ${user.generateToken().token}`);
 
     expect(recipients.body).toHaveLength(2);
   });

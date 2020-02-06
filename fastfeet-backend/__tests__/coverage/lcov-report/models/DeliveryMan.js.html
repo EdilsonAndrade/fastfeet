@@ -3,7 +3,7 @@
 <html lang="en">
 
 <head>
-    <title>Code coverage report for middlewares/auth.js</title>
+    <title>Code coverage report for models/DeliveryMan.js</title>
     <meta charset="utf-8" />
     <link rel="stylesheet" href="../prettify.css" />
     <link rel="stylesheet" href="../base.css" />
@@ -19,20 +19,20 @@
 <body>
 <div class='wrapper'>
     <div class='pad1'>
-        <h1><a href="../index.html">All files</a> / <a href="index.html">middlewares</a> auth.js</h1>
+        <h1><a href="../index.html">All files</a> / <a href="index.html">models</a> DeliveryMan.js</h1>
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">85% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>17/20</span>
+                <span class='fraction'>7/7</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">75% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>6/8</span>
+                <span class='fraction'>3/4</span>
             </div>
         
             
@@ -44,9 +44,9 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">81.25% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>13/16</span>
+                <span class='fraction'>4/4</span>
             </div>
         
             
@@ -75,57 +75,42 @@
 <a name='L16'></a><a href='#L16'>16</a>
 <a name='L17'></a><a href='#L17'>17</a>
 <a name='L18'></a><a href='#L18'>18</a>
-<a name='L19'></a><a href='#L19'>19</a>
-<a name='L20'></a><a href='#L20'>20</a>
-<a name='L21'></a><a href='#L21'>21</a>
-<a name='L22'></a><a href='#L22'>22</a>
-<a name='L23'></a><a href='#L23'>23</a>
-<a name='L24'></a><a href='#L24'>24</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">6x</span>
-<span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-yes">3x</span>
+<a name='L19'></a><a href='#L19'>19</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-yes">21x</span>
-<span class="cline-any cline-yes">21x</span>
-<span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">19x</span>
-<span class="cline-any cline-yes">19x</span>
-<span class="cline-any cline-yes">19x</span>
-<span class="cline-any cline-yes">19x</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">19x</span>
-<span class="cline-any cline-yes">19x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import jwt from 'jsonwebtoken';<span class="branch-0 cbranch-no" title="branch not covered" ></span>
-import { promisify } from 'util';
-import auth from '../../config/auth';
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import Sequelize, { Model } from 'sequelize';<span class="branch-0 cbranch-no" title="branch not covered" ></span>
 &nbsp;
-export default async (req, res, next) =&gt; {
-  const authHeader = req.headers.authorization;
-  if (!authHeader) {
-    return res.status(401).json({ error: 'User not authorized' });
-  }
+class DeliveryMan extends Model {
+  static init(sequelize) {
+    super.init({
+      name: Sequelize.STRING,
+      email: Sequelize.STRING,
+      avatar_id: Sequelize.INTEGER,
+    },
+    {
+      sequelize,
+    });
 &nbsp;
-  const [, token] = authHeader.split(' ');
-  try {
-    const decoder = await promisify(jwt.verify)(token, auth.secret);
-    <span class="missing-if-branch" title="if path not taken" >I</span>if (!decoder) {
-<span class="cstat-no" title="statement not covered" >      return res.status(401).json({ error: 'User not verified' });</span>
-    }
-    req.userId = decoder.id;
-    return next();
-  } catch (error) {
-<span class="cstat-no" title="statement not covered" >    console.log(`token = ${token} `);</span>
-<span class="cstat-no" title="statement not covered" >    return res.status(500).json({ error: `Error occured ${error}` });</span>
+    return this;
   }
-};
+}
+&nbsp;
+export default DeliveryMan;
 &nbsp;</pre></td></tr></table></pre>
 
                 <div class='push'></div><!-- for sticky footer -->

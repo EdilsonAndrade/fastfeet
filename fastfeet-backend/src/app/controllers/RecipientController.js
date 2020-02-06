@@ -33,7 +33,7 @@ class RecipientController {
   async delete(req, res) {
     const { recipientId } = req.params;
     const recipient = await Recipient.findByPk(recipientId);
-    if (!recipient) {
+    if (!recipient || recipient === {}) {
       return res.status(401).json({ error: 'Recipient does not exist' });
     }
     await recipient.destroy(req.body);

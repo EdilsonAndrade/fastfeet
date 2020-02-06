@@ -3,7 +3,7 @@
 <html lang="en">
 
 <head>
-    <title>Code coverage report for middlewares/auth.js</title>
+    <title>Code coverage report for controllers/FileUploadController.js</title>
     <meta charset="utf-8" />
     <link rel="stylesheet" href="../prettify.css" />
     <link rel="stylesheet" href="../base.css" />
@@ -19,34 +19,34 @@
 <body>
 <div class='wrapper'>
     <div class='pad1'>
-        <h1><a href="../index.html">All files</a> / <a href="index.html">middlewares</a> auth.js</h1>
+        <h1><a href="../index.html">All files</a> / <a href="index.html">controllers</a> FileUploadController.js</h1>
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">85% </span>
+                <span class="strong">41.18% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>17/20</span>
+                <span class='fraction'>7/17</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">75% </span>
+                <span class="strong">37.5% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>6/8</span>
+                <span class='fraction'>3/8</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">100% </span>
+                <span class="strong">50% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>2/2</span>
+                <span class='fraction'>1/2</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">81.25% </span>
+                <span class="strong">23.08% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>13/16</span>
+                <span class='fraction'>3/13</span>
             </div>
         
             
@@ -55,7 +55,7 @@
             Press <em>n</em> or <em>j</em> to go to the next uncovered block, <em>b</em>, <em>p</em> or <em>k</em> for the previous block.
         </p>
     </div>
-    <div class='status-line high'></div>
+    <div class='status-line low'></div>
     <pre><table class="coverage">
 <tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
 <a name='L2'></a><a href='#L2'>2</a>
@@ -80,52 +80,67 @@
 <a name='L21'></a><a href='#L21'>21</a>
 <a name='L22'></a><a href='#L22'>22</a>
 <a name='L23'></a><a href='#L23'>23</a>
-<a name='L24'></a><a href='#L24'>24</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">6x</span>
+<a name='L24'></a><a href='#L24'>24</a>
+<a name='L25'></a><a href='#L25'>25</a>
+<a name='L26'></a><a href='#L26'>26</a>
+<a name='L27'></a><a href='#L27'>27</a>
+<a name='L28'></a><a href='#L28'>28</a>
+<a name='L29'></a><a href='#L29'>29</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">6x</span>
 <span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-yes">21x</span>
-<span class="cline-any cline-yes">21x</span>
-<span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">19x</span>
-<span class="cline-any cline-yes">19x</span>
-<span class="cline-any cline-yes">19x</span>
-<span class="cline-any cline-yes">19x</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">19x</span>
-<span class="cline-any cline-yes">19x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import jwt from 'jsonwebtoken';<span class="branch-0 cbranch-no" title="branch not covered" ></span>
-import { promisify } from 'util';
-import auth from '../../config/auth';
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import File from '../models/File';<span class="branch-1 cbranch-no" title="branch not covered" ></span>
+import DeliveryMan from '../models/DeliveryMan';
 &nbsp;
-export default async (req, res, next) =&gt; {
-  const authHeader = req.headers.authorization;
-  if (!authHeader) {
-    return res.status(401).json({ error: 'User not authorized' });
-  }
-&nbsp;
-  const [, token] = authHeader.split(' ');
-  try {
-    const decoder = await promisify(jwt.verify)(token, auth.secret);
-    <span class="missing-if-branch" title="if path not taken" >I</span>if (!decoder) {
-<span class="cstat-no" title="statement not covered" >      return res.status(401).json({ error: 'User not verified' });</span>
+class FileUploadController {
+<span class="fstat-no" title="function not covered" >  as</span>ync store(req, res) {
+    const { deliveryManId } = <span class="cstat-no" title="statement not covered" >req.body;</span>
+    const { originalname: name, filename: path } = <span class="cstat-no" title="statement not covered" >req.file;</span>
+    const user = <span class="cstat-no" title="statement not covered" >await DeliveryMan.findByPk(deliveryManId);</span>
+<span class="cstat-no" title="statement not covered" >    if (!user) {</span>
+<span class="cstat-no" title="statement not covered" >      return res.status(401).json({ error: 'Delivery man not found' });</span>
     }
-    req.userId = decoder.id;
-    return next();
-  } catch (error) {
-<span class="cstat-no" title="statement not covered" >    console.log(`token = ${token} `);</span>
-<span class="cstat-no" title="statement not covered" >    return res.status(500).json({ error: `Error occured ${error}` });</span>
+    const file = <span class="cstat-no" title="statement not covered" >await File.create({</span>
+      name,
+      path,
+    });
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    if (!file) {</span>
+<span class="cstat-no" title="statement not covered" >      return res.status(401).json('Error occuried while uploading the file');</span>
+    }
+<span class="cstat-no" title="statement not covered" >    await user.update({</span>
+      avatar_id: file.id,
+    });
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    return res.json(file);</span>
   }
-};
+}
+&nbsp;
+export default new FileUploadController();
 &nbsp;</pre></td></tr></table></pre>
 
                 <div class='push'></div><!-- for sticky footer -->
