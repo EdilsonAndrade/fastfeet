@@ -73,16 +73,10 @@ describe('DeliveryMan', () => {
     expect(updatedDeliveryMan.body.error).toEqual('DeliveryMan does not exist');
   });
   it('should delete deliveryman', async () => {
-    const deliveryman = await factory.attrs('DeliveryMan');
+    const deliveryman = await factory.create('DeliveryMan');
     const user = await factory.create('User');
 
-
-    const response = await request(app)
-      .post('/deliveryman')
-      .set('Authorization', `Bearer ${user.generateToken().token}`)
-      .send(deliveryman);
-
-    const { id } = response.body;
+    const { id } = deliveryman;
 
     const deleted = await request(app)
       .delete(`/deliveryman/${id}`)

@@ -78,15 +78,10 @@ describe('Recipient', () => {
   });
 
   it('should delete recipient', async () => {
-    const recipient = await factory.attrs('Recipient');
+    const recipient = await factory.create('Recipient');
     const user = await factory.create('User');
-    const response = await request(app)
-      .post('/recipients')
-      .set('Authorization', `Bearer ${user.generateToken().token}`)
-      .send(recipient);
 
-
-    const { id } = response.body;
+    const { id } = recipient;
     const deleted = await request(app)
       .delete(`/recipients/${id}`)
       .set('Authorization', `Bearer ${user.generateToken().token}`);
