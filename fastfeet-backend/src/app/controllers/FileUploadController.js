@@ -8,24 +8,18 @@ class FileUploadController {
     const { originalname: name, filename: path } = req.file;
     const user = await DeliveryMan.findByPk(deliveryManId);
     if (!user) {
-      return res.status(400).json({ error: 'Delivery man not found' });
+      return res.status(400).json({ error: 'DeliveryMan not found' });
     }
-    try {
-      const file = await File.create({
-        name,
-        path,
-      });
-      if (!file) {
-        return res.status(400).json('Error occuried while uploading the file');
-      }
-      await user.update({
-        avatar_id: file.id,
-      });
+    const file = await File.create({
+      name,
+      path,
+    });
 
-      return res.json(file);
-    } catch (error) {
-      return res.status(400).json(error);
-    }
+    await user.update({
+      avatar_id: file.id,
+    });
+
+    return res.json(file);
   }
 }
 

@@ -27,4 +27,16 @@ describe('File Upload', () => {
     expect(response.body).toHaveProperty('url');
     expect(response.body).toHaveProperty('path');
   });
+
+  it('deliveryman does not exist on uploading file', async () => {
+    const filePath = resolve(__dirname, '..', 'testfile', 'testefile.png');
+    const user = await factory.create('User');
+    const response = await request(app)
+      .post('/files/0')
+      .set('Authorization', `Bearer ${user.generateToken().token}`)
+      .field('name', 'file')
+      .attach('file', filePath);
+
+    expect(response.body.error).toBe('DeliveryMan not found');
+  });
 });
