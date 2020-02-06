@@ -36,7 +36,7 @@ class RecipientController {
     if (!recipient || recipient === {}) {
       return res.status(401).json({ error: 'Recipient does not exist' });
     }
-    await recipient.destroy(req.body);
+    await recipient.destroy();
 
     return res.json({ message: 'Recipient deleted success' });
   }

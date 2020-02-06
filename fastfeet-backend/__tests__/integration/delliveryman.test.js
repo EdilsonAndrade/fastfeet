@@ -3,19 +3,17 @@ import app from '../../src/app';
 import truncate from '../utils/truncate';
 import factory from '../factories';
 
-
+beforeEach(async () => {
+  await truncate();
+});
 describe('DeliveryMan', () => {
-  beforeEach(async () => {
-    await truncate();
-  });
-
   it('should return not authorized', async () => {
     const fakeDeliveryMan = await factory.attrs('DeliveryMan');
 
     const response = await request(app)
       .post('/deliveryman')
       .send(fakeDeliveryMan);
-    expect(response.body.error).toBe('User not authorized');
+    expect(response.body.error).toEqual('User not authorized');
   });
 
   it('should create deliveryman ', async () => {
@@ -40,7 +38,7 @@ describe('DeliveryMan', () => {
 
     const { error } = response.body;
 
-    expect(error).toBe('Validation failed');
+    expect(error).toEqual('Validation failed');
   });
 
   it('should update deliveryman', async () => {
@@ -61,7 +59,7 @@ describe('DeliveryMan', () => {
       .send(updatedDeliveryMan);
 
     const { name } = updateDeliveryMan.body;
-
+    console.log(JSON.stringify(updateDeliveryMan.body));
     expect(name).toEqual(updatedDeliveryMan.name);
   });
 
@@ -72,7 +70,7 @@ describe('DeliveryMan', () => {
       .set('Authorization', `Bearer ${user.generateToken().token}`)
       .send({ name: 'Edilson DeliveryMan' });
 
-    expect(updatedDeliveryMan.body.error).toBe('DeliveryMan does not exist');
+    expect(updatedDeliveryMan.body.error).toEqual('DeliveryMan does not exist');
   });
   it('should delete deliveryman', async () => {
     const deliveryman = await factory.attrs('DeliveryMan');
@@ -90,17 +88,24 @@ describe('DeliveryMan', () => {
       .delete(`/deliveryman/${id}`)
       .set('Authorization', `Bearer ${user.generateToken().token}`);
 
-    expect(deleted.body.message).toBe('DeliveryMan deleted success');
+    expect(deleted.body.message).toEqual('DeliveryMan deleted success');
   });
 
   it('should delete deliveryman not found', async () => {
+    const deliveryman = await factory.attrs('DeliveryMan');
     const user = await factory.create('User');
+
+
+    await request(app)
+      .post('/deliveryman')
+      .set('Authorization', `Bearer ${user.generateToken().token}`)
+      .send(deliveryman);
 
     const deleted = await request(app)
       .delete('/deliveryman/0')
       .set('Authorization', `Bearer ${user.generateToken().token}`);
 
-    expect(deleted.body.message).toBe('DeliveryMan does not exist');
+    expect(deleted.body.error).toEqual('DeliveryMan does not exist');
   });
 
   it('should list deliveryman', async () => {

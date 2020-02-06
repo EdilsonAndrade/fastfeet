@@ -28,13 +28,13 @@ class DeliveryManController {
 
   async delete(req, res) {
     const { deliveryManId } = req.params;
-
     const deliveryMan = await DeliveryMan.findByPk(deliveryManId);
-
-    if (!deliveryMan || deliveryMan === {}) {
+    console.log(deliveryMan);
+    if (!deliveryMan) {
       return res.status(401).json({ error: 'DeliveryMan does not exist' });
     }
-    await deliveryMan.destroy(req.body);
+
+    await deliveryMan.destroy();
 
     return res.json({ message: 'DeliveryMan deleted success' });
   }

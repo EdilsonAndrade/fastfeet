@@ -3,13 +3,10 @@ import app from '../../src/app';
 import truncate from '../utils/truncate';
 import factory from '../factories';
 
-
+beforeEach(async () => {
+  await truncate();
+});
 describe('Recipient', () => {
-  beforeEach(async () => {
-    await truncate();
-  });
-
-
   it('should return not authorize for create', async () => {
     const recipient = await factory.attrs('Recipient');
 
@@ -18,7 +15,7 @@ describe('Recipient', () => {
 
     const { error } = response.body;
 
-    expect(error).toBe('User not authorized');
+    expect(error).toEqual('User not authorized');
   });
 
   it('should create recipient ', async () => {
@@ -48,7 +45,7 @@ describe('Recipient', () => {
 
     const { error } = response.body;
 
-    expect(error).toBe('Validation failed');
+    expect(error).toEqual('Validation failed');
   });
 
   it('should update recipient', async () => {
@@ -77,20 +74,24 @@ describe('Recipient', () => {
       .set('Authorization', `Bearer ${user.generateToken().token}`)
       .send({ name: 'Edilson Recipient' });
 
-    expect(updatedRecipient.body.error).toBe('Recipient does not exist');
+    expect(updatedRecipient.body.error).toEqual('Recipient does not exist');
   });
 
   it('should delete recipient', async () => {
-    const recipient = await factory.create('Recipient');
-
+    const recipient = await factory.attrs('Recipient');
     const user = await factory.create('User');
+    const response = await request(app)
+      .post('/recipients')
+      .set('Authorization', `Bearer ${user.generateToken().token}`)
+      .send(recipient);
 
-    const { id } = recipient;
+
+    const { id } = response.body;
     const deleted = await request(app)
       .delete(`/recipients/${id}`)
       .set('Authorization', `Bearer ${user.generateToken().token}`);
 
-    expect(deleted.body.message).toBe('Recipient deleted success');
+    expect(deleted.body.message).toEqual('Recipient deleted success');
   });
 
   it('should list recipients', async () => {
