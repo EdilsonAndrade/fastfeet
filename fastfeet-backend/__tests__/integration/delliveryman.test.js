@@ -44,11 +44,16 @@ describe('DeliveryMan', () => {
   });
 
   it('should update deliveryman', async () => {
-    const fakeDeliveryMan = await factory.create('DeliveryMan');
+    const fakeDeliveryMan = await factory.attrs('DeliveryMan');
     const user = await factory.create('User');
     const updatedDeliveryMan = await factory.attrs('DeliveryMan');
 
-    const { id } = fakeDeliveryMan;
+    const response = await request(app)
+      .post('/deliveryman')
+      .set('Authorization', `Bearer ${user.generateToken().token}`)
+      .send(fakeDeliveryMan);
+
+    const { id } = response.body;
 
     const updateDeliveryMan = await request(app)
       .put(`/deliveryman/${id}`)
@@ -60,8 +65,6 @@ describe('DeliveryMan', () => {
     expect(name).toEqual(updatedDeliveryMan.name);
   });
 
-  // novos
-
   it('should error deliveryman does not exist', async () => {
     const user = await factory.create('User');
     const updatedDeliveryMan = await request(app)
@@ -71,7 +74,6 @@ describe('DeliveryMan', () => {
 
     expect(updatedDeliveryMan.body.error).toBe('DeliveryMan does not exist');
   });
-
   it('should delete deliveryman', async () => {
     const deliveryman = await factory.attrs('DeliveryMan');
     const user = await factory.create('User');
