@@ -8,7 +8,7 @@ class DeliveryManController {
       email: Yup.string().required(),
     });
     if (!(await schema.isValid(req.body))) {
-      return res.status(401).json({ error: 'Validation failed' });
+      return res.status(400).json({ error: 'Validation failed' });
     }
 
     const deliveryMan = await DeliveryMan.create(req.body);
@@ -19,7 +19,7 @@ class DeliveryManController {
     const { deliveryManId } = req.params;
     const deliveryMan = await DeliveryMan.findByPk(deliveryManId);
     if (!deliveryMan) {
-      return res.status(401).json({ error: 'DeliveryMan does not exist' });
+      return res.status(400).json({ error: 'DeliveryMan does not exist' });
     }
     const updatedRecipient = await deliveryMan.update(req.body);
 
@@ -29,9 +29,8 @@ class DeliveryManController {
   async delete(req, res) {
     const { deliveryManId } = req.params;
     const deliveryMan = await DeliveryMan.findByPk(deliveryManId);
-    console.log(deliveryMan);
     if (!deliveryMan) {
-      return res.status(401).json({ error: 'DeliveryMan does not exist' });
+      return res.status(400).json({ error: 'DeliveryMan does not exist' });
     }
 
     await deliveryMan.destroy();

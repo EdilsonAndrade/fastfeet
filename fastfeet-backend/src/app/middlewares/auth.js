@@ -17,7 +17,6 @@ export default async (req, res, next) => {
     req.userId = decoder.id;
     return next();
   } catch (error) {
-    console.log(`token = ${token} `);
     return res.status(500).json({ error: `Error occured ${error}` });
   }
 };

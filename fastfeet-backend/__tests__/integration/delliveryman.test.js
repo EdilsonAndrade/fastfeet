@@ -59,7 +59,7 @@ describe('DeliveryMan', () => {
       .send(updatedDeliveryMan);
 
     const { name } = updateDeliveryMan.body;
-    console.log(JSON.stringify(updateDeliveryMan.body));
+
     expect(name).toEqual(updatedDeliveryMan.name);
   });
 

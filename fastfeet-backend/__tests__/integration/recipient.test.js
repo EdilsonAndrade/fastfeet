@@ -89,6 +89,16 @@ describe('Recipient', () => {
     expect(deleted.body.message).toEqual('Recipient deleted success');
   });
 
+  it('should delete recipient', async () => {
+    await factory.create('Recipient');
+    const user = await factory.create('User');
+
+    const deleted = await request(app)
+      .delete('/recipients/0')
+      .set('Authorization', `Bearer ${user.generateToken().token}`);
+    expect(deleted.body.error).toEqual('Recipient does not exist');
+  });
+
   it('should list recipients', async () => {
     let recipient = await factory.attrs('Recipient');
     const user = await factory.create('User');

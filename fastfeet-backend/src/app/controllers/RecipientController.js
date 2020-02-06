@@ -12,7 +12,7 @@ class RecipientController {
       city: Yup.string().required(),
     });
     if (!(await schema.isValid(req.body))) {
-      return res.status(401).json({ error: 'Validation failed' });
+      return res.status(400).json({ error: 'Validation failed' });
     }
 
     const recipient = await Recipient.create(req.body);
@@ -23,7 +23,7 @@ class RecipientController {
     const { recipientId } = req.params;
     const recipient = await Recipient.findByPk(recipientId);
     if (!recipient) {
-      return res.status(401).json({ error: 'Recipient does not exist' });
+      return res.status(400).json({ error: 'Recipient does not exist' });
     }
     const updatedRecipient = await recipient.update(req.body);
 
@@ -33,8 +33,8 @@ class RecipientController {
   async delete(req, res) {
     const { recipientId } = req.params;
     const recipient = await Recipient.findByPk(recipientId);
-    if (!recipient || recipient === {}) {
-      return res.status(401).json({ error: 'Recipient does not exist' });
+    if (!recipient) {
+      return res.status(400).json({ error: 'Recipient does not exist' });
     }
     await recipient.destroy();
 
