@@ -3,9 +3,12 @@ import app from '../../src/app';
 import truncate from '../utils/truncate';
 import factory from '../factories';
 
+beforeEach(async () => {
+  await truncate();
+});
 describe('User', () => {
   let body = '';
-  beforeAll(async () => {
+  beforeEach(async () => {
     await request(app)
       .post('/users')
       .send({
@@ -19,16 +22,14 @@ describe('User', () => {
       .send({ email: 'admin@fastfeet.com', password: '123456' });
     body = response.body;
   });
-  beforeEach(async () => {
-    await truncate();
-  });
+
   it('user does not exist when loggin', async () => {
     const response = await request(app)
       .post('/sessions')
       .send({ email: 'invalido@fastfeet.com', password: '123456' });
-
-    expect(response.body.error).toBe('User does not exist');
+    expect(response.body.error).toEqual('User does not exist');
   });
+
   it('should return password invalid', async () => {
     await factory.create('User', {
       name: 'Distribuidora FastFeet',

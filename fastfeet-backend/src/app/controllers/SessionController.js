@@ -14,15 +14,16 @@ class SessionController {
       return res.status(400).json({ error: 'Validation failed' });
     }
 
+
     const { email, password } = req.body;
     const user = await User.findOne({ where: { email } });
-
     if (!user) {
       return res.status(400).json({ error: 'User does not exist' });
     }
     if (!(await user.checkPassword(password))) {
       return res.status(400).json({ error: 'User or Password is invalid' });
     }
+
     const { id, name } = user;
     return res.json({
       user: {

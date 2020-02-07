@@ -4,11 +4,17 @@ import { factory } from 'factory-girl';
 import Recipient from '../src/app/models/Recipient';
 import User from '../src/app/models/User';
 import DeliveryMan from '../src/app/models/DeliveryMan';
+import Order from '../src/app/models/Order';
 
 factory.define('User', User, {
   name: faker.name.findName(),
   email: faker.internet.email(),
   password: faker.internet.password(),
+});
+
+factory.define('Order', Order, {
+  product: faker.commerce.product(),
+
 });
 
 factory.define('Recipient', Recipient, {
