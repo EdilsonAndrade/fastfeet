@@ -1,4 +1,4 @@
-import { resolve } from 'path';
+import path, { resolve } from 'path';
 import fs from 'mz/fs';
 import request from 'supertest';
 import app from '../../src/app';
@@ -37,6 +37,12 @@ describe('File Upload', () => {
       .field('name', 'file')
       .attach('file', filePath);
 
+    const directory = resolve(__dirname, '..', '..', 'tmp', 'uploads');
+    fs.readdir(directory, (err, files) => {
+      files.forEach((file) => {
+        fs.unlink(path.join(directory, file));
+      });
+    });
     expect(response.body.error).toBe('DeliveryMan not found');
   });
 });

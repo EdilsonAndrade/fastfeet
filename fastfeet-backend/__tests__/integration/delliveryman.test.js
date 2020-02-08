@@ -6,6 +6,7 @@ import factory from '../factories';
 beforeEach(async () => {
   await truncate();
 });
+
 describe('DeliveryMan', () => {
   it('should return not authorized', async () => {
     const fakeDeliveryMan = await factory.attrs('DeliveryMan');
@@ -42,19 +43,13 @@ describe('DeliveryMan', () => {
   });
 
   it('should update deliveryman', async () => {
-    const fakeDeliveryMan = await factory.attrs('DeliveryMan');
+    const fakeDeliveryMan = await factory.create('DeliveryMan');
     const user = await factory.create('User');
     const updatedDeliveryMan = await factory.attrs('DeliveryMan');
 
-    const response = await request(app)
-      .post('/deliveryman')
-      .set('Authorization', `Bearer ${user.generateToken().token}`)
-      .send(fakeDeliveryMan);
-
-    const { id } = response.body;
 
     const updateDeliveryMan = await request(app)
-      .put(`/deliveryman/${id}`)
+      .put(`/deliveryman/${fakeDeliveryMan.id}`)
       .set('Authorization', `Bearer ${user.generateToken().token}`)
       .send(updatedDeliveryMan);
 
@@ -124,5 +119,27 @@ describe('DeliveryMan', () => {
       .set('Authorization', `Bearer ${user.generateToken().token}`);
 
     expect(deliveryman.body).toHaveLength(2);
+  });
+
+  it('should list not canceled and not delivered orders ', async () => {
+    const deliveryMan = await factory.create('DeliveryMan');
+    let recipient = await factory.create('Recipient');
+
+
+    await factory.create('Order', {
+      recipientId: recipient.id,
+      deliverymanId: deliveryMan.id,
+    });
+    recipient = await factory.create('Recipient');
+    await factory.create('Order', {
+      recipientId: recipient.id,
+      deliverymanId: deliveryMan.id,
+    });
+
+    const myOrders = await request(app)
+      .get(`/deliveryman/${deliveryMan.id}/orders`);
+
+
+    expect(myOrders.body.length).toBeGreaterThan(1);
   });
 });

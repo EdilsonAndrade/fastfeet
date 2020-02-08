@@ -17,6 +17,8 @@ routes.post('/sessions', SessionController.store);
 
 routes.post('/users', UserController.store);
 
+routes.get('/deliveryman/:deliveryManId/orders', OrderController.index);
+
 routes.use(authMiddleware);
 
 routes.post('/recipients', RecipientController.store);
@@ -33,6 +35,7 @@ routes.post('/files/:deliveryManId', upload.single('file'), FileUploadController
 
 routes.post('/orders', OrderController.store);
 routes.put('/orders/:orderId', OrderController.update);
-routes.get('/orders/:orderId', OrderController.index);
+routes.delete('/orders/:orderId', OrderController.delete);
+routes.get('/orders', OrderController.index);
 
 export default routes;
