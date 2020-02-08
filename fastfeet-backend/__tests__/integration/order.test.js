@@ -1,6 +1,5 @@
 import request from 'supertest';
 import app from '../../src/app';
-
 import factory from '../factories';
 
 describe('Orders', () => {
@@ -190,5 +189,18 @@ describe('Orders', () => {
       .set('Authorization', `Bearer ${user.generateToken().token}`);
 
     expect(deleted.body.error).toEqual('Order does not exist');
+  });
+
+  it('end delivery', async () => {
+    const fakeOrder = await factory.create('Order', {
+      recipientId: fakeRecipient.id,
+      deliverymanId: fakeDeliveryMan.id,
+    });
+    const updatedResponse = await request(app)
+      .put(`/deliveryman/${fakeDeliveryMan.id}/orders/${fakeOrder.id}`)
+      .send({ endDate: new Date() })
+      .set('Authorization', `Bearer ${user.generateToken().token}`);
+
+    expect(updatedResponse.body.endDate).toBeDefined();
   });
 });

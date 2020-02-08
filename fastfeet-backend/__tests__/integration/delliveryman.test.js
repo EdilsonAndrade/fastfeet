@@ -1,13 +1,16 @@
 import request from 'supertest';
+import { setHours } from 'date-fns';
 import app from '../../src/app';
 import truncate from '../utils/truncate';
 import factory from '../factories';
 
-beforeAll(async () => {
-  await truncate();
-});
-
 describe('DeliveryMan', () => {
+  let user;
+  beforeAll(async () => {
+    await truncate();
+    user = await factory.create('User');
+  });
+
   it('should return not authorized', async () => {
     const fakeDeliveryMan = await factory.attrs('DeliveryMan');
 
@@ -19,7 +22,7 @@ describe('DeliveryMan', () => {
 
   it('should create deliveryman ', async () => {
     const fakeDeliveryMan = await factory.attrs('DeliveryMan');
-    const user = await factory.create('User');
+
     const response = await request(app)
       .post('/deliveryman')
       .set('Authorization', `Bearer ${user.generateToken().token}`)
@@ -30,7 +33,7 @@ describe('DeliveryMan', () => {
 
   it('should return validation failed if missed not nullable field', async () => {
     const fakeDeliveryMan = await factory.attrs('DeliveryMan');
-    const user = await factory.create('User');
+
     const { name } = fakeDeliveryMan;
     const response = await request(app)
       .post('/deliveryman')
@@ -44,7 +47,7 @@ describe('DeliveryMan', () => {
 
   it('should update deliveryman', async () => {
     const fakeDeliveryMan = await factory.create('DeliveryMan');
-    const user = await factory.create('User');
+
     const updatedDeliveryMan = await factory.attrs('DeliveryMan');
 
 
@@ -59,7 +62,6 @@ describe('DeliveryMan', () => {
   });
 
   it('should error deliveryman does not exist', async () => {
-    const user = await factory.create('User');
     const updatedDeliveryMan = await request(app)
       .put('/deliveryman/0')
       .set('Authorization', `Bearer ${user.generateToken().token}`)
@@ -69,7 +71,7 @@ describe('DeliveryMan', () => {
   });
   it('should delete deliveryman', async () => {
     const deliveryman = await factory.create('DeliveryMan');
-    const user = await factory.create('User');
+
 
     const { id } = deliveryman;
 
@@ -82,7 +84,6 @@ describe('DeliveryMan', () => {
 
   it('should delete deliveryman not found', async () => {
     const deliveryman = await factory.attrs('DeliveryMan');
-    const user = await factory.create('User');
 
 
     await request(app)
@@ -99,7 +100,6 @@ describe('DeliveryMan', () => {
 
   it('should list deliveryman', async () => {
     let fakeDeliveryman = await factory.attrs('DeliveryMan');
-    const user = await factory.create('User');
 
 
     await request(app)
@@ -152,7 +152,8 @@ describe('DeliveryMan', () => {
       deliverymanId: fakeDeliveryMan.id,
     });
     const updatedResponse = await request(app)
-      .put(`/deliveryman/${fakeDeliveryMan.id}/orders/${fakeOrder.id}/delivery`);
+      .put(`/deliveryman/${fakeDeliveryMan.id}/orders/${fakeOrder.id}/delivery`)
+      .set('Authorization', `Bearer ${user.generateToken().token}`);
 
     expect(updatedResponse.body.startDate).toBeDefined();
   });
@@ -166,7 +167,8 @@ describe('DeliveryMan', () => {
       deliverymanId: fakeDeliveryMan.id,
     });
     const updatedResponse = await request(app)
-      .put(`/deliveryman/15000/orders/${fakeOrder.id}/delivery`);
+      .put(`/deliveryman/15000/orders/${fakeOrder.id}/delivery`)
+      .set('Authorization', `Bearer ${user.generateToken().token}`);
 
     expect(updatedResponse.body.error).toBe('DeliveryMan does not exist');
   });
@@ -180,12 +182,68 @@ describe('DeliveryMan', () => {
       deliverymanId: fakeDeliveryMan.id,
     });
     const updatedResponse = await request(app)
-      .put(`/deliveryman/${fakeDeliveryMan.id}/orders/2500/delivery`);
+      .put(`/deliveryman/${fakeDeliveryMan.id}/orders/2500/delivery`)
+      .set('Authorization', `Bearer ${user.generateToken().token}`);
 
     expect(updatedResponse.body.error).toBe('Order not found');
   });
 
-  // it('deliveryman can get only 5 orders by day should return limit order exceed', async () => {
+  it('deliveryman can get only 5 orders by day should return limit order exceed', async () => {
+    const fakeDeliveryMan = await factory.create('DeliveryMan');
+    const fakeRecipient = await factory.create('Recipient');
 
-  // });
+    await factory.create('Order', {
+      recipientId: fakeRecipient.id,
+      deliverymanId: fakeDeliveryMan.id,
+      startDate: new Date(),
+    });
+
+    await factory.create('Order', {
+      recipientId: fakeRecipient.id,
+      deliverymanId: fakeDeliveryMan.id,
+      startDate: new Date(),
+    });
+    await factory.create('Order', {
+      recipientId: fakeRecipient.id,
+      deliverymanId: fakeDeliveryMan.id,
+      startDate: new Date(),
+    });
+    await factory.create('Order', {
+      recipientId: fakeRecipient.id,
+      deliverymanId: fakeDeliveryMan.id,
+      startDate: new Date(),
+    });
+    await factory.create('Order', {
+      recipientId: fakeRecipient.id,
+      deliverymanId: fakeDeliveryMan.id,
+      startDate: new Date(),
+    });
+    const fakeOrder = await factory.create('Order', {
+      recipientId: fakeRecipient.id,
+      deliverymanId: fakeDeliveryMan.id,
+    });
+    const updatedResponse = await request(app)
+      .put(`/deliveryman/${fakeDeliveryMan.id}/orders/${fakeOrder.id}/delivery`)
+      .send({ actualDate: setHours(new Date(), 19) })
+      .set('Authorization', `Bearer ${user.generateToken().token}`);
+
+    expect(updatedResponse.body.error).toBe('Limit of 5 orders exceeded');
+  });
+
+  it('deliveryman can get package between 8am and 6pm', async () => {
+    const fakeDeliveryMan = await factory.create('DeliveryMan');
+    const fakeRecipient = await factory.create('Recipient');
+
+
+    const fakeOrder = await factory.create('Order', {
+      recipientId: fakeRecipient.id,
+      deliverymanId: fakeDeliveryMan.id,
+    });
+    const updatedResponse = await request(app)
+      .put(`/deliveryman/${fakeDeliveryMan.id}/orders/${fakeOrder.id}/delivery`)
+      .send({ actualDate: setHours(new Date(), 19) })
+      .set('Authorization', `Bearer ${user.generateToken().token}`);
+
+    expect(updatedResponse.body.error).toBe('We are close for deliveries');
+  });
 });

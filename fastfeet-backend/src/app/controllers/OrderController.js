@@ -1,7 +1,7 @@
+
 import Order from '../models/Order';
 import Recipient from '../models/Recipient';
 import DeliveryMan from '../models/DeliveryMan';
-
 
 class OrderController {
   async store(req, res) {
@@ -57,7 +57,9 @@ class OrderController {
   }
 
   async update(req, res) {
-    const { deliverymanId, recipientId, product } = req.body;
+    const {
+      deliverymanId, recipientId, product, endDate,
+    } = req.body;
     const { orderId } = req.params;
 
     const deliveryMan = await DeliveryMan.findByPk(deliverymanId);
@@ -74,6 +76,7 @@ class OrderController {
       deliverymanId,
       product,
       recipientId,
+      endDate,
     });
     return res.json(updatedOrder);
   }
