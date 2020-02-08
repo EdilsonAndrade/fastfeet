@@ -1,20 +1,23 @@
 import request from 'supertest';
 import app from '../../src/app';
-import truncate from '../utils/truncate';
+
 import factory from '../factories';
 
 describe('Orders', () => {
   let user = '';
+  let fakeRecipient;
+  let fakeDeliveryMan;
   beforeAll(async () => {
     user = await factory.create('User');
-    await truncate();
+
+    fakeRecipient = await factory.create('Recipient');
+    fakeDeliveryMan = await factory.create('DeliveryMan');
   });
 
 
   it('should return not authorized', async () => {
     const fakeOrder = await factory.attrs('Order');
-    const fakeRecipient = await factory.create('Recipient');
-    const fakeDeliveryMan = await factory.create('DeliveryMan');
+
     const response = await request(app)
       .post('/orders')
       .send({
@@ -26,8 +29,6 @@ describe('Orders', () => {
   });
 
   it('should create an order', async () => {
-    const fakeDeliveryMan = await factory.create('DeliveryMan');
-    const fakeRecipient = await factory.create('Recipient');
     const fakeOrder = await factory.attrs('Order');
 
     const response = await request(app)
@@ -41,9 +42,18 @@ describe('Orders', () => {
     expect(response.body).toHaveProperty('id');
   });
 
-  it('should upadte an order', async () => {
-    const fakeDeliveryMan = await factory.create('DeliveryMan');
-    const fakeRecipient = await factory.create('Recipient');
+  it('DeliveryMan not found', async () => {
+    const response = await request(app)
+      .post('/orders')
+      .set('Authorization', `Bearer ${user.generateToken().token}`)
+      .send({
+        product: 'Shirt',
+        recipientId: fakeRecipient.id,
+      });
+    expect(response.body.error).toEqual('Deliveryman not found');
+  });
+
+  it('should update an order', async () => {
     const fakeOrder = await factory.create('Order', {
       recipientId: fakeRecipient.id,
       deliverymanId: fakeDeliveryMan.id,
@@ -51,7 +61,6 @@ describe('Orders', () => {
 
     const anotherFakeDeliveryMan = await factory.create('DeliveryMan');
     const anotherFakeRecipient = await factory.create('Recipient');
-
     const updatedResponse = await request(app)
       .put(`/orders/${fakeOrder.id}`)
       .set('Authorization', `Bearer ${user.generateToken().token}`)
@@ -65,23 +74,8 @@ describe('Orders', () => {
     expect(deliverymanId).toBe(anotherFakeDeliveryMan.id);
   });
 
-  it('DeliveryMan not found', async () => {
-    const fakeRecipient = await factory.create('Recipient');
-    const fakeOrder = await factory.attrs('Order');
-
-    const response = await request(app)
-      .post('/orders')
-      .set('Authorization', `Bearer ${user.generateToken().token}`)
-      .send({
-        ...fakeOrder,
-        recipientId: fakeRecipient.id,
-        deliverymanId: 1,
-      });
-    expect(response.body.error).toEqual('Deliveryman not found');
-  });
 
   it('Recipient not found', async () => {
-    const fakeDeliveryMan = await factory.create('DeliveryMan');
     const fakeOrder = await factory.attrs('Order');
 
     const response = await request(app)
@@ -89,15 +83,12 @@ describe('Orders', () => {
       .set('Authorization', `Bearer ${user.generateToken().token}`)
       .send({
         ...fakeOrder,
-        recipientId: 22,
         deliverymanId: fakeDeliveryMan.id,
       });
     expect(response.body.error).toEqual('Recipient not found');
   });
 
   it('should list an order', async () => {
-    const fakeDeliveryMan = await factory.create('DeliveryMan');
-    const fakeRecipient = await factory.create('Recipient');
     const fakeOrder = await factory.create('Order', {
       recipientId: fakeRecipient.id,
       deliverymanId: fakeDeliveryMan.id,
@@ -113,8 +104,6 @@ describe('Orders', () => {
   });
 
   it('should list all orders', async () => {
-    const fakeDeliveryMan = await factory.create('DeliveryMan');
-    const fakeRecipient = await factory.create('Recipient');
     await factory.create('Order', {
       recipientId: fakeRecipient.id,
       deliverymanId: fakeDeliveryMan.id,
@@ -128,37 +117,19 @@ describe('Orders', () => {
   });
 
   it('on update DeliveryMan not found', async () => {
-    const fakeRecipient = await factory.create('Recipient');
-    const fakeOrder = await factory.attrs('Order');
-
     const response = await request(app)
-      .put(`/orders/${fakeOrder.id}`)
+      .put('/orders/1}')
       .set('Authorization', `Bearer ${user.generateToken().token}`)
       .send({
-        ...fakeOrder,
+        product: 'Shirt',
         recipientId: fakeRecipient.id,
-        deliverymanId: 1,
+
       });
     expect(response.body.error).toEqual('Deliveryman not found');
   });
 
-  it('on update DeliveryMannot found not found', async () => {
-    const fakeRecipient = await factory.create('DeliveryMan');
-    const fakeOrder = await factory.attrs('Order');
-
-    const response = await request(app)
-      .put(`/orders/${fakeOrder.id}`)
-      .set('Authorization', `Bearer ${user.generateToken().token}`)
-      .send({
-        ...fakeOrder,
-        recipientId: fakeRecipient.id,
-        deliverymanId: 33,
-      });
-    expect(response.body.error).toEqual('Deliveryman not found');
-  });
 
   it('on update Recipient not found', async () => {
-    const fakeDeliveryMan = await factory.create('DeliveryMan');
     const fakeOrder = await factory.attrs('Order');
 
     const response = await request(app)
@@ -166,15 +137,12 @@ describe('Orders', () => {
       .set('Authorization', `Bearer ${user.generateToken().token}`)
       .send({
         ...fakeOrder,
-        recipientId: 22,
         deliverymanId: fakeDeliveryMan.id,
       });
     expect(response.body.error).toEqual('Recipient not found');
   });
 
   it('on update order not found', async () => {
-    const fakeDeliveryMan = await factory.create('DeliveryMan');
-    const fakeRecipient = await factory.create('Recipient');
     await factory.create('Order', {
       recipientId: fakeRecipient.id,
       deliverymanId: fakeDeliveryMan.id,
@@ -196,8 +164,6 @@ describe('Orders', () => {
 
 
   it('should delete order', async () => {
-    const fakeDeliveryMan = await factory.create('DeliveryMan');
-    const fakeRecipient = await factory.create('Recipient');
     const order = await factory.create('Order', {
       recipientId: fakeRecipient.id,
       deliverymanId: fakeDeliveryMan.id,
@@ -214,8 +180,6 @@ describe('Orders', () => {
   });
 
   it('should delete order not found', async () => {
-    const fakeDeliveryMan = await factory.create('DeliveryMan');
-    const fakeRecipient = await factory.create('Recipient');
     await factory.create('Order', {
       recipientId: fakeRecipient.id,
       deliverymanId: fakeDeliveryMan.id,

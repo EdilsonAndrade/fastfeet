@@ -60,16 +60,15 @@ class OrderController {
     const { deliverymanId, recipientId, product } = req.body;
     const { orderId } = req.params;
 
-
     const deliveryMan = await DeliveryMan.findByPk(deliverymanId);
-    if (!deliveryMan) return res.status(400).json({ error: 'Deliveryman not found' });
-
+    if (!deliveryMan) {
+      return res.status(400).json({ error: 'Deliveryman not found' });
+    }
     const recipient = await Recipient.findByPk(recipientId);
     if (!recipient) return res.status(400).json({ error: 'Recipient not found' });
 
     const order = await Order.findByPk(orderId);
     if (!order) return res.status(400).json({ error: 'Order not found' });
-
 
     const updatedOrder = await order.update({
       deliverymanId,
