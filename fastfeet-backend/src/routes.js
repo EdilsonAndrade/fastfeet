@@ -8,6 +8,7 @@ import RecipientController from './app/controllers/RecipientController';
 import DeliveryManController from './app/controllers/DeliveryManController';
 import FileUploadController from './app/controllers/FileUploadController';
 import OrderController from './app/controllers/OrderController';
+import DeliveryController from './app/controllers/DeliveryController';
 
 
 const routes = new Router();
@@ -18,6 +19,7 @@ routes.post('/sessions', SessionController.store);
 routes.post('/users', UserController.store);
 
 routes.get('/deliveryman/:deliveryManId/orders', OrderController.index);
+routes.put('/deliveryman/:deliveryManId/orders/:orderId/delivery', DeliveryController.update);
 
 routes.use(authMiddleware);
 

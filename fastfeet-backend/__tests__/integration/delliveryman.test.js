@@ -3,7 +3,7 @@ import app from '../../src/app';
 import truncate from '../utils/truncate';
 import factory from '../factories';
 
-beforeEach(async () => {
+beforeAll(async () => {
   await truncate();
 });
 
@@ -118,7 +118,7 @@ describe('DeliveryMan', () => {
       .get('/deliveryman')
       .set('Authorization', `Bearer ${user.generateToken().token}`);
 
-    expect(deliveryman.body).toHaveLength(2);
+    expect(deliveryman.body.length).toBeGreaterThan(1);
   });
 
   it('should list not canceled and not delivered orders ', async () => {
@@ -141,5 +141,47 @@ describe('DeliveryMan', () => {
 
 
     expect(myOrders.body.length).toBeGreaterThan(1);
+  });
+
+  it('when delivery man get order, update start date', async () => {
+    const fakeDeliveryMan = await factory.create('DeliveryMan');
+    const fakeRecipient = await factory.create('Recipient');
+
+    const fakeOrder = await factory.create('Order', {
+      recipientId: fakeRecipient.id,
+      deliverymanId: fakeDeliveryMan.id,
+    });
+    const updatedResponse = await request(app)
+      .put(`/deliveryman/${fakeDeliveryMan.id}/orders/${fakeOrder.id}/delivery`);
+
+    expect(updatedResponse.body.startDate).toBeDefined();
+  });
+
+  it('when delivery man get order, deliveryMan not found', async () => {
+    const fakeDeliveryMan = await factory.create('DeliveryMan');
+    const fakeRecipient = await factory.create('Recipient');
+
+    const fakeOrder = await factory.create('Order', {
+      recipientId: fakeRecipient.id,
+      deliverymanId: fakeDeliveryMan.id,
+    });
+    const updatedResponse = await request(app)
+      .put(`/deliveryman/15000/orders/${fakeOrder.id}/delivery`);
+
+    expect(updatedResponse.body.error).toBe('DeliveryMan does not exist');
+  });
+
+  it('when delivery man get order, order not found', async () => {
+    const fakeDeliveryMan = await factory.create('DeliveryMan');
+    const fakeRecipient = await factory.create('Recipient');
+
+    await factory.create('Order', {
+      recipientId: fakeRecipient.id,
+      deliverymanId: fakeDeliveryMan.id,
+    });
+    const updatedResponse = await request(app)
+      .put(`/deliveryman/${fakeDeliveryMan.id}/orders/2500/delivery`);
+
+    expect(updatedResponse.body.error).toBe('Order not found');
   });
 });
