@@ -9,6 +9,6 @@ module.exports = {
     pass: process.env.MAIL_PASS,
   },
   default: {
-    from: 'Fast Feet Delivery <naoresponda@fastfeet.com.br>',
+    from: 'FastFeet Delivery <naoresponda@fastfeet.com.br>',
   },
 };

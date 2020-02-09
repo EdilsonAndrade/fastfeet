@@ -2,6 +2,8 @@
 import Order from '../models/Order';
 import Recipient from '../models/Recipient';
 import DeliveryMan from '../models/DeliveryMan';
+import DeliveryCreatedMail from '../jobs/DeliveryCreatedMail';
+import Queue from '../../lib/Queue';
 
 class OrderController {
   async store(req, res) {
@@ -19,6 +21,20 @@ class OrderController {
       recipientId,
       deliverymanId,
     });
+    if (process.env.NODE_ENV !== 'test') {
+      Queue.add(DeliveryCreatedMail.key, {
+        message: {
+          to: deliveryMan.email,
+          subject: 'Nova entrega cadastrada',
+          template: 'newPackage',
+          context: {
+            deliveryMan: deliveryMan.name,
+            startTime: '08:00',
+            endTime: '18:00',
+          },
+        },
+      });
+    }
 
     return res.json(response);
   }
