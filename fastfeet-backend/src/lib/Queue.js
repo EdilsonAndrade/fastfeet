@@ -1,15 +1,14 @@
 import Bee from 'bee-queue';
 import redisConfig from '../config/redis';
 import DeliveryCreatedMail from '../app/jobs/DeliveryCreatedMail';
+import DeliveryCanceledMail from '../app/jobs/DeliveryCanceledMail';
 
-const jobs = [DeliveryCreatedMail];
+const jobs = [DeliveryCreatedMail, DeliveryCanceledMail];
 
 class Queue {
   constructor() {
-    if (process.env.NODE_ENV !== 'test') {
-      this.queues = {};
-      this.init();
-    }
+    this.queues = {};
+    this.init();
   }
 
   init() {

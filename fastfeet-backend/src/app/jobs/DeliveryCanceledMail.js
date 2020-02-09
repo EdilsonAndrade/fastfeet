@@ -1,8 +1,8 @@
 import Mail from '../../lib/Mail';
 
-class DeliveryCreatedMail {
+class DeliveryCanceledMail {
   get key() {
-    return 'DeliveryCreated';
+    return 'DeliveryCanceled';
   }
 
   async handle({ data }) {
@@ -11,4 +11,4 @@ class DeliveryCreatedMail {
     await Mail.sendMail(message);
   }
 }
-export default new DeliveryCreatedMail();
+export default new DeliveryCanceledMail();

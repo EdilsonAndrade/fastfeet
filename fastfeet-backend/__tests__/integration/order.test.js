@@ -1,4 +1,5 @@
 import request from 'supertest';
+import { parseISO } from 'date-fns';
 import app from '../../src/app';
 import factory from '../factories';
 
@@ -175,7 +176,7 @@ describe('Orders', () => {
       .delete(`/orders/${id}`)
       .set('Authorization', `Bearer ${user.generateToken().token}`);
 
-    expect(deleted.body.message).toEqual('Order deleted success');
+    expect(deleted.body).toHaveProperty('canceledAt');
   });
 
   it('should delete order not found', async () => {
@@ -191,16 +192,45 @@ describe('Orders', () => {
     expect(deleted.body.error).toEqual('Order does not exist');
   });
 
-  it('end delivery', async () => {
+  it('should update order start date', async () => {
     const fakeOrder = await factory.create('Order', {
       recipientId: fakeRecipient.id,
       deliverymanId: fakeDeliveryMan.id,
     });
-    const updatedResponse = await request(app)
-      .put(`/deliveryman/${fakeDeliveryMan.id}/orders/${fakeOrder.id}`)
-      .send({ endDate: new Date() })
-      .set('Authorization', `Bearer ${user.generateToken().token}`);
 
-    expect(updatedResponse.body.endDate).toBeDefined();
+    const date = new Date();
+    const response = await request(app)
+      .put(`/orders/${fakeOrder.id}`)
+      .set('Authorization', `Bearer ${user.generateToken().token}`)
+      .send({ recipientId: fakeRecipient.id, deliverymanId: fakeDeliveryMan.id, startDate: date });
+
+    expect(parseISO(response.body.startDate)).toEqual(date);
+  });
+
+  it('should update order end date', async () => {
+    const fakeOrder = await factory.create('Order', {
+      recipientId: fakeRecipient.id,
+      deliverymanId: fakeDeliveryMan.id,
+    });
+
+    const date = new Date();
+    const response = await request(app)
+      .put(`/orders/${fakeOrder.id}`)
+      .set('Authorization', `Bearer ${user.generateToken().token}`)
+      .send({ recipientId: fakeRecipient.id, deliverymanId: fakeDeliveryMan.id, endDate: date });
+
+    expect(parseISO(response.body.endDate)).toEqual(date);
+  });
+
+  it('should in update order end date not authorize', async () => {
+    const fakeOrder = await factory.create('Order', {
+      recipientId: fakeRecipient.id,
+      deliverymanId: fakeDeliveryMan.id,
+    });
+    const response = await request(app)
+      .put(`/orders/${fakeOrder.id}`)
+      .send({ recipientId: fakeRecipient.id, deliverymanId: fakeDeliveryMan.id });
+
+    expect(response.body.error).toEqual('User not authorized');
   });
 });

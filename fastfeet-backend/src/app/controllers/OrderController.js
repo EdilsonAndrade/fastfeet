@@ -3,6 +3,7 @@ import Order from '../models/Order';
 import Recipient from '../models/Recipient';
 import DeliveryMan from '../models/DeliveryMan';
 import DeliveryCreatedMail from '../jobs/DeliveryCreatedMail';
+import DeliveryCanceledMail from '../jobs/DeliveryCanceledMail';
 import Queue from '../../lib/Queue';
 
 class OrderController {
@@ -21,20 +22,18 @@ class OrderController {
       recipientId,
       deliverymanId,
     });
-    if (process.env.NODE_ENV !== 'test') {
-      Queue.add(DeliveryCreatedMail.key, {
-        message: {
-          to: deliveryMan.email,
-          subject: 'Nova entrega cadastrada',
-          template: 'newPackage',
-          context: {
-            deliveryMan: deliveryMan.name,
-            startTime: '08:00',
-            endTime: '18:00',
-          },
+    Queue.add(DeliveryCreatedMail.key, {
+      message: {
+        to: deliveryMan.email,
+        subject: 'Nova entrega cadastrada',
+        template: 'newPackage',
+        context: {
+          deliveryMan: deliveryMan.name,
+          startTime: '08:00',
+          endTime: '18:00',
         },
-      });
-    }
+      },
+    });
 
     return res.json(response);
   }
@@ -42,7 +41,6 @@ class OrderController {
   async index(req, res) {
     const { orderId } = req.body;
     const { deliveryManId } = req.params;
-
     if (deliveryManId) {
       const myOrders = await Order.findAll({
         where: {
@@ -74,7 +72,7 @@ class OrderController {
 
   async update(req, res) {
     const {
-      deliverymanId, recipientId, product, endDate,
+      deliverymanId, recipientId, product, endDate, startDate,
     } = req.body;
     const { orderId } = req.params;
 
@@ -87,26 +85,48 @@ class OrderController {
 
     const order = await Order.findByPk(orderId);
     if (!order) return res.status(400).json({ error: 'Order not found' });
-
     const updatedOrder = await order.update({
       deliverymanId,
       product,
       recipientId,
       endDate,
+      startDate,
     });
     return res.json(updatedOrder);
   }
 
   async delete(req, res) {
     const { orderId } = req.params;
-    const order = await Order.findByPk(orderId);
+
+    const order = await Order.findByPk(orderId, {
+      include: [{
+        model: DeliveryMan,
+        attributes: ['name', 'email'],
+      }],
+    });
     if (!order) {
       return res.status(400).json({ error: 'Order does not exist' });
     }
+    const { name, email } = order.DeliveryMan;
+    if (name && email) {
+      Queue.add(DeliveryCanceledMail.key, {
+        message: {
+          to: email,
+          subject: `Entrega cancelada - ${orderId}`,
+          template: 'canceledPackage',
 
-    await order.destroy();
+          context: {
+            deliveryMan: name,
+            orderId,
+          },
+        },
+      });
+    }
+    const updatedOrder = await order.update({
+      canceledAt: new Date(),
+    });
 
-    return res.json({ message: 'Order deleted success' });
+    return res.json(updatedOrder);
   }
 }
 

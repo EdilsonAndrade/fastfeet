@@ -1,5 +1,7 @@
 import request from 'supertest';
-import { setHours } from 'date-fns';
+import { setHours, parseISO } from 'date-fns';
+import fs from 'mz/fs';
+import { resolve } from 'path';
 import app from '../../src/app';
 import truncate from '../utils/truncate';
 import factory from '../factories';
@@ -152,8 +154,7 @@ describe('DeliveryMan', () => {
       deliverymanId: fakeDeliveryMan.id,
     });
     const updatedResponse = await request(app)
-      .put(`/deliveryman/${fakeDeliveryMan.id}/orders/${fakeOrder.id}/delivery`)
-      .set('Authorization', `Bearer ${user.generateToken().token}`);
+      .put(`/deliveryman/${fakeDeliveryMan.id}/orders/${fakeOrder.id}`);
 
     expect(updatedResponse.body.startDate).toBeDefined();
   });
@@ -167,8 +168,7 @@ describe('DeliveryMan', () => {
       deliverymanId: fakeDeliveryMan.id,
     });
     const updatedResponse = await request(app)
-      .put(`/deliveryman/15000/orders/${fakeOrder.id}/delivery`)
-      .set('Authorization', `Bearer ${user.generateToken().token}`);
+      .put(`/deliveryman/15000/orders/${fakeOrder.id}`);
 
     expect(updatedResponse.body.error).toBe('DeliveryMan does not exist');
   });
@@ -182,8 +182,7 @@ describe('DeliveryMan', () => {
       deliverymanId: fakeDeliveryMan.id,
     });
     const updatedResponse = await request(app)
-      .put(`/deliveryman/${fakeDeliveryMan.id}/orders/2500/delivery`)
-      .set('Authorization', `Bearer ${user.generateToken().token}`);
+      .put(`/deliveryman/${fakeDeliveryMan.id}/orders/2500`);
 
     expect(updatedResponse.body.error).toBe('Order not found');
   });
@@ -223,9 +222,8 @@ describe('DeliveryMan', () => {
       deliverymanId: fakeDeliveryMan.id,
     });
     const updatedResponse = await request(app)
-      .put(`/deliveryman/${fakeDeliveryMan.id}/orders/${fakeOrder.id}/delivery`)
-      .send({ actualDate: setHours(new Date(), 19) })
-      .set('Authorization', `Bearer ${user.generateToken().token}`);
+      .put(`/deliveryman/${fakeDeliveryMan.id}/orders/${fakeOrder.id}`)
+      .send({ actualDate: setHours(new Date(), 19) });
 
     expect(updatedResponse.body.error).toBe('Limit of 5 orders exceeded');
   });
@@ -240,10 +238,51 @@ describe('DeliveryMan', () => {
       deliverymanId: fakeDeliveryMan.id,
     });
     const updatedResponse = await request(app)
-      .put(`/deliveryman/${fakeDeliveryMan.id}/orders/${fakeOrder.id}/delivery`)
-      .send({ actualDate: setHours(new Date(), 19) })
-      .set('Authorization', `Bearer ${user.generateToken().token}`);
+      .put(`/deliveryman/${fakeDeliveryMan.id}/orders/${fakeOrder.id}`)
+      .send({ actualDate: setHours(new Date(), 19) });
 
     expect(updatedResponse.body.error).toBe('We are close for deliveries');
+  });
+
+  it('end delivery without signature must raise error', async () => {
+    const fakeRecipient = await factory.create('Recipient');
+    const fakeDeliveryMan = await factory.create('DeliveryMan');
+    const fakeOrder = await factory.create('Order', {
+      recipientId: fakeRecipient.id,
+      deliverymanId: fakeDeliveryMan.id,
+    });
+    const endDate = new Date();
+    const updatedResponse = await request(app)
+      .put(`/deliveryman/${fakeDeliveryMan.id}/orders/${fakeOrder.id}`)
+      .send({ endDate });
+
+    expect(updatedResponse.body.error).toEqual('Signature must be send');
+  });
+
+  it('end delivery', async () => {
+    const fakeRecipient = await factory.create('Recipient');
+    const fakeDeliveryMan = await factory.create('DeliveryMan');
+    const fakeOrder = await factory.create('Order', {
+      recipientId: fakeRecipient.id,
+      deliverymanId: fakeDeliveryMan.id,
+    });
+
+    const filePath = resolve(__dirname, '..', 'testfile', 'testefile.png');
+    const uploadPath = resolve(__dirname, '..', '..', 'tmp', 'uploads');
+
+    const response = await request(app)
+      .put(`/files/${fakeOrder.id}`)
+      .field('name', 'file')
+      .attach('file', filePath);
+
+    await fs.unlink(resolve(uploadPath, response.body.File.path));
+
+    expect(response.body.signatureId).toBeDefined();
+
+    const endDate = new Date();
+    const updatedResponse = await request(app)
+      .put(`/deliveryman/${fakeDeliveryMan.id}/orders/${fakeOrder.id}`)
+      .send({ endDate });
+    expect(parseISO(updatedResponse.body.endDate)).toEqual(endDate);
   });
 });

@@ -6,10 +6,10 @@ import DeliveryMan from '../models/DeliveryMan';
 import Order from '../models/Order';
 
 
-class DeliveryController {
+class DeliveryManagementController {
   async update(req, res) {
     const { deliveryManId, orderId } = req.params;
-    const { actualDate } = req.body;
+    const { actualDate, endDate } = req.body;
     const deliveryMan = await DeliveryMan.findByPk(deliveryManId);
 
     if (!deliveryMan) return res.status(400).json({ error: 'DeliveryMan does not exist' });
@@ -21,7 +21,9 @@ class DeliveryController {
           [Op.between]: [startOfToday(), endOfToday()],
         },
         deliverymanId: deliveryManId,
+
       },
+
     });
     if (countOfOrderDelivered.length === 5) {
       return res.status(401).json({ error: 'Limit of 5 orders exceeded' });
@@ -38,13 +40,18 @@ class DeliveryController {
     const order = await Order.findByPk(orderId);
 
     if (!order) return res.status(400).json({ error: 'Order not found' });
-
-    order.startDate = startDate;
-
+    if (actualDate) {
+      order.startDate = startDate;
+    }
+    if (endDate) {
+      if (!order.signatureId) {
+        return res.status(401).json({ error: 'Signature must be send' });
+      }
+      order.endDate = endDate;
+    }
     const updatedOrder = await order.update();
-
     return res.json(updatedOrder);
   }
 }
 
-export default new DeliveryController();
+export default new DeliveryManagementController();
