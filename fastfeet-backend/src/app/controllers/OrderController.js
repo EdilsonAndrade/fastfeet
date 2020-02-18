@@ -1,4 +1,5 @@
 
+import { Op } from 'sequelize';
 import Order from '../models/Order';
 import Recipient from '../models/Recipient';
 import DeliveryMan from '../models/DeliveryMan';
@@ -41,6 +42,17 @@ class OrderController {
   async index(req, res) {
     const { orderId } = req.body;
     const { deliveryManId } = req.params;
+    const { search } = req.query;
+    if (search) {
+      const orders = await Order.findAll({
+        where: {
+          name: {
+            [Op.like]: `%${search}%`,
+          },
+        },
+      });
+      return res.json(orders);
+    }
     if (deliveryManId) {
       const myOrders = await Order.findAll({
         where: {

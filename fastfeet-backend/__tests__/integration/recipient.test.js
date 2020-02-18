@@ -120,4 +120,30 @@ describe('Recipient', () => {
 
     expect(recipients.body).toHaveLength(2);
   });
+
+  it('should list recipients by  name', async () => {
+    let recipient = await factory.attrs('Recipient', {
+      name: 'Marcelo Oliveira',
+    });
+    const user = await factory.create('User');
+    await request(app)
+      .post('/recipients')
+      .set('Authorization', `Bearer ${user.generateToken().token}`)
+      .send(recipient);
+
+    recipient = await factory.attrs('Recipient', {
+      name: 'André cola',
+    });
+
+    await request(app)
+      .post('/recipients')
+      .set('Authorization', `Bearer ${user.generateToken().token}`)
+      .send(recipient);
+
+    const recipients = await request(app)
+      .get('/recipients?search=Oli')
+      .set('Authorization', `Bearer ${user.generateToken().token}`);
+
+    expect(recipients.body[0].name).toBe('Marcelo Oliveira');
+  });
 });

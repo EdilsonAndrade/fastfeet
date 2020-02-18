@@ -3,12 +3,16 @@ import redisConfig from '../config/redis';
 import DeliveryCreatedMail from '../app/jobs/DeliveryCreatedMail';
 import DeliveryCanceledMail from '../app/jobs/DeliveryCanceledMail';
 
+require('../bootstrap');
+
 const jobs = [DeliveryCreatedMail, DeliveryCanceledMail];
 
 class Queue {
   constructor() {
-    this.queues = {};
-    this.init();
+    if (process.env.NODE_ENV !== 'test') {
+      this.queues = {};
+      this.init();
+    }
   }
 
   init() {
@@ -23,7 +27,10 @@ class Queue {
   }
 
   add(queue, job) {
-    return this.queues[queue].bee.createJob(job).save();
+    if (process.env.NODE_ENV !== 'test') {
+      return this.queues[queue].bee.createJob(job).save();
+    }
+    return null;
   }
 
   processQueue() {

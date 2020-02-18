@@ -1,4 +1,5 @@
 import * as Yup from 'yup';
+import { Op } from 'sequelize';
 import DeliveryMan from '../models/DeliveryMan';
 
 class DeliveryManController {
@@ -39,6 +40,18 @@ class DeliveryManController {
   }
 
   async index(req, res) {
+    const { search } = req.query;
+
+    if (search) {
+      const deliveryMen = await DeliveryMan.findAll({
+        where: {
+          name: {
+            [Op.like]: `%${search}%`,
+          },
+        },
+      });
+      return res.json(deliveryMen);
+    }
     const deliveryMen = await DeliveryMan.findAll();
     return res.json(deliveryMen);
   }

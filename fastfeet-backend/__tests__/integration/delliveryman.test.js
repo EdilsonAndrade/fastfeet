@@ -285,4 +285,29 @@ describe('DeliveryMan', () => {
       .send({ endDate });
     expect(parseISO(updatedResponse.body.endDate)).toEqual(endDate);
   });
+
+  it('should list deliveryman by name', async () => {
+    let fakeDeliveryman = await factory.attrs('DeliveryMan', {
+      name: 'Edilson Andrade',
+    });
+
+
+    await request(app)
+      .post('/deliveryman')
+      .set('Authorization', `Bearer ${user.generateToken().token}`)
+      .send(fakeDeliveryman);
+
+    fakeDeliveryman = await factory.attrs('DeliveryMan');
+
+    await request(app)
+      .post('/deliveryman')
+      .set('Authorization', `Bearer ${user.generateToken().token}`)
+      .send(fakeDeliveryman);
+
+    const deliveryman = await request(app)
+      .get('/deliveryman?search=Andra')
+      .set('Authorization', `Bearer ${user.generateToken().token}`);
+
+    expect(deliveryman.body[0].name).toBe('Edilson Andrade');
+  });
 });

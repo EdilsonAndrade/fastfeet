@@ -24,7 +24,7 @@ describe('Order Problems', () => {
     });
 
     const response = await request(app)
-      .get(`/order/${fakeOrder.id}/problems`)
+      .get(`/orders/${fakeOrder.id}/problems`)
       .set('Authorization', `Bearer ${user.generateToken().token}`);
     expect(response.body.length).toBeGreaterThan(0);
   });
@@ -35,9 +35,8 @@ describe('Order Problems', () => {
     });
 
     const response = await request(app)
-      .post(`/order/${fakeOrder.id}/problems`)
+      .post(`/orders/${fakeOrder.id}/problems`)
       .send({ description: fakeOrderProblem.description });
-
     expect(response.body.description).toEqual(fakeOrderProblem.description);
   });
 });

@@ -233,4 +233,22 @@ describe('Orders', () => {
 
     expect(response.body.error).toEqual('User not authorized');
   });
+
+  it('should list an order searching by product name', async () => {
+    const order = await factory.attrs('Order', {
+      recipientId: fakeRecipient.id,
+      deliverymanId: fakeDeliveryMan.id,
+      product: 'Feijoada Completa',
+    });
+    await request(app)
+      .post('/orders')
+      .set('Authorization', `Bearer ${user.generateToken().token}`)
+      .send(order);
+
+    const response = await request(app)
+      .get('/orders?Compl')
+      .set('Authorization', `Bearer ${user.generateToken().token}`);
+
+    expect(response.body[response.body.length - 1].product).toBe('Feijoada Completa');
+  });
 });
