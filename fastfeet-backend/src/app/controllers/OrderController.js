@@ -42,17 +42,49 @@ class OrderController {
   async index(req, res) {
     const { orderId } = req.body;
     const { deliveryManId } = req.params;
-    const { search } = req.query;
-    if (search) {
-      const orders = await Order.findAll({
+    const { search, limit, page } = req.query;
+
+    if (!deliveryManId && search) {
+      const orders = await Order.findAndCountAll({
+        limit: Number(limit),
+        offset: (page - 1) * limit,
         where: {
-          name: {
+          product: {
             [Op.like]: `%${search}%`,
           },
         },
+        include: [
+          {
+            model: Recipient,
+            attributes: ['name', 'city', 'state'],
+          },
+          {
+            model: DeliveryMan,
+            attributes: ['name'],
+          },
+        ],
       });
       return res.json(orders);
     }
+
+    if (!deliveryManId) {
+      const orders = await Order.findAndCountAll({
+        limit: Number(limit),
+        offset: (page - 1) * limit,
+        include: [
+          {
+            model: Recipient,
+            attributes: ['name', 'city', 'state'],
+          },
+          {
+            model: DeliveryMan,
+            attributes: ['name'],
+          },
+        ],
+      });
+      return res.json(orders);
+    }
+
     if (deliveryManId) {
       const myOrders = await Order.findAll({
         where: {

@@ -2,12 +2,14 @@ import request from 'supertest';
 import { parseISO } from 'date-fns';
 import app from '../../src/app';
 import factory from '../factories';
+import truncate from '../utils/truncate';
 
 describe('Orders', () => {
   let user = '';
   let fakeRecipient;
   let fakeDeliveryMan;
   beforeAll(async () => {
+    await truncate();
     user = await factory.create('User');
 
     fakeRecipient = await factory.create('Recipient');
@@ -95,12 +97,12 @@ describe('Orders', () => {
     });
 
     const response = await request(app)
-      .get('/orders')
+      .get('/orders?limit=1&page=1')
       .set('Authorization', `Bearer ${user.generateToken().token}`)
       .send({ orderId: fakeOrder.id });
 
 
-    expect(response.body).toHaveProperty('id');
+    expect(response.body.rows[0]).toHaveProperty('id');
   });
 
   it('should list all orders', async () => {
@@ -110,10 +112,10 @@ describe('Orders', () => {
     });
 
     const response = await request(app)
-      .get('/orders')
+      .get('/orders?limit=1000&page=1')
       .set('Authorization', `Bearer ${user.generateToken().token}`);
 
-    expect(response.body.length).toBeGreaterThan(1);
+    expect(response.body.rows.length).toBeGreaterThan(1);
   });
 
   it('on update DeliveryMan not found', async () => {
@@ -246,9 +248,39 @@ describe('Orders', () => {
       .send(order);
 
     const response = await request(app)
-      .get('/orders?Compl')
+      .get('/orders?search=Compl&limit=1&page=1')
       .set('Authorization', `Bearer ${user.generateToken().token}`);
 
-    expect(response.body[response.body.length - 1].product).toBe('Feijoada Completa');
+    expect(response.body.rows[response.body.rows.length - 1].product).toBe('Feijoada Completa');
+  });
+
+  it('should list all orders paged', async () => {
+    await factory.create('Order', {
+      recipientId: fakeRecipient.id,
+      deliverymanId: fakeDeliveryMan.id,
+    });
+    await factory.create('Order', {
+      recipientId: fakeRecipient.id,
+      deliverymanId: fakeDeliveryMan.id,
+    });
+    await factory.create('Order', {
+      recipientId: fakeRecipient.id,
+      deliverymanId: fakeDeliveryMan.id,
+    });
+    await factory.create('Order', {
+      recipientId: fakeRecipient.id,
+      deliverymanId: fakeDeliveryMan.id,
+    });
+    await factory.create('Order', {
+      recipientId: fakeRecipient.id,
+      deliverymanId: fakeDeliveryMan.id,
+    });
+
+
+    const response = await request(app)
+      .get('/orders?limit=2&page=5')
+      .set('Authorization', `Bearer ${user.generateToken().token}`);
+    expect(response.body.rows.length).toBe(2);
+    expect(response.body.count).toBe(16);
   });
 });
