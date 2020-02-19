@@ -3,12 +3,12 @@
 </h1>
 
 
-
 <h3 align="center">
   FastFeet, delivery de encomendas por aplicativo
 </h3>
 
-<h4 align="center"><strong>Instalação e Configuração - Dependências</strong></h4>
+
+<h4 align="center"><strong>Instalação e Configuração - Dependências - Back End</strong></h4>
 
 <ul>
   <li>Acesse a pasta <b>fastfeet-backend</b> e siga os passos abaixo</li>
@@ -45,3 +45,5 @@ docker run --name redisfastfeet -p 6379:6379 -d -t redis:alpine
 ```json
  docker start postgresfastfeet redisfastfeet
 ```
+3. Acesse o banco postgres com algum gerenciador como exemplo postbird, crie o banco com nome de <strong>fastfeet</strong>
+4. Crie um arquivo <b>.env</b> e coloque as configurações conforme arquivo <b>.env.example</b> alterando ip, usuário,password, banco... conforme definido na criação das imagens e também do banco.
