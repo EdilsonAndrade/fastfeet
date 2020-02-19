@@ -67,7 +67,7 @@ class OrderController {
       return res.json(orders);
     }
 
-    if (!deliveryManId) {
+    if (!deliveryManId && !orderId) {
       const orders = await Order.findAndCountAll({
         limit: Number(limit),
         offset: (page - 1) * limit,
@@ -109,9 +109,6 @@ class OrderController {
       const order = await Order.findByPk(orderId);
       return res.json(order);
     }
-
-    const orders = await Order.findAll();
-    return res.json(orders);
   }
 
   async update(req, res) {

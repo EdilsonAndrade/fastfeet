@@ -91,15 +91,14 @@ describe('Orders', () => {
   });
 
   it('should list an order', async () => {
-    const fakeOrder = await factory.create('Order', {
+    await factory.create('Order', {
       recipientId: fakeRecipient.id,
       deliverymanId: fakeDeliveryMan.id,
     });
 
     const response = await request(app)
       .get('/orders?limit=1&page=1')
-      .set('Authorization', `Bearer ${user.generateToken().token}`)
-      .send({ orderId: fakeOrder.id });
+      .set('Authorization', `Bearer ${user.generateToken().token}`);
 
 
     expect(response.body.rows[0]).toHaveProperty('id');
@@ -254,6 +253,21 @@ describe('Orders', () => {
     expect(response.body.rows[response.body.rows.length - 1].product).toBe('Feijoada Completa');
   });
 
+  it('should list an order by order id', async () => {
+    const order = await factory.create('Order', {
+      recipientId: fakeRecipient.id,
+      deliverymanId: fakeDeliveryMan.id,
+      product: 'Feijoada Completa',
+    });
+
+
+    const response = await request(app)
+      .get('/orders')
+      .send({ orderId: order.id })
+      .set('Authorization', `Bearer ${user.generateToken().token}`);
+
+    expect(response.body.product).toBe(order.product);
+  });
   it('should list all orders paged', async () => {
     await factory.create('Order', {
       recipientId: fakeRecipient.id,
@@ -281,6 +295,6 @@ describe('Orders', () => {
       .get('/orders?limit=2&page=5')
       .set('Authorization', `Bearer ${user.generateToken().token}`);
     expect(response.body.rows.length).toBe(2);
-    expect(response.body.count).toBe(16);
+    expect(response.body.count).toBe(17);
   });
 });
