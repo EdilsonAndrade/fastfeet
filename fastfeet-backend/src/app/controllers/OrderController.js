@@ -105,10 +105,8 @@ class OrderController {
       return res.json(myOrders);
     }
 
-    if (orderId) {
-      const order = await Order.findByPk(orderId);
-      return res.json(order);
-    }
+    const order = await Order.findByPk(orderId);
+    return res.json(order);
   }
 
   async update(req, res) {

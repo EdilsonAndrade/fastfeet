@@ -36,13 +36,11 @@ class FileUploadController {
   }
 
   async store(req, res) {
-    const { deliveryManId } = req.params;
+    const { deliveryManId } = req.query;
 
     const { originalname: name, filename: path } = req.file;
     const deliveryMan = await DeliveryMan.findByPk(deliveryManId);
-    if (!deliveryMan) {
-      return res.status(401).json({ error: 'DeliveryMan not found' });
-    }
+
 
     if (!name) {
       return res.status(401).json({ error: 'An imagem must be send' });
@@ -52,10 +50,12 @@ class FileUploadController {
       path,
     });
 
+    if (deliveryMan) {
+      await deliveryMan.update({
+        avatar_id: file.id,
+      });
+    }
 
-    await deliveryMan.update({
-      avatar_id: file.id,
-    });
 
     return res.json(file);
   }

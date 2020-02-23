@@ -18,7 +18,7 @@ describe('File Upload', () => {
     const { id } = fakeDeliveryMan;
     const user = await factory.create('User');
     const response = await request(app)
-      .post(`/files/${id}`)
+      .post(`/files?deliveryManId=${id}`)
       .set('Authorization', `Bearer ${user.generateToken().token}`)
       .field('name', 'file')
       .attach('file', filePath);
@@ -28,11 +28,11 @@ describe('File Upload', () => {
     expect(response.body).toHaveProperty('path');
   });
 
-  it('deliveryman does not exist on uploading file', async () => {
+  it('uploading file returns url, path and id to save further', async () => {
     const filePath = resolve(__dirname, '..', 'testfile', 'testefile.png');
     const user = await factory.create('User');
     const response = await request(app)
-      .post('/files/0')
+      .post('/files?deliveryManId=0')
       .set('Authorization', `Bearer ${user.generateToken().token}`)
       .field('name', 'file')
       .attach('file', filePath);
@@ -43,6 +43,8 @@ describe('File Upload', () => {
         fs.unlink(path.join(directory, file));
       });
     });
-    expect(response.body.error).toBe('DeliveryMan not found');
+    expect(response.body).toHaveProperty('url');
+    expect(response.body).toHaveProperty('path');
+    expect(response.body).toHaveProperty('id');
   });
 });

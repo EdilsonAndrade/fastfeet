@@ -117,10 +117,10 @@ describe('DeliveryMan', () => {
       .send(fakeDeliveryman);
 
     const deliveryman = await request(app)
-      .get('/deliveryman')
+      .get('/deliveryman?limit=10&page=1')
       .set('Authorization', `Bearer ${user.generateToken().token}`);
 
-    expect(deliveryman.body.length).toBeGreaterThan(1);
+    expect(deliveryman.body.rows.length).toBeGreaterThan(1);
   });
 
   it('should list not canceled and not delivered orders ', async () => {
@@ -305,9 +305,9 @@ describe('DeliveryMan', () => {
       .send(fakeDeliveryman);
 
     const deliveryman = await request(app)
-      .get('/deliveryman?search=Andra')
+      .get('/deliveryman?search=Andra&limit=10&page=1')
       .set('Authorization', `Bearer ${user.generateToken().token}`);
 
-    expect(deliveryman.body[0].name).toBe('Edilson Andrade');
+    expect(deliveryman.body.rows[0].name).toBe('Edilson Andrade');
   });
 });

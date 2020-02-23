@@ -1,0 +1,179 @@
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { MdSearch } from 'react-icons/md';
+import { toast } from 'react-toastify';
+import history from '../../services/history';
+import Button from '../../components/Button';
+import Grid from '../../components/Grid';
+import api from '~/services/api';
+import { saveSuccess, loadSuccess } from '~/store/modules/deliveryman/actions';
+import Pagination from '~/components/Pagination';
+import AvatarPreviewDefault from '~/assets/avatar.svg';
+import { Avatar, DeliveryManTopContent } from './styles';
+import ContextMenu from '~/components/ContextMenu';
+
+export default function DeliveryMan() {
+  const dispatch = useDispatch();
+  const deliveryMans = useSelector(state => state.deliveryman.deliveryMans);
+  const [searchValue, setSearchValue] = useState('');
+  const [previousPage, setPreviousPage] = useState(0);
+  const [nextPage, setNextPage] = useState(2);
+  const [page, setPage] = useState(1);
+  const [deliveryManId, setDeliveryManId] = useState(0);
+  const [deliveryManCount, setDeliveryManCount] = useState(0);
+  const totalPages = 2;
+
+  const [anchorEl, setAnchorEl] = React.useState(null);
+
+  async function handleSearch(e) {
+    const response = await api.get(
+      `/deliveryman?limit=${totalPages}&page=${page}&search=${e}`
+    );
+    const { data } = response;
+    setDeliveryManCount(data.count);
+    dispatch(loadSuccess(data.rows));
+  }
+  const handleClick = (event, id) => {
+    setAnchorEl(event.currentTarget);
+    setDeliveryManId(id);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleCadastrar = () => {
+    dispatch(saveSuccess(''));
+    history.push('/deliveryman/deliverymanform');
+  };
+
+  const handlePreviousPage = () => {
+    setPreviousPage(previousPage - 1);
+    setPage(page - 1);
+  };
+
+  const handleNextPage = () => {
+    setNextPage(nextPage + 1);
+    setPage(page + 1);
+  };
+
+  async function getDeliveryMan(pageOnDeleted) {
+    const response = await api.get(
+      `/deliveryman?limit=${totalPages}&page=${pageOnDeleted || page}`
+    );
+    const { data } = response;
+    setDeliveryManCount(data.count);
+    dispatch(loadSuccess(data.rows));
+  }
+  const handleEdit = () => {
+    dispatch(saveSuccess(deliveryMans.find(d => d.id === +deliveryManId)));
+    setAnchorEl(null);
+    history.push({
+      pathname: '/deliveryman/deliverymanform',
+    });
+  };
+
+  async function handleDelete() {
+    setAnchorEl(null);
+    if (window.confirm('Tem certeza que quer excluir este registro?')) {
+      try {
+        let pageOnDelete = page;
+        if (deliveryManCount - 1 <= totalPages) {
+          pageOnDelete -= 1;
+        }
+        await api.delete(`/deliveryman/${deliveryManId}`);
+        getDeliveryMan(pageOnDelete);
+        setPage(pageOnDelete);
+      } catch (error) {
+        toast.error(`Ocorreu um erro : ${error}`);
+      }
+    }
+  }
+
+  useEffect(() => {
+    getDeliveryMan();
+  }, [dispatch, previousPage, nextPage]);
+
+  return (
+    <>
+      <DeliveryManTopContent>
+        <strong>Gerenciando entregadores</strong>
+        <div>
+          <label htmlFor="search">
+            <MdSearch color="#ccc" size={22} />
+            <input
+              id="search"
+              type="text"
+              value={searchValue}
+              placeholder="Buscar por entregadores"
+              onChange={e => {
+                setSearchValue(e.target.value);
+                handleSearch(e.target.value);
+              }}
+            />
+          </label>
+
+          <Button buttonType="button" saveButton handleClick={handleCadastrar}>
+            Cadastrar
+          </Button>
+        </div>
+      </DeliveryManTopContent>
+      <Grid>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Foto</th>
+            <th>Nome</th>
+            <th>Email</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          {deliveryMans.map(deliveryman => (
+            <tr key={deliveryman.id}>
+              <td>{deliveryman.id}</td>
+              <td>
+                <Avatar
+                  src={
+                    deliveryman.avatar
+                      ? deliveryman.avatar.url
+                      : AvatarPreviewDefault
+                  }
+                  alt="avatar"
+                />
+              </td>
+              <td>{deliveryman.name}</td>
+              <td>{deliveryman.email}</td>
+              <td>
+                <button
+                  aria-controls="contextMenu"
+                  aria-haspopup="true"
+                  onClick={e => handleClick(e, deliveryman.id)}
+                  type="button"
+                >
+                  <ul>
+                    <li>.</li>
+                    <li>.</li>
+                    <li>.</li>
+                  </ul>
+                </button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+        <ContextMenu
+          anchorEl={anchorEl}
+          handleClose={handleClose}
+          handleDelete={handleDelete}
+          handleEdit={handleEdit}
+          menuId="contextMenu"
+        />
+      </Grid>
+      <Pagination
+        handleBackPage={() => handlePreviousPage(previousPage)}
+        showBack={page > 1}
+        showForward={deliveryManCount / totalPages > page}
+        handleForwardPage={() => handleNextPage(nextPage)}
+      />
+    </>
+  );
+}

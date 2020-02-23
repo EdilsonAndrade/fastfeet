@@ -40,19 +40,28 @@ class DeliveryManController {
   }
 
   async index(req, res) {
-    const { search } = req.query;
+    const { search, limit, page } = req.query;
 
     if (search) {
-      const deliveryMen = await DeliveryMan.findAll({
+      const deliveryMen = await DeliveryMan.findAndCountAll({
+        limit: Number(limit),
+        offset: (page - 1) * limit,
         where: {
           name: {
             [Op.like]: `%${search}%`,
           },
         },
       });
+
       return res.json(deliveryMen);
     }
-    const deliveryMen = await DeliveryMan.findAll();
+
+    const deliveryMen = await DeliveryMan.findAndCountAll({
+      limit: Number(limit),
+      offset: (page - 1) * limit,
+
+    });
+
     return res.json(deliveryMen);
   }
 }
