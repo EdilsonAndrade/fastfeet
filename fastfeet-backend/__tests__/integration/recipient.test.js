@@ -7,6 +7,9 @@ beforeEach(async () => {
   await truncate();
 });
 describe('Recipient', () => {
+  afterAll(async () => {
+    await truncate();
+  });
   it('should return not authorize for create', async () => {
     const recipient = await factory.attrs('Recipient');
 
@@ -121,7 +124,7 @@ describe('Recipient', () => {
     expect(recipients.body).toHaveLength(2);
   });
 
-  it('should list recipients by  name', async () => {
+  it('should list recipients by name', async () => {
     let recipient = await factory.attrs('Recipient', {
       name: 'Marcelo Oliveira',
     });
@@ -141,9 +144,8 @@ describe('Recipient', () => {
       .send(recipient);
 
     const recipients = await request(app)
-      .get('/recipients?search=Oli')
+      .get('/recipients?search=Oli&limit=10&page=1')
       .set('Authorization', `Bearer ${user.generateToken().token}`);
-
-    expect(recipients.body[0].name).toBe('Marcelo Oliveira');
+    expect(recipients.body.rows[0].name).toBe('Marcelo Oliveira');
   });
 });

@@ -39,7 +39,7 @@ export default function Header() {
           <NavLink
             activeStyle={{ color: '#000000' }}
             style={{ color: '#999999' }}
-            to="/issues"
+            to="/problem"
           >
             PROBLEMAS
           </NavLink>

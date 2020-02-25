@@ -43,17 +43,38 @@ class RecipientController {
   }
 
   async index(req, res) {
-    const { search } = req.query;
+    const { search, limit, page } = req.query;
     if (search) {
-      const recipients = await Recipient.findAll({
+      const recipients = await Recipient.findAndCountAll({
+        limit: Number(limit),
+        offset: (page - 1) * limit,
         where: {
-          name: {
-            [Op.like]: `%${search}%`,
-          },
+          [Op.or]: [
+            {
+              name: {
+                [Op.like]: `%${search.toString().toLowerCase()}%`,
+              },
+            },
+            {
+              name: {
+                [Op.like]: `%${search.toString().toUpperCase()}%`,
+              },
+            },
+
+          ],
+
         },
       });
       return res.json(recipients);
     }
+    if (limit && page) {
+      const recipients = await Recipient.findAndCountAll({
+        limit: Number(limit),
+        offset: (page - 1) * limit,
+      });
+      return res.json(recipients);
+    }
+
     const recipients = await Recipient.findAll();
     return res.json(recipients);
   }

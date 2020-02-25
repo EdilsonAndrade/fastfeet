@@ -1,5 +1,6 @@
 import styled, { keyframes } from 'styled-components';
 import { FaSpinner } from 'react-icons/fa';
+import AsyncSelect from 'react-select/async';
 
 const rotate = keyframes`
   from{
@@ -13,46 +14,51 @@ export const Spinner = styled(FaSpinner)`
   animation: ${rotate} 2s linear infinite;
 `;
 export const Content = styled.div`
+  background: #fff;
   display: flex;
   flex-direction: column;
-  background: #fff;
   justify-content: flex-start;
-  padding: 20px;
+  align-items: flex-start;
+  padding: 20px 0;
+  label {
+    font-weight: bold;
+    text-transform: uppercase;
+  }
+  > span {
+    display: flex;
 
-  > label,
-  select,
-  input,
-  div {
-    width: 100%;
-    > div {
-      & + div {
-        margin-left: 5px;
+    > span {
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      margin-left: 10px;
+      margin-bottom: 10px;
+      > div {
+        height: 45px;
+        > div {
+          height: 45px;
+        }
       }
     }
   }
-  select {
-    flex: 1;
-    padding: 10px;
-    border: 1px solid #eee;
-    background: #fff;
-  }
 
-  label,
-  strong {
-    font-size: 18px;
-    font-weight: bold;
-  }
-  input {
-    padding: 15px;
-    border: 1px solid #eee;
-    border-radius: 4px;
-    margin-top: 4px;
-    margin-bottom: 12px;
-  }
-  span {
-    text-align: left;
-    color: #7d40e7;
-    font-weight: bold;
+  div#productDiv {
+    margin-left: 7%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
     width: 100%;
+    input {
+      width: 94%;
+      padding: 10px;
+      border: solid 1px #ccc;
+      border-radius: 5px;
+      height: 45px;
+    }
   }
+`;
+
+export const AsyncSelectRecipient = styled(AsyncSelect)`
+  width: 520px;
 `;

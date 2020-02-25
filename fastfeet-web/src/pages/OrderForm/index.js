@@ -1,63 +1,97 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
-import { Input, Form, Select } from '@rocketseat/unform';
 import history from '../../services/history';
 import Button from '../../components/Button';
-import { Content, Spinner } from './styles';
+import { Content, Spinner, AsyncSelectRecipient } from './styles';
 import { startLoading } from '~/store/modules/loading/actions';
 import { saveRequest } from '~/store/modules/order/actions';
-import * as DeliveryManActions from '~/store/modules/deliveryman/actions';
-import * as RecipientActions from '~/store/modules/recipient/actions';
 import api from '~/services/api';
 
 export default function OrderForm() {
   const dispatch = useDispatch();
-  const recipients = useSelector(state => state.recipient.recipients);
-  const deliverymans = useSelector(state => state.deliveryman.deliveryMans);
-  const orderData = useSelector(state => state.order);
+  const order = useSelector(state => state.order);
   const loading = useSelector(state => state.load.loading);
 
+  const [recipients, setRecipients] = useState([]);
+  const [deliveryMans, setDeliveryMans] = useState([]);
   const [editMode, setEditMode] = useState(false);
+  const [recipientId, setRecipientId] = useState();
+  const [product, setProduct] = useState(order.product);
+  const [deliverymanId, setDeliveryManId] = useState();
 
-  const recipientsSelect = recipients.map(recipient => ({
-    id: recipient.id,
-    title: recipient.name,
-  }));
+  const [defaultDeliveryMan, setDefaultDeliveryMan] = useState({
+    value: order.DeliveryMan && order.DeliveryMan.id,
+    label: order.DeliveryMan && order.DeliveryMan.name,
+  });
+  const [defaultRecipient, setDefaultRecipient] = useState({
+    value: order.Recipient && order.Recipient.id,
+    label: order.Recipient && order.Recipient.name,
+  });
+  async function handleSearchRecipient(newValue) {
+    const inputValue = newValue.replace(/\W/g, '');
+    const response = await api.get(
+      `recipients?search=${inputValue}&limit=1000000&page=1`
+    );
+    const recipipents = response.data.rows.map(r => ({
+      label: r.name,
+      value: r.id,
+    }));
+    setRecipients(recipipents);
+    return recipients;
+  }
+  async function handleSearchDeliveryMan(newValue) {
+    const inputValue = newValue.replace(/\W/g, '');
+    const response = await api.get(
+      `deliveryman?search=${inputValue}&limit=1000000&page=1`
+    );
+    const deliveryman = response.data.rows.map(r => ({
+      label: r.name,
+      value: r.id,
+    }));
+    setDeliveryMans(deliveryman);
+    return deliveryman;
+  }
 
-  const deliverymanSelect = deliverymans.map(deliveryman => ({
-    id: deliveryman.id,
-    title: deliveryman.name,
-  }));
+  const filterRecipients = inputValue => {
+    return recipients.filter(i =>
+      i.label.toLowerCase().includes(inputValue.toLowerCase())
+    );
+  };
+
+  const filterDeliveryMan = inputValue => {
+    return deliveryMans.filter(i =>
+      i.label.toLowerCase().includes(inputValue.toLowerCase())
+    );
+  };
+
+  const loadRecipients = (inputValue, callback) => {
+    callback(filterRecipients(inputValue));
+  };
+  const loadDeliveryMan = (inputValue, callback) => {
+    callback(filterDeliveryMan(inputValue));
+  };
+
   useEffect(() => {
-    if (orderData.id) {
+    if (order.id) {
       setEditMode(true);
+      setDeliveryManId(order.DeliveryMan.id);
+      setRecipientId(order.Recipient.id);
     }
   }, []);
 
   const handleBack = () => {
     history.push('/orders');
   };
-  const handleSave = data => {
+  const handleSave = () => {
     dispatch(startLoading());
-    dispatch(saveRequest({ ...data, id: orderData.id }));
+    dispatch(
+      saveRequest({ deliverymanId, recipientId, product, id: order.id })
+    );
   };
 
-  useEffect(() => {
-    async function getRecipientsAndDeliveryMans() {
-      let response = await api.get('/deliveryman');
-      let { data } = response;
-      dispatch(DeliveryManActions.loadSuccess(data));
-      response = await api.get('/recipients');
-      data = response.data;
-      dispatch(RecipientActions.loadSuccess(data));
-    }
-
-    getRecipientsAndDeliveryMans();
-  }, []);
-
   return (
-    <Form onSubmit={handleSave} initialData={orderData}>
+    <form>
       <div>
         <strong>
           {editMode ? 'Edição de encomendas' : 'Cadastro de encomendas'}
@@ -71,7 +105,7 @@ export default function OrderForm() {
               <Spinner size={20} color="#fff" />
             </Button>
           ) : (
-            <Button buttonType="submit" saveButton>
+            <Button buttonType="button" handleClick={handleSave} saveButton>
               SALVAR
             </Button>
           )}
@@ -79,22 +113,45 @@ export default function OrderForm() {
       </div>
 
       <Content>
-        <div>
-          <Select
-            name="recipientId"
-            options={recipientsSelect}
-            label="Destinatário"
+        <span>
+          <span>
+            <label htmlFor="recipient">Destinário</label>
+            <AsyncSelectRecipient
+              id="recipient"
+              label="Destinatário"
+              loadOptions={loadRecipients}
+              onInputChange={handleSearchRecipient}
+              onChange={e => setRecipientId(e.value)}
+              cacheOptions
+              defaultOptions
+              defaultValue={defaultRecipient}
+            />
+          </span>
+          <span>
+            <label htmlFor="deliveryman">Entregador</label>
+            <AsyncSelectRecipient
+              id="deliveryman"
+              label="Entregador"
+              loadOptions={loadDeliveryMan}
+              onInputChange={handleSearchDeliveryMan}
+              onChange={e => setDeliveryManId(e.value)}
+              cacheOptions
+              defaultOptions
+              defaultValue={defaultDeliveryMan}
+            />
+          </span>
+        </span>
+        <div id="productDiv">
+          <label htmlFor="product">Product</label>
+          <input
+            id="product"
+            name="product"
+            value={product}
+            onChange={e => setProduct(e.target.value)}
+            type="text"
           />
-          <Select
-            name="deliveryManId"
-            options={deliverymanSelect}
-            label="Entregador"
-          />
-        </div>
-        <div>
-          <Input name="product" type="text" label="Produto" />
         </div>
       </Content>
-    </Form>
+    </form>
   );
 }

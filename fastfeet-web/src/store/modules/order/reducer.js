@@ -1,9 +1,11 @@
 import { produce } from 'immer';
 
 const INITIAL_VALUE = {
-  deliveryManId: null,
+  deliverymanId: null,
   recipientId: null,
   product: '',
+  Recipient: '',
+  DeliveryMan: '',
   orders: [],
 };
 
@@ -11,11 +13,20 @@ export default function student(state = INITIAL_VALUE, action) {
   return produce(state, draft => {
     switch (action.type) {
       case '@order/SAVE_SUCCESS': {
-        const { deliverymanId, recipientId, product, id } = action.payload;
+        const {
+          deliverymanId,
+          recipientId,
+          product,
+          id,
+          Recipient,
+          DeliveryMan,
+        } = action.payload;
 
-        draft.deliveryManId = deliverymanId;
+        draft.deliverymanId = deliverymanId;
         draft.recipientId = recipientId;
         draft.product = product;
+        draft.Recipient = Recipient;
+        draft.DeliveryMan = DeliveryMan;
         draft.id = id;
         break;
       }

@@ -49,18 +49,29 @@ class OrderController {
         limit: Number(limit),
         offset: (page - 1) * limit,
         where: {
-          product: {
-            [Op.like]: `%${search}%`,
-          },
+          [Op.or]: [
+            {
+              product: {
+                [Op.like]: `%${search.toString().toLowerCase()}%`,
+              },
+            },
+            {
+              product: {
+                [Op.like]: `%${search.toString().toUpperCase()}%`,
+              },
+            },
+
+          ],
+
         },
         include: [
           {
             model: Recipient,
-            attributes: ['name', 'city', 'state'],
+            attributes: ['id', 'name', 'city', 'state'],
           },
           {
             model: DeliveryMan,
-            attributes: ['name'],
+            attributes: ['id', 'name'],
           },
         ],
       });
@@ -74,11 +85,11 @@ class OrderController {
         include: [
           {
             model: Recipient,
-            attributes: ['name', 'city', 'state'],
+            attributes: ['id', 'name', 'city', 'state'],
           },
           {
             model: DeliveryMan,
-            attributes: ['name'],
+            attributes: ['id', 'name'],
           },
         ],
       });
@@ -136,7 +147,7 @@ class OrderController {
 
   async delete(req, res) {
     const { orderId } = req.params;
-
+    console.log(orderId);
     const order = await Order.findByPk(orderId, {
       include: [{
         model: DeliveryMan,
@@ -161,11 +172,11 @@ class OrderController {
         },
       });
     }
-    const updatedOrder = await order.update({
+    const deletedOrder = await order.update({
       canceledAt: new Date(),
     });
 
-    return res.json(updatedOrder);
+    return res.json(deletedOrder);
   }
 }
 

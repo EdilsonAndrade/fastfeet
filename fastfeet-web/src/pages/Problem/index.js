@@ -1,108 +1,119 @@
-import React, { useState, useEffect } from 'react';
-import { Dialog } from '@material-ui/core';
-import { Form, Textarea } from '@rocketseat/unform';
+import React, { useEffect, useState } from 'react';
+
 import { toast } from 'react-toastify';
-import Button from '../../components/Button';
 import Grid from '../../components/Grid';
-import { Content, AnswerModal, NoDoubt } from './styles';
 import api from '~/services/api';
+import Pagination from '~/components/Pagination';
+import { ProblemTopContent } from './styles';
+import ContextMenu from '~/components/ContextMenu';
 
-export default function Order() {
-  const [open, setOpen] = useState(false);
-  const [orders, setOrders] = useState([]);
-  const [studentOrder, setStudentOrder] = useState('');
+export default function Problem() {
+  const [problems, setProblems] = useState([]);
+  const [previousPage, setPreviousPage] = useState(0);
+  const [nextPage, setNextPage] = useState(2);
+  const [page, setPage] = useState(1);
   const [orderId, setOrderId] = useState(0);
+  const [problemsCount, setProblemsCount] = useState(0);
+  const totalPages = 2;
 
-  async function getOrders() {
-    const response = await api.get('/help-orders');
-    if (response.data) {
-      setOrders(response.data);
-    }
-  }
-  useEffect(() => {
-    getOrders();
-  }, []);
-  const openQuestion = order => {
-    const { question, id } = order;
-    setStudentOrder(question);
+  const [anchorEl, setAnchorEl] = React.useState(null);
+
+  const handleClick = (event, id) => {
+    setAnchorEl(event.currentTarget);
     setOrderId(id);
-    setOpen(true);
   };
   const handleClose = () => {
-    setOpen(false);
+    setAnchorEl(null);
   };
 
-  async function handleAnswerStudent(data) {
-    const { answer } = data;
-    try {
-      await api.post(`/help-orders/${orderId}/answer`, { answer });
-      toast.success('Duvida respondia com sucesso');
-      getOrders();
-      setOpen(false);
-    } catch (error) {
-      toast.error('Ocorreu um erro no servidor');
+  const handlePreviousPage = () => {
+    setPreviousPage(previousPage - 1);
+    setPage(page - 1);
+  };
+
+  const handleNextPage = () => {
+    setNextPage(nextPage + 1);
+    setPage(page + 1);
+  };
+
+  async function getProblems(pageOnDeleted) {
+    const response = await api.get(
+      `/problems?limit=${totalPages}&page=${pageOnDeleted || page}`
+    );
+    const { data } = response;
+    setProblemsCount(data.count);
+    setProblems(data.rows);
+  }
+
+  async function handleDelete() {
+    setAnchorEl(null);
+    if (window.confirm('Tem certeza que quer excluir este registro?')) {
+      try {
+        let pageOnDelete = page;
+        if (problemsCount - 1 <= totalPages) {
+          pageOnDelete -= 1;
+        }
+        await api.delete(`/orders/${orderId}/problems`);
+        getProblems(pageOnDelete);
+        setPage(pageOnDelete);
+      } catch (error) {
+        toast.error(`Ocorreu um erro : ${error}`);
+      }
     }
   }
 
-  return (
-    <Content>
-      <div>
-        <strong>Pedidos de auxilio</strong>
-      </div>
-      {orders.length > 0 ? (
-        <Grid>
-          <thead>
-            <tr>
-              <th>Aluno</th>
-              <th />
-            </tr>
-          </thead>
-          <tbody>
-            {orders.map(order => (
-              <tr key={order.id}>
-                <td>{order.Student.name}</td>
-                <td>
-                  <button type="button" onClick={() => openQuestion(order)}>
-                    Responder
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </Grid>
-      ) : (
-        <NoDoubt>
-          <p>Nenhum aluno com dúvidas</p>
-        </NoDoubt>
-      )}
+  useEffect(() => {
+    getProblems();
+  }, [previousPage, nextPage]);
 
-      <Dialog
-        onClose={handleClose}
-        aria-labelledby="customized-dialog-title"
-        open={open}
-      >
-        <AnswerModal>
-          <Form onSubmit={handleAnswerStudent}>
-            <strong>PERGUNTA DO ALUNO</strong>
-            <span>{studentOrder}</span>
-            <strong>SUA RESPOSTA</strong>
-            <div>
-              <Textarea
-                style={{ borderStyle: 'none' }}
-                placeholder="Insira a resposta com detalhamento"
-                name="answer"
-                cols={38}
-                rows={10}
-              />
-            </div>
-            <span>
-              <Button buttonType="submit" icon="none" saveButton>
-                Responder aluno
-              </Button>
-            </span>
-          </Form>
-        </AnswerModal>
-      </Dialog>
-    </Content>
+  return (
+    <>
+      <ProblemTopContent>
+        <strong>Problemas na entrega</strong>
+      </ProblemTopContent>
+      <Grid>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>PROBLEMA</th>
+            <th>AÇÕES</th>
+          </tr>
+        </thead>
+        <tbody>
+          {problems.map(problem => (
+            <tr key={problem.orderId}>
+              <td>{problem.id}</td>
+              <td>{problem.description}</td>
+              <td>
+                <button
+                  aria-controls="contextMenu"
+                  aria-haspopup="true"
+                  onClick={e => handleClick(e, problem.id)}
+                  type="button"
+                >
+                  <ul>
+                    <li>.</li>
+                    <li>.</li>
+                    <li>.</li>
+                  </ul>
+                </button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+        <ContextMenu
+          anchorEl={anchorEl}
+          handleClose={handleClose}
+          handleDelete={handleDelete}
+          menuId="contextMenu"
+        />
+      </Grid>
+      <Pagination
+        handleBackPage={() => handlePreviousPage(previousPage)}
+        showBack={page > 1}
+        showForward={problemsCount / totalPages > page}
+        handleForwardPage={() => handleNextPage(nextPage)}
+      />
+    </>
   );
 }

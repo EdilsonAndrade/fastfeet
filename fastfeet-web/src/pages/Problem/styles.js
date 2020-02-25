@@ -1,80 +1,33 @@
 import styled from 'styled-components';
 
-export const Content = styled.div`
-  width: 75%;
+export const ProblemTopContent = styled.div`
   display: flex;
   flex-direction: column;
-  margin: 0 auto;
-  div {
-    width: 65%;
-    padding: 0 12px;
+  align-items: baseline;
+  strong {
+    width: 100%;
   }
-
-  table {
-    tbody {
-      tr {
-        display: flex;
-        justify-content: space-between;
-        border-bottom: 1px solid #eee;
-        td {
-          border: none;
-          button {
-            text-transform: lowercase;
-            border: none;
-            font-size: 15px;
-            color: #4d85ee;
-            text-align: right;
-            background: none;
-          }
-        }
-      }
-    }
-  }
-`;
-export const AnswerModal = styled.div`
-  form {
+  > div {
+    width: 100%;
     display: flex;
-    flex-direction: column;
-    max-width: 350px;
-    padding: 15px;
-
-    strong {
-      margin: 10px 0;
-    }
-    span {
-      font-size: 16px;
-      color: #666666;
-      line-height: 26px;
-    }
-    > div {
-      width: 100%;
-      border: 1px solid #eee;
-      padding: 12px 10px;
-      border-radius: 4px;
-    }
-    span {
+    justify-content: space-between;
+    align-items: center;
+    label {
+      background: #fff;
       display: flex;
-      flex-direction: column;
       align-items: center;
-      button {
-        width: 100%;
+      svg {
+        margin-left: 15px;
+        color: #ccc;
       }
     }
-  }
-`;
-
-export const NoDoubt = styled.div`
-  margin: 20px auto;
-  max-width: 350px;
-  padding: 20px;
-  background: linear-gradient(#ddd, #eee);
-  display: flex;
-  justify-content: center;
-  border: 1px solid #eee;
-  border-radius: 4px;
-  p {
-    font-weight: bold;
-    font-size: 24px;
-    color: #c2c2c2;
+    input {
+      width: 190px;
+      height: 30px;
+      font-size: 12px;
+      ::placeholder {
+        color: #ccc;
+      }
+    }
   }
 `;

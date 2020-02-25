@@ -12,5 +12,5 @@ module.exports = {
 
   }),
 
-  down: (queryInterface) => queryInterface.removeConstraint('delivery_mans', 'file_deliverman_fk'),
+  down: (queryInterface) => queryInterface,
 };

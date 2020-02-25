@@ -3,8 +3,12 @@ import fs from 'mz/fs';
 import request from 'supertest';
 import app from '../../src/app';
 import factory from '../factories';
+import truncate from '../utils/truncate';
 
 describe('File Upload', () => {
+  afterAll(async () => {
+    await truncate();
+  });
   it('file should exist', async () => {
     const filePath = resolve(__dirname, '..', 'testfile', 'testefile.png');
     const result = await fs.exists(filePath);

@@ -4,7 +4,7 @@ import { toast } from 'react-toastify';
 import history from '../../services/history';
 import Button from '../../components/Button';
 import Grid from '../../components/Grid';
-import ButtonDiv from './styles';
+import { ButtonDiv, StatusContent } from './styles';
 import api from '~/services/api';
 import { saveSuccess } from '~/store/modules/order/actions';
 import Pagination from '~/components/Pagination';
@@ -21,19 +21,11 @@ export default function Order() {
   const totalPages = 2;
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [orderId, setOrderId] = useState(0);
+
   const handleCadastrar = () => {
     dispatch(saveSuccess(''));
     history.push('/order/orderform');
   };
-
-  async function handleSearchStudent(e) {
-    const response = await api.get(
-      `/orders?limit=${totalPages}&page=${page}&name=${e}`
-    );
-    const { data } = response;
-    setOrdersCount(data.count);
-    setOrders(data.rows);
-  }
 
   const handleEdit = () => {
     dispatch(saveSuccess(orders.find(d => d.id === +orderId)));
@@ -59,13 +51,61 @@ export default function Order() {
     setNextPage(nextPage + 1);
     setPage(page + 1);
   };
-  async function handleDelete(id) {
+
+  const getFormatedStatus = order => {
+    let status = {};
+    if (order.canceledAt) {
+      status = { text: 'CANCELADA', background: '#FAB0B0', color: '#DE3B3B' };
+      return status;
+    }
+    if (order.endDate) {
+      status = { text: 'ENTREGUE', background: '#DFF0DF', color: '#2CA42B' };
+      return status;
+    }
+    if (order.startDate) {
+      status = { text: 'RETIRADA', background: '#BAD2FF', color: '#4D85EE' };
+      return status;
+    }
+    status = { text: 'PENDENTE', background: '#F0F0DF', color: '#C1BC35' };
+    return status;
+  };
+
+  async function handleSearchStudent(e) {
+    const response = await api.get(
+      `/orders?limit=${totalPages}&page=${page}&name=${e}`
+    );
+    const { data } = response;
+    const dataWithStatusFormated = data.rows.map(d => ({
+      ...d,
+      formattedStatus: getFormatedStatus(d),
+    }));
+    setOrders(dataWithStatusFormated);
+    setOrdersCount(data.count);
+    setOrders(data.rows);
+  }
+
+  async function getOrders(onDeletePage) {
+    const response = await api.get(
+      `/orders?limit=2&page=${onDeletePage || page}`
+    );
+    setOrdersCount(response.data.count);
+    const { data } = response;
+    const dataWithStatusFormated = data.rows.map(d => ({
+      ...d,
+      formattedStatus: getFormatedStatus(d),
+    }));
+    setOrders(dataWithStatusFormated);
+    if (response.data.length <= 0) {
+      setPage(page - 1);
+    }
+  }
+
+  async function handleDelete() {
+    setAnchorEl(null);
     if (window.confirm('Tem certeza que quer excluir este registro?')) {
       try {
-        const response = await api.delete(`/students/${id}`);
-        setOrders(response.data.rows);
-        setOrdersCount(response.data.count);
-        setPage(1);
+        await api.delete(`/orders/${orderId}`);
+        getOrders(page);
       } catch (error) {
         toast.error(`Ocorreu um erro : ${error}`);
       }
@@ -73,17 +113,8 @@ export default function Order() {
   }
 
   useEffect(() => {
-    async function getOrders() {
-      const response = await api.get(`/orders?limit=2&page=${page}`);
-      setOrdersCount(response.data.count);
-      const { data } = response;
-      setOrders(data.rows);
-      if (response.data.length <= 0) {
-        setPage(page - 1);
-      }
-    }
     getOrders();
-  }, [dispatch, page]);
+  }, [page]);
 
   return (
     <>
@@ -129,20 +160,26 @@ export default function Order() {
               <td>{order.DeliveryMan.name}</td>
               <td>{order.Recipient.city}</td>
               <td>{order.Recipient.state}</td>
-              <td>{order.status}</td>
               <td>
-                <button
-                  aria-controls="contextMenu"
-                  aria-haspopup="true"
-                  onClick={e => handleClick(e, order.id)}
-                  type="button"
-                >
-                  <ul>
-                    <li>.</li>
-                    <li>.</li>
-                    <li>.</li>
-                  </ul>
-                </button>
+                <StatusContent id="status" status={order.formattedStatus}>
+                  <span>{order.formattedStatus.text}</span>
+                </StatusContent>
+              </td>
+              <td>
+                {order.canceledAt ? null : (
+                  <button
+                    aria-controls="contextMenu"
+                    aria-haspopup="true"
+                    onClick={e => handleClick(e, order.id)}
+                    type="button"
+                  >
+                    <ul>
+                      <li>.</li>
+                      <li>.</li>
+                      <li>.</li>
+                    </ul>
+                  </button>
+                )}
               </td>
             </tr>
           ))}

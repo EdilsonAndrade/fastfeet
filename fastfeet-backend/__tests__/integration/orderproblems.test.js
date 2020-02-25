@@ -1,8 +1,13 @@
 import request from 'supertest';
 import app from '../../src/app';
 import factory from '../factories';
+import truncate from '../utils/truncate';
 
 describe('Order Problems', () => {
+  afterAll(async () => {
+    await truncate();
+  });
+
   let user = '';
   let fakeRecipient;
   let fakeDeliveryMan;
@@ -24,9 +29,9 @@ describe('Order Problems', () => {
     });
 
     const response = await request(app)
-      .get(`/orders/${fakeOrder.id}/problems`)
+      .get('/problems?limit=100&page=1')
       .set('Authorization', `Bearer ${user.generateToken().token}`);
-    expect(response.body.length).toBeGreaterThan(0);
+    expect(response.body.rows.length).toBeGreaterThan(0);
   });
 
   it('should save a problem and return description', async () => {

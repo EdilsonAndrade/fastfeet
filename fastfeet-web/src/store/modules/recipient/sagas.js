@@ -2,7 +2,7 @@ import { call, put, takeLatest, all } from 'redux-saga/effects';
 import { toast } from 'react-toastify';
 import api from '../../../services/api';
 import history from '../../../services/history';
-import { saveSuccess } from './actions';
+
 import * as RecipentActions from './actions';
 import { stopLoading } from '../loading/actions';
 
@@ -28,7 +28,7 @@ function* saveRequest({ payload }) {
         city,
         state: cityState,
       });
-      yield put(saveSuccess(response.data));
+      yield put(RecipentActions.saveSuccess(response.data));
       toast.success('Destinatário cadastrado com sucesso');
     } else {
       const response = yield call(api.post, '/recipients', {
@@ -41,7 +41,7 @@ function* saveRequest({ payload }) {
         state: cityState,
       });
 
-      yield put(saveSuccess(response.data));
+      yield put(RecipentActions.saveSuccess(response.data));
       toast.success('Destinatário cadastrado com sucesso');
     }
 
@@ -56,11 +56,5 @@ function* saveRequest({ payload }) {
     );
   }
 }
-function* loadSuccess() {
-  const recipientsResponse = yield call(api.get, '/recipients');
-  yield put(RecipentActions.loadSuccess(recipientsResponse.data));
-}
-export default all([
-  takeLatest('@recipient/SAVE_REQUEST', saveRequest),
-  takeLatest('@recipient/LOAD_SUCCESS', loadSuccess),
-]);
+
+export default all([takeLatest('@recipient/SAVE_REQUEST', saveRequest)]);

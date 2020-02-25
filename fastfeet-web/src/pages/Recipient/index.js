@@ -98,7 +98,7 @@ export default function Recipient() {
 
   useEffect(() => {
     getRecipients();
-  }, [dispatch, previousPage, nextPage]);
+  }, [previousPage, nextPage]);
 
   return (
     <>

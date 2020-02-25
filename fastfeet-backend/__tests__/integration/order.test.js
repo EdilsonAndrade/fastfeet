@@ -5,6 +5,10 @@ import factory from '../factories';
 import truncate from '../utils/truncate';
 
 describe('Orders', () => {
+  afterAll(async () => {
+    await truncate();
+  });
+
   let user = '';
   let fakeRecipient;
   let fakeDeliveryMan;

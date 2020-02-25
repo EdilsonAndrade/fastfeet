@@ -1,6 +1,7 @@
 import * as Yup from 'yup';
 import { Op } from 'sequelize';
 import DeliveryMan from '../models/DeliveryMan';
+import File from '../models/File';
 
 class DeliveryManController {
   async store(req, res) {
@@ -47,21 +48,47 @@ class DeliveryManController {
         limit: Number(limit),
         offset: (page - 1) * limit,
         where: {
-          name: {
-            [Op.like]: `%${search}%`,
-          },
+          [Op.or]: [
+            {
+              name: {
+                [Op.like]: `%${search.toString().toLowerCase()}%`,
+              },
+            },
+            {
+              name: {
+                [Op.like]: `%${search.toString().toUpperCase()}%`,
+              },
+            },
+
+          ],
+
         },
+        include: [
+          {
+            model: File,
+            as: 'avatar',
+          },
+        ],
+      });
+
+      return res.json(deliveryMen);
+    }
+    if (page && limit) {
+      const deliveryMen = await DeliveryMan.findAndCountAll({
+        limit: Number(limit),
+        offset: (page - 1) * limit,
+        include: [
+          {
+            model: File,
+            as: 'avatar',
+          },
+        ],
       });
 
       return res.json(deliveryMen);
     }
 
-    const deliveryMen = await DeliveryMan.findAndCountAll({
-      limit: Number(limit),
-      offset: (page - 1) * limit,
-
-    });
-
+    const deliveryMen = await DeliveryMan.findAll();
     return res.json(deliveryMen);
   }
 }

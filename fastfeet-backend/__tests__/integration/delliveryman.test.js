@@ -13,6 +13,10 @@ describe('DeliveryMan', () => {
     user = await factory.create('User');
   });
 
+  afterAll(async () => {
+    await truncate();
+  });
+
   it('should return not authorized', async () => {
     const fakeDeliveryMan = await factory.attrs('DeliveryMan');
 

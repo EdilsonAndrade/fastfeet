@@ -7,6 +7,9 @@ beforeEach(async () => {
   await truncate();
 });
 describe('User', () => {
+  afterAll(async () => {
+    await truncate();
+  });
   let body = '';
   beforeEach(async () => {
     await request(app)
