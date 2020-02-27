@@ -24,7 +24,7 @@ routes.post('/users', UserController.store);
 // free routes - deliveryman
 routes.get('/deliveryman/:deliveryManId/orders', OrderController.index);
 routes.put('/deliveryman/:deliveryManId/orders/:orderId', DeliveryManagementController.update);
-
+routes.get('/deliveryman/:deliveryManId', DeliveryManController.index);
 // free routes - user signature file route for order
 routes.put('/files/:orderId', upload.single('file'), FileUploadController.update);
 

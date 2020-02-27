@@ -42,6 +42,21 @@ class DeliveryManController {
 
   async index(req, res) {
     const { search, limit, page } = req.query;
+    const { deliveryManId } = req.params;
+
+    if (deliveryManId) {
+      const deliveryMan = await DeliveryMan.findByPk(deliveryManId, {
+        include: [
+          {
+            model: File,
+            as: 'avatar',
+          },
+
+        ],
+      });
+      console.log(`vou devolver = ${JSON.stringify(deliveryMan)}`);
+      return res.json(deliveryMan);
+    }
 
     if (search) {
       const deliveryMen = await DeliveryMan.findAndCountAll({

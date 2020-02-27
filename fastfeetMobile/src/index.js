@@ -1,15 +1,18 @@
+import {NavigationContainer} from '@react-navigation/native';
 import React from 'react';
 import { Provider } from 'react-redux';
-import { SafeAreaView, Text, StatusBar } from 'react-native';
+import { StatusBar } from 'react-native';
 import './config/ReactotronConfig';
-import App from './App';
+import Routes from '~/routes';
 import store from '~/store';
 const Index = () => {
   return (
+    <NavigationContainer>
     <Provider store={store}>
-        <StatusBar barStyle="default" backgroundColor="#7159c1" />
-        <App />
+        <StatusBar barStyle="dark-content"  backgroundColor="#fff" />
+        <Routes />
     </Provider>
+    </NavigationContainer>
   );
 };
 
