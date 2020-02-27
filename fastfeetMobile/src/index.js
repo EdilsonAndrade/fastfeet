@@ -1,16 +1,16 @@
-import {NavigationContainer} from '@react-navigation/native';
 import React from 'react';
-import {SafeAreaView, Text, StatusBar} from 'react-native';
+import { Provider } from 'react-redux';
+import { SafeAreaView, Text, StatusBar } from 'react-native';
 import './config/ReactotronConfig';
-const App = () => {
+import App from './App';
+import store from '~/store';
+const Index = () => {
   return (
-    <NavigationContainer>
-      <StatusBar barStyle="dark-content" />
-      <SafeAreaView>
-        <Text>FastFeet</Text>
-      </SafeAreaView>
-    </NavigationContainer>
+    <Provider store={store}>
+        <StatusBar barStyle="default" backgroundColor="#7159c1" />
+        <App />
+    </Provider>
   );
 };
 
-export default App;
+export default Index;
