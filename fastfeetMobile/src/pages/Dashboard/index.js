@@ -1,7 +1,8 @@
-import React from 'react';
+import React  from 'react';
 import {Dashboard, DashboardText} from './styles';
 
-export default function Signin() {
+
+export default function Signin({navigation}) {
   return (
     <Dashboard >
       <DashboardText>Este é o meu dashboard de entregas</DashboardText>

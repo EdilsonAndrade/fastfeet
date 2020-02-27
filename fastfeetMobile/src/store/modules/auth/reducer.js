@@ -12,7 +12,6 @@ export default function auth(state = INITIAL_VALUE, action){
     switch (action.type) {
       case '@signin/REQUEST':{
         const {name, email, avatar} = action.payload;
-        console.tron.warn(JSON.stringify(action.payload));
         draft.name = name;
         draft.email = email;
         draft.avatar = avatar;

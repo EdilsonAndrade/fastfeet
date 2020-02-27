@@ -1,28 +1,51 @@
-import React, {useState} from 'react';
-import {useDispatch} from 'react-redux';
+import React, { useState, useEffect } from 'react';
+import { ActivityIndicator, Alert } from 'react-native';
+import { useDispatch, useSelector } from 'react-redux';
 import { SigningView, Logo, IdInput, LoginButon, LoginTextButton } from './styles';
 import api from '~/services/api';
 import LogoFastFett from '~/assets/logo.png'
-import {signinRequest} from '~/store/modules/auth/actions';
+import { signinRequest } from '~/store/modules/auth/actions';
 export default function Signin({ navigation }) {
+  
   const [deliveryManId, setDeliveryManId] = useState();
-const dispatch = useDispatch();
+  const [loading, setLoading] = useState(false);
+  const deliveryMan = useSelector(state => state.auth)
+  const dispatch = useDispatch();
 
-  const handleSignin = async () =>{
-    const response = await api.get(`/deliveryman/${deliveryManId}`);
-    console.tron.warn(`resposta = ${JSON.stringify(response.data)}`);
+  useEffect(() => {
+    if (deliveryMan.signed) {
+      navigation.navigate('Dashboard');
+    }
 
-    dispatch(signinRequest(response.data));
-    navigation.navigate('Dashboard');
+  }, [deliveryMan])
+  const handleSignin = async () => {
+    setLoading(true);
+    try {
+      if (!deliveryManId) {
+        Alert.alert(
+          'Número de cadastro',
+          'Informe um número de registro válido'
+        )
+        setLoading(false);
+      } else {
+        const response = await api.get(`/deliveryman/${deliveryManId}`);
+        dispatch(signinRequest(response.data));
+      }
+
+    } catch (error) {
+      setLoading(false);
+    }
+
   }
   return (
     <SigningView >
       <Logo source={LogoFastFett} />
-      <IdInput keyboardType="numeric" placeholder="Informe seu ID de cadastro" onChangeText={(text)=>setDeliveryManId(text)} ></IdInput>
+      <IdInput keyboardType="numeric" placeholder="Informe seu ID de cadastro" onChangeText={(text) => setDeliveryManId(text)} ></IdInput>
       <LoginButon onPress={handleSignin} >
-        <LoginTextButton>
+        {loading ? <ActivityIndicator size={20} color="#fff" /> : <LoginTextButton>
           Entrar no sistema
-        </LoginTextButton>
+        </LoginTextButton>}
+
       </LoginButon>
     </SigningView>
   );
