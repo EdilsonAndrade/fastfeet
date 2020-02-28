@@ -2,10 +2,7 @@ module.exports = {
   env: {
     es6: true,
   },
-  extends: [
-    'plugin:react/recommended',
-    'airbnb','prettier'
-  ],
+  extends: ['airbnb', 'prettier', 'prettier/react'],
   globals: {
     Atomics: 'readonly',
     SharedArrayBuffer: 'readonly',
@@ -19,12 +16,24 @@ module.exports = {
     sourceType: 'module',
   },
   plugins: [
-    'react',
-    'prettier'
+    'react', 'jsx-a11y', 'import', 'prettier'
+
   ],
   rules: {
     "prettier/prettier": "error",
     "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],
+    'import-helpers/order-imports': [
+      'warn',
+      {
+          newlinesBetween: 'always',
+          groups: [
+              'module',
+              '/^@shared/',
+              ['parent', 'sibling', 'index'],
+          ],
+          alphabetize: { order: 'asc', ignoreCase: true },
+      },
+  ],
   },
   settings:{
     "import/resolver":{

@@ -10,7 +10,8 @@ export default function Routes(){
   const signed = useSelector(state=>state.auth.signed);
   return (
     <Stack.Navigator screenOptions={{ headerShown:false}}  >
-      {!signed ? 
+
+      {!signed ?
             <Stack.Screen name="Signin" component={Signin} />
             :
             <Stack.Screen name="Dashboard" component={dashboardRoutes} />

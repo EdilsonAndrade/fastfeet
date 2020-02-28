@@ -5,8 +5,9 @@ import { SigningView, Logo, IdInput, LoginButon, LoginTextButton } from './style
 import api from '~/services/api';
 import LogoFastFett from '~/assets/logo.png'
 import { signinRequest } from '~/store/modules/auth/actions';
+import { StatusBar } from 'react-native';
 export default function Signin({ navigation }) {
-  
+
   const [deliveryManId, setDeliveryManId] = useState();
   const [loading, setLoading] = useState(false);
   const deliveryMan = useSelector(state => state.auth)
@@ -39,6 +40,7 @@ export default function Signin({ navigation }) {
   }
   return (
     <SigningView >
+      <StatusBar barStyle="light-content" backgroundColor="#7159c1" />
       <Logo source={LogoFastFett} />
       <IdInput keyboardType="numeric" placeholder="Informe seu ID de cadastro" onChangeText={(text) => setDeliveryManId(text)} ></IdInput>
       <LoginButon onPress={handleSignin} >

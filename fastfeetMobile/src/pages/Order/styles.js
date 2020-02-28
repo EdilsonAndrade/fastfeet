@@ -1,13 +1,13 @@
 import styled from 'styled-components/native';
-
+import {FlatList} from 'react-native';
 export const OrderContainer = styled.View`
   display:flex;
   justify-content:center;
   align-items:center;
   width:100%;
   background:#fff;
-  
-  
+
+
 `;
 
 export const Header = styled.View `
@@ -18,7 +18,7 @@ export const Header = styled.View `
   width:100%;
   justify-content:space-between;
   background:#fff;
-  
+
 `;
 export const GroupedAvatar = styled.View`
    flex-direction:row;
@@ -32,7 +32,7 @@ export const Avatar = styled.Image`
   border-radius:40px;
   background:#7159c1;
   margin-right:10px;
-  
+
 `;
 export const ContentName = styled.View`
 `;
@@ -70,7 +70,8 @@ export const PendingText = styled.Text`
 `;
 export const DeliveredText = styled.Text``;
 
-export const DeliveriesContainer = styled.View`
+export const Deliveries = styled(FlatList).attrs({
+})`
 width:100%;
 padding:20px;
 
@@ -81,7 +82,7 @@ align-items:center;
 border:1px solid #eee;
 border-radius:6px;
 margin-bottom:15px;
-  
+
 `;
 export const TopContent = styled.View`
   flex-direction:row;
@@ -93,30 +94,30 @@ export const TopContent = styled.View`
 
 export const TruckImage = styled.Image`
   margin-right:10px;
-  
+
 `;
 export const DeliveryCountText = styled.Text`
   color:#7159c1;
   font-size:14px;
   font-weight:bold;
-  
-  
+
+
 `;
 export const TrackContent = styled.View`
   flex-direction:row;
   align-items:center;
-  
+
   justify-content:space-between;
   margin-top:38px;
   width:80%;
   border:1px solid #7159c1;
-  
-   
+
+
 `;
 export const SmallDotContent = styled.View`
   align-items:center;
-  
-  
+
+
 `;
 export const SmallDot = styled.View`
   background: ${props=>props.active ? '#7159c1' : '#fff'};
@@ -125,7 +126,7 @@ export const SmallDot = styled.View`
   height:10px;
   border-radius: 5px;
   margin:-5px;
-  
+
 `;
 export const SingleLine = styled.View``;
 export const SmallDotText = styled.Text`
@@ -135,7 +136,7 @@ export const SmallDotText = styled.Text`
   position:relative;
   width:60px;
   left:-28px;
-  
+
 `;
 
 export const LocationDateContent = styled.View`

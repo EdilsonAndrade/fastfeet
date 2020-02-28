@@ -1,11 +1,13 @@
-import React from 'react';
-import { useSelector } from 'react-redux';
+import React, { useEffect } from 'react';
+import { StatusBar } from 'react-native';
+import { useSelector, useDispatch } from 'react-redux';
+import {format, parseISO} from 'date-fns';
 import Exit from '~/assets/exit.png'
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import {
   OrderContainer, Header, GroupedAvatar, Avatar, ContentName, WelcomeText, DeliveryManName, ExitImage, SubHeader,
   DeliveryText, FilterContent, PendingText, DeliveredText,
-  DeliveriesContainer,
+  Deliveries,
   DeliveryContent,
   TopContent,
   TruckImage,
@@ -26,18 +28,35 @@ import {
 } from './styles';
 
 import Truck from '~/assets/truck.png';
+import * as OrderActions from '~/store/modules/order/actions';
+import api from '~/services/api';
 
 export default function Order({ navigation }) {
   const deliveryMan = useSelector(state => state.auth)
-  console.tron.warn(`delivery man = ${JSON.stringify(deliveryMan.avatar.url)})}`)
+  const orders = useSelector(state => state.order.orders);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    async function getOrders() {
+      const response = await api.get(`/deliveryman/${deliveryMan.id}/orders`)
+      const rows = response.data.map(d=>({
+        ...d,
+        formattedDate: format(parseISO(d.createdAt), 'dd/MM/yy')
+      }))
+      dispatch(OrderActions.loadSuccess(rows));
+    }
+    getOrders();
+  }, [])
+
   return (
     <OrderContainer>
+      <StatusBar barStyle="dark-content" backgroundColor="#fff" />
       <Header>
         <GroupedAvatar>
           <Avatar source={{ uri: deliveryMan.avatar.url }} ></Avatar>
           <ContentName>
             <WelcomeText>Bem vindo de volta</WelcomeText>
-            <DeliveryManName>Douglas Telles</DeliveryManName>
+            <DeliveryManName>{deliveryMan.name}</DeliveryManName>
           </ContentName>
         </GroupedAvatar>
         <ExitImage source={Exit}></ExitImage>
@@ -54,74 +73,44 @@ export default function Order({ navigation }) {
 
         </FilterContent>
       </SubHeader>
-      <DeliveriesContainer>
-        <DeliveryContent>
-          <TopContent>
-            <TruckImage source={Truck}></TruckImage>
-            <DeliveryCountText>Encomenda 01</DeliveryCountText>
-          </TopContent>
-          <TrackContent>
-              <SmallDot  active={true}>
-              <SmallDotText>Aguardando Retirada</SmallDotText>
+      <Deliveries
+        data={orders}
+        keyExtractor={item => Number(item.id)}
+        renderItem={({item}) => (
+          <DeliveryContent key={item.id}>
+            <TopContent>
+              <TruckImage source={Truck}></TruckImage>
+              <DeliveryCountText>Encomenda {item.id}</DeliveryCountText>
+            </TopContent>
+            <TrackContent>
+              <SmallDot active={true}>
+                <SmallDotText>Aguardando Retirada</SmallDotText>
               </SmallDot>
 
-            <SingleLine></SingleLine>
-              <SmallDot  active={true}>
-              <SmallDotText>Retirada</SmallDotText>
+              <SingleLine></SingleLine>
+              <SmallDot active={true}>
+                <SmallDotText>Retirada</SmallDotText>
               </SmallDot>
-            <SingleLine>
-            
-            </SingleLine>
+              <SingleLine>
+
+              </SingleLine>
               <SmallDot active={false}><SmallDotText>Entregue</SmallDotText></SmallDot>
-          </TrackContent>
-         
-          <LocationDateContent>
-            <DateContent>
-              <Label>Data</Label>
-              <StrongText>11/01/2020</StrongText>
-            </DateContent>
-            <CityContent>
-              <Label>Cidade</Label>
-              <StrongText>São Paulo</StrongText>
-            </CityContent>
-            <Details>Ver Detalhes</Details>
-          </LocationDateContent>
+            </TrackContent>
 
-        </DeliveryContent>
-        <DeliveryContent>
-          <TopContent>
-            <TruckImage source={Truck}></TruckImage>
-            <DeliveryCountText>Encomenda 01</DeliveryCountText>
-          </TopContent>
-          <TrackContent>
-              <SmallDot  active={true}>
-              <SmallDotText>Aguardando Retirada</SmallDotText>
-              </SmallDot>
-
-            <SingleLine></SingleLine>
-              <SmallDot  active={false}>
-              <SmallDotText>Retirada</SmallDotText>
-              </SmallDot>
-            <SingleLine>
-            
-            </SingleLine>
-              <SmallDot active={false}><SmallDotText>Entregue</SmallDotText></SmallDot>
-          </TrackContent>
-         
-          <LocationDateContent>
-            <DateContent>
-              <Label>Data</Label>
-              <StrongText>11/01/2020</StrongText>
-            </DateContent>
-            <CityContent>
-              <Label>Cidade</Label>
-              <StrongText>Rio do Sul</StrongText>
-            </CityContent>
-            <Details>Ver Detalhes</Details>
-          </LocationDateContent>
-
-        </DeliveryContent>
-      </DeliveriesContainer>
+            <LocationDateContent>
+              <DateContent>
+                <Label>Data</Label>
+                <StrongText>{item.formattedDate}</StrongText>
+              </DateContent>
+              <CityContent>
+                <Label>Cidade</Label>
+                <StrongText>São Paulo</StrongText>
+              </CityContent>
+              <Details>Ver Detalhes</Details>
+            </LocationDateContent>
+          </DeliveryContent>
+        )}
+      />
     </OrderContainer>
   );
 }

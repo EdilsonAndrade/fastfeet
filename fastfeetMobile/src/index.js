@@ -9,7 +9,7 @@ const Index = () => {
   return (
     <NavigationContainer>
     <Provider store={store}>
-        <StatusBar barStyle="dark-content"  backgroundColor="#fff" />
+    <StatusBar barStyle="dark-content"  backgroundColor="#fff" />
         <Routes />
     </Provider>
     </NavigationContainer>

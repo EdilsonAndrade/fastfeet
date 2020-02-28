@@ -1,11 +1,53 @@
-import React  from 'react';
-import {OrderContainer, OrderContainerText} from './styles';
+import React, { useEffect, useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux'
+import { format, parseISO } from 'date-fns';
+import {signoutRequest} from '~/store/modules/auth/actions';
+import {
+  ProfileContainer,
+  Avatar,
+  SmallContainer,
+  Label,
+  DeliveryManInfo,
+  LogoutButton,
+  LogoutText
+} from './styles';
 
 
-export default function Order({navigation}) {
+export default function Profile() {
+  const deliveryMan = useSelector(state => state.auth)
+  const [formattedCreatedAt, setFormattedCreatedAt] = useState('');
+
+  const dispatch = useDispatch();
+
+  const handleLogout = () =>{
+    dispatch(signoutRequest())
+  }
+
+  useEffect(() => {
+    setFormattedCreatedAt(format(parseISO(deliveryMan.createdAt), 'dd/MM/yyyy'));
+  }, [])
+  const formatedDate = deliveryMan
   return (
-    <OrderContainer >
-      <OrderContainerText>Este é o meu perfiil</OrderContainerText>
-    </OrderContainer>
+    <ProfileContainer >
+      <Avatar source={{ uri: deliveryMan.avatar.url }} />
+      <SmallContainer>
+        <Label>Nome completo</Label>
+        <DeliveryManInfo>
+          {deliveryMan.name}
+        </DeliveryManInfo>
+        <Label>Email</Label>
+        <DeliveryManInfo>
+          {deliveryMan.email}
+        </DeliveryManInfo>
+        <Label>Data do cadastro</Label>
+        <DeliveryManInfo>
+          {formattedCreatedAt}
+        </DeliveryManInfo>
+        <LogoutButton title="Logout" onPress={handleLogout}>
+          <LogoutText>Logout</LogoutText>
+        </LogoutButton>
+      </SmallContainer>
+
+    </ProfileContainer>
   );
 }
