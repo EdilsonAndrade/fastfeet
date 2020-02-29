@@ -1,8 +1,12 @@
 import styled from 'styled-components/native';
 import {RectButton} from 'react-native-gesture-handler';
+export const Container = styled.View`
+  background:#fff;
+  flex:1;
+`;
 export const OrderDetailContainer = styled.View`
   height:18%;
-  background:#7159c1;
+  background:#7d40e7;
   align-items:center;
 
 `;
@@ -13,7 +17,7 @@ padding:15px;
 width:90%;
 background: #fff;
 border-radius:4px;
-background: ${props=>props.backColor ? props.backColor : '#fff'};
+
 `;
 export const RowDirection = styled.View`
 flex-direction:row;
@@ -25,7 +29,7 @@ export const TruckImage = styled.Image`
 
 `;
 export const DetailTextColor = styled.Text`
-color: #7159c1;
+color: #7d40e7;
 font-weight:bold;
 margin-top: ${props=>props.space ?props.space : '0'};
 
@@ -51,11 +55,14 @@ export const DateInfo = styled.View`
 
 `;
 
-export const ButtonContent = styled.View`
+export const ButtonContent = styled(RectButton)`
 align-items:center;
 text-align:center;
 flex:1;
-margin-left:${props=>props.marginLeft ? props.marginLeft : '0' };
+margin: 1px;
+background: ${props=>props.backColor ? props.backColor : '#fff'};
+padding:15px;
+border-radius:6px;
 `;
 
 export const ProblemImage = styled.Image``;

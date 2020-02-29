@@ -2,16 +2,16 @@ import styled from 'styled-components/native';
 import {RectButton} from 'react-native-gesture-handler'
 export const SigningView = styled.View`
   flex:1;
-  background:#7159c1;
+  background:#7D40E7;
   display:flex;
   justify-content:center;
   align-items:center;
-  
+
 `;
 
 export const Logo = styled.Image`
-  
-  
+
+
 `;
 
 export const IdInput = styled.TextInput`

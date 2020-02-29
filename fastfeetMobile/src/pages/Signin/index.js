@@ -40,7 +40,7 @@ export default function Signin({ navigation }) {
   }
   return (
     <SigningView >
-      <StatusBar barStyle="light-content" backgroundColor="#7159c1" />
+      <StatusBar barStyle="light-content" backgroundColor="#7D40E7" />
       <Logo source={LogoFastFett} />
       <IdInput returnKeyType="go" onSubmitEditing={handleSignin} keyboardType="numeric" placeholder="Informe seu ID de cadastro" onChangeText={(text) => setDeliveryManId(text)} ></IdInput>
       <LoginButon onPress={handleSignin} >
