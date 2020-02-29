@@ -42,7 +42,7 @@ export default function Signin({ navigation }) {
     <SigningView >
       <StatusBar barStyle="light-content" backgroundColor="#7159c1" />
       <Logo source={LogoFastFett} />
-      <IdInput keyboardType="numeric" placeholder="Informe seu ID de cadastro" onChangeText={(text) => setDeliveryManId(text)} ></IdInput>
+      <IdInput returnKeyType="go" onSubmitEditing={handleSignin} keyboardType="numeric" placeholder="Informe seu ID de cadastro" onChangeText={(text) => setDeliveryManId(text)} ></IdInput>
       <LoginButon onPress={handleSignin} >
         {loading ? <ActivityIndicator size={20} color="#fff" /> : <LoginTextButton>
           Entrar no sistema

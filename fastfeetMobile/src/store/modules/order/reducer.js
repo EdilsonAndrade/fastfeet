@@ -15,10 +15,10 @@ export default function order(state=INITIAL_DATA, action){
         break;
       }
       case "@order/SELECT_ONE_ORDER":{
-        const {product, recipient, deliveryMan} = action.payload;
-        draft.produc= product;
-        draft.recipient = recipient;
-        draft.deliveryMan = deliveryMan;
+        const {product, Recipient, DeliveryMan} = action.payload;
+        draft.product= product;
+        draft.recipient = Recipient;
+        draft.deliveryMan = DeliveryMan;
         break;
       }
       default:

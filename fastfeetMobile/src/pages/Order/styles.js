@@ -4,9 +4,8 @@ export const OrderContainer = styled.View`
   display:flex;
   justify-content:center;
   align-items:center;
-  width:100%;
+  flex:1;
   background:#fff;
-
 
 `;
 
@@ -25,6 +24,7 @@ export const GroupedAvatar = styled.View`
   align-items:center;
   justify-content:center;
   background:#fff;
+  flex:1;
 `;
 export const Avatar = styled.Image`
   width:80px;
@@ -35,15 +35,20 @@ export const Avatar = styled.Image`
 
 `;
 export const ContentName = styled.View`
+flex:1;
+padding:10px;
 `;
 export const WelcomeText = styled.Text`
 font-size:12px;
 `;
-export const DeliveryManName = styled.Text`
+export const DeliveryManName = styled.Text.attrs({
+  numberOfLines:2
+})`
 font-size:22px;
 font-weight:bold;
 `;
-export const ExitImage = styled.Image``;
+export const ExitImage = styled.Image`
+`;
 
 export const SubHeader = styled.View`
   flex-direction:row;
