@@ -1,6 +1,8 @@
 import React from 'react';
+
 import Background from '~/assets/confirmdeliveryback.png'
-import Camera from '~/assets/camera.png'
+import Camera from '~/assets/camera.png';
+
 import {
   Container,
   OrderDetailContainer,
