@@ -8,7 +8,6 @@ import Recipient from '../models/Recipient';
 
 class DeliveryManagementController {
   async update(req, res) {
-    console.log('cheguei');
     const { deliveryManId, orderId } = req.params;
     const { startDate, endDate } = req.body;
     const deliveryMan = await DeliveryMan.findByPk(deliveryManId);
@@ -55,11 +54,11 @@ class DeliveryManagementController {
       include: [
         {
           model: Recipient,
-          attributes: ['id', 'name', 'city', 'state'],
+          attributes: ['id', 'name', 'city', 'state', 'addressLine', 'addressLineTwo', 'number', 'zipCode'],
         },
         {
           model: DeliveryMan,
-          attributes: ['id', 'name'],
+          attributes: ['id', 'name', 'email'],
         },
       ],
     });

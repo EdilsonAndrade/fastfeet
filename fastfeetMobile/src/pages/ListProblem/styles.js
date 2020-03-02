@@ -13,17 +13,24 @@ export const OrderDetailContainer = styled.View`
 `;
 export const ContainerText = styled.Text`
 color:#fff;
-  font-weight:bold;
-  font-size:18px;
+font-weight:bold;
+font-size:18px;
 `;
-export const OrderInfoContent = styled.View`
+export const ProblemsContainer = styled.View`
 margin-top: ${props=>props.space ?props.space : '15px'};
-
-width:94%;
-
+top:-13%;
+width:100%;
 border-radius:4px;
 
 `;
+
+export const Problems = styled(FlatList).attrs({
+})`
+width:100%;
+padding:20px;
+height:480px;
+`;
+
 export const ProblemContent = styled.View`
   flex-direction:row;
   justify-content:space-between;
@@ -38,8 +45,9 @@ export const ProblemContent = styled.View`
 
 `;
 export const DetailText = styled.Text.attrs({
-  numberOfLines:1
+
 })`
+width:75%;
 text-align: ${props=>props.textAlign ? props.textAlign : 'left'};
 color:#ccc;
 font-weight:bold;
@@ -47,10 +55,13 @@ margin-top: ${props=>props.space ?props.space : '0'};
 font-size: ${props=>props.fontSize ? props.fontSize: '14px'};
 `;
 
-
-export const Problems = styled(FlatList).attrs({
+export const DateText = styled.Text.attrs({
 })`
-width:100%;
-padding:20px;
-height:620px;
+width:23%;
+text-align: ${props=>props.textAlign ? props.textAlign : 'left'};
+color:#ccc;
+font-weight:bold;
+margin-top: ${props=>props.space ?props.space : '0'};
+font-size: ${props=>props.fontSize ? props.fontSize: '14px'};
 `;
+

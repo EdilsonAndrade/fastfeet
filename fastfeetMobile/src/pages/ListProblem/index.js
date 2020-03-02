@@ -5,10 +5,11 @@ import {
   Container,
   OrderDetailContainer,
   ContainerText,
-  OrderInfoContent,
+  ProblemsContainer,
   DetailText,
   ProblemContent,
-  Problems
+  Problems,
+  DateText
 
 } from './styles';
 
@@ -22,19 +23,17 @@ export default function ListProblem({ route, navigation }) {
 
   const getProblems = async () => {
     try {
-      const response = await api.get(`/orders/${orderId}/problems?limit=6&page=${page}`);
+      const response = await api.get(`/orders/${orderId}/problems?limit=5&page=${page}`);
 
       const rows = response.data.rows.map(p=>({
         ...p,
         formattedData: format(parseISO(p.createdAt),'dd/MM/yy')
       }))
-      console.tron.warn(JSON.stringify(rows));
       setProblems([...problems, ...rows])
       setPage(page + 1);
 
-
     } catch (error) {
-
+        Alert.alert("Erro", "Ocorreu um erro, tente novamente em alguns minutos");
     }
   }
   useEffect(() => {
@@ -54,7 +53,7 @@ export default function ListProblem({ route, navigation }) {
     return (
       <ProblemContent key={item.id}>
           <DetailText>{item.description.length < 5 ? "Não informado" : item.description}</DetailText>
-          <DetailText>{item.formattedData}</DetailText>
+          <DateText>{item.formattedData}</DateText>
       </ProblemContent>
     )
   }
@@ -63,17 +62,18 @@ export default function ListProblem({ route, navigation }) {
     <Container>
       <OrderDetailContainer>
         <ContainerText>Encomenda {orderId < 10 ? `0${orderId}` : orderId}</ContainerText>
-        <OrderInfoContent>
+
+      </OrderDetailContainer>
+      <ProblemsContainer>
         <Problems
         onEndReached={getProblems}
-        onEndReachedThreshold={0.2}
+        onEndReachedThreshold={0.1}
         data={problems}
         keyExtractor={item => String(item.id)}
         renderItem={({ item }) => renderList(item)}
         ListFooterComponent={renderFooter}
       />
-        </OrderInfoContent>
-      </OrderDetailContainer>
+        </ProblemsContainer>
     </Container>
   );
 }

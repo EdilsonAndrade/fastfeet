@@ -21,7 +21,7 @@ export default function order(state = INITIAL_DATA, action) {
       }
       case "@order/SELECT_ONE_ORDER": {
         const { id, product, Recipient, DeliveryMan, canceledAt, createdAt, endDate, startDate } = action.payload;
-        console.tron.warn(`startdate = ${startDate}`);
+        console.tron.warn(JSON.stringify(action.payload));
         draft.product = product;
         draft.recipient = Recipient;
         draft.deliveryMan = DeliveryMan;

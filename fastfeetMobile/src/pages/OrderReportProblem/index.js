@@ -35,6 +35,7 @@ export default function OrderReportProblem({ route, navigation }) {
           description
         })
         Alert.alert("Sucesso", "Problema cadastrado com sucesso!");
+        setDescription('');
       } catch (error) {
         Alert.alert("Erro", `Ocorreu um erro tente novamente mais tard ${error}`);
       }

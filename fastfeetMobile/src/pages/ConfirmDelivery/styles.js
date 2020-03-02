@@ -1,5 +1,5 @@
 import styled from 'styled-components/native';
-import {TouchableOpacity} from 'react-native';
+import {RectButton} from 'react-native-gesture-handler'
 export const Container = styled.View`
   background:#fff;
   flex:1;
@@ -12,17 +12,48 @@ export const OrderDetailContainer = styled.View`
 `;
 
 export const OrderInfoContent = styled.View`
-margin-top: ${props=>props.space ?props.space : '15px'};
-padding:15px;
-width:90%;
-background: #fff;
+margin-top:84px;
 border-radius:4px;
+justify-content:center;
+align-items:center;
+`;
+
+export const ContainerCamera = styled.View`
+height:50%;
+justify-content:center;
+align-items:center;
+`;
+
+export const ConfirmBackground = styled.Image`
+border-radius:6px;
 
 `;
 
-export const DetailText = styled.Text`
-text-align: ${props=>props.textAlign ? props.textAlign : 'left'};
-color:#666;
-margin-top: ${props=>props.space ?props.space : '0'};
-font-size: ${props=>props.fontSize ? props.fontSize: '14px'};
+export const CircleBackCam = styled.View`
+  width:61px;
+  height:61px;
+  background:rgba(0, 0, 0, .3);
+  border-radius:30px;
+  align-items:center;
+  justify-content:center;
+  top:-80px;
+`
+
+export const Cam = styled.Image`
+  width:26px;
+`
+export const ButtonSend = styled(RectButton)`
+  background:#7d40e7;
+  top:-50px;
+  align-self:stretch;
+  height:45px;
+  border-radius:4px;
+  justify-content:center;
+  align-items:center;
+`
+
+export const ButtonSendText = styled.Text`
+font-weight:bold;
+font-size:16px;
+color:#fff;
 `;

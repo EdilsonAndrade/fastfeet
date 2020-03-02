@@ -68,12 +68,10 @@ export default function OrderDetail({ navigation }) {
     Alert.alert("Iniciar entrega", 'Tem certeza que deseja iniciar esta entrega?',[
       {text:'Sim', onPress: async ()=>{
         try {
-          console.tron.warn('entrei')
           const response = await api.put(`/deliveryman/${deliveryMan.id}/orders/${order.id}`,{
             startDate:new Date()
           });
-          console.tron.warn('passei por aqui ')
-          console.tron.warn(JSON.stringify(response.data.startDate));
+
           dispatch(OrderActions.selectOrder(response.data));
 
         } catch ({response}) {
