@@ -30,7 +30,7 @@ routes.put('/files/:orderId', upload.single('file'), FileUploadController.update
 
 // free routes - order problem
 routes.post('/orders/:orderId/problems', OrderProblemController.store);
-
+routes.get('/orders/:orderId/problems', OrderProblemController.index);
 routes.use(authMiddleware);
 
 // recipients routes
@@ -51,7 +51,7 @@ routes.post('/orders', OrderController.store);
 routes.put('/orders/:orderId', OrderController.update);
 routes.delete('/orders/:orderId', OrderController.delete);
 routes.get('/orders', OrderController.index);
-routes.get('/orders/:orderId/problems', OrderProblemController.index);
+
 routes.get('/problems', OrderProblemController.index);
 
 

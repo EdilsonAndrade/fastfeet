@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from 'react';
-import { StatusBar , ActivityIndicator, View} from 'react-native';
+import React, { useEffect, useState, useCallback } from 'react';
+import { useIsFocused } from '@react-navigation/native';
+import { StatusBar, ActivityIndicator, View, Alert } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import { format, parseISO } from 'date-fns';
 import Exit from '~/assets/exit.png'
@@ -36,27 +37,29 @@ export default function Order({ navigation }) {
   const [page, setPage] = useState(1);
   const [orders, setOrders] = useState([]);
   const dispatch = useDispatch();
-  const [loading,setLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [filter, setFilter] = useState('AWAITING');
+  const isFocused = useIsFocused();
 
   const handleLogout = () => {
     dispatch(signoutRequest())
   }
   async function getOrders() {
     setLoading(true);
-      let response =null;
-      if(filter === 'DELIVERED'){
-        response = await api.get(`/deliveryman/${deliveryMan.id}/orders?limit=3&page=${page}&done=true`)
+    let response = null;
+    if (filter === 'DELIVERED') {
+      response = await api.get(`/deliveryman/${deliveryMan.id}/orders?limit=3&page=${page}&done=true`)
 
-      }else{
-        response = await api.get(`/deliveryman/${deliveryMan.id}/orders?limit=3&page=${page}`)
-      }
-      const rows = response.data.rows.map(d => ({
-        ...d,
-        formattedDate: format(parseISO(d.createdAt), 'dd/MM/yy')
-      }))
-      setOrders([...orders,...rows])
-      setPage(page+1);
+    } else {
+      response = await api.get(`/deliveryman/${deliveryMan.id}/orders?limit=3&page=${page}`)
+    }
+    const rows = response.data.rows.map(d => ({
+      ...d,
+      formattedDate: format(parseISO(d.createdAt), 'dd/MM/yy')
+    }))
+
+    setOrders([...orders, ...rows])
+    setPage(page + 1);
 
     setLoading(false);
   }
@@ -65,25 +68,34 @@ export default function Order({ navigation }) {
     getOrders();
   }, [])
 
-  useEffect(()=>{
-
+  useEffect(() => {
     getOrders();
+  }, [filter]);
 
-  },[filter]);
+  useEffect(() => {
+    if(isFocused){
+      console.tron.warn('foquei e vou chamar o getOrders')
+      getOrders();
+    }else{
+      setPage(1);
+      setOrders([]);
+    }
 
-  const handleGetDelivered = ()=>{
+  }, [isFocused])
+
+  const handleGetDelivered = () => {
     setOrders([])
     setFilter('DELIVERED')
     setPage(1);
   }
 
-  const handleGetOrders =()=>{
+  const handleGetOrders = () => {
     setOrders([]);
     setFilter('AWAITING')
     setPage(1);
   }
 
-  const renderFooter = () =>{
+  const renderFooter = () => {
     if (!loading) return null;
     return (
       <View >
@@ -92,46 +104,46 @@ export default function Order({ navigation }) {
     );
   }
 
-  const handleShowOrderDetail = (orderSelect) =>{
+  const handleShowOrderDetail = (orderSelect) => {
     dispatch(OrderActions.selectOrder(orderSelect))
     navigation.navigate('OrderDetail');
   }
-  const renderList = (item)=>{
+  const renderList = (item) => {
     return (
       <DeliveryContent key={item.id}>
-      <TopContent>
-        <TruckImage source={Truck}></TruckImage>
-        <DeliveryCountText>Encomenda {item.id}</DeliveryCountText>
-      </TopContent>
-      <TrackContent>
-        <SmallDot active={item.createdAt && !item.startDate}>
-          <SmallDotText>Aguardando Retirada</SmallDotText>
-        </SmallDot>
+        <TopContent>
+          <TruckImage source={Truck}></TruckImage>
+          <DeliveryCountText>Encomenda {item.id}</DeliveryCountText>
+        </TopContent>
+        <TrackContent>
+          <SmallDot active={item.createdAt && !item.startDate}>
+            <SmallDotText>Aguardando Retirada</SmallDotText>
+          </SmallDot>
 
-        <SingleLine></SingleLine>
-        <SmallDot active={item.startDate}>
-          <SmallDotText>Retirada</SmallDotText>
-        </SmallDot>
-        <SingleLine>
+          <SingleLine></SingleLine>
+          <SmallDot active={item.startDate}>
+            <SmallDotText>Retirada</SmallDotText>
+          </SmallDot>
+          <SingleLine>
 
-        </SingleLine>
-        <SmallDot active={item.endDate}><SmallDotText>Entregue</SmallDotText></SmallDot>
-      </TrackContent>
+          </SingleLine>
+          <SmallDot active={item.endDate}><SmallDotText>Entregue</SmallDotText></SmallDot>
+        </TrackContent>
 
-      <LocationDateContent>
-        <DateContent>
-          <Label>Data</Label>
-          <StrongText>{item.formattedDate}</StrongText>
-        </DateContent>
-        <CityContent>
-          <Label>Cidade</Label>
-          <StrongText>São Paulo</StrongText>
-        </CityContent>
-        <TouchableOpacity onPress={()=>handleShowOrderDetail(item)}>
-        <Details>Ver Detalhes</Details>
-        </TouchableOpacity>
-      </LocationDateContent>
-    </DeliveryContent>
+        <LocationDateContent>
+          <DateContent>
+            <Label>Data</Label>
+            <StrongText>{item.formattedDate}</StrongText>
+          </DateContent>
+          <CityContent>
+            <Label>Cidade</Label>
+            <StrongText>São Paulo</StrongText>
+          </CityContent>
+          <TouchableOpacity onPress={() => handleShowOrderDetail(item)}>
+            <Details>Ver Detalhes</Details>
+          </TouchableOpacity>
+        </LocationDateContent>
+      </DeliveryContent>
     )
   }
   return (
@@ -153,10 +165,10 @@ export default function Order({ navigation }) {
         <DeliveryText>Entregas</DeliveryText>
         <FilterContent>
           <TouchableOpacity onPress={handleGetOrders}>
-            <PendingText active={filter==='AWAITING'}>Pendentes</PendingText>
+            <PendingText active={filter === 'AWAITING'}>Pendentes</PendingText>
           </TouchableOpacity>
           <TouchableOpacity onPress={handleGetDelivered}>
-            <PendingText active={filter==='DELIVERED'}>Entregues</PendingText>
+            <PendingText active={filter === 'DELIVERED'}>Entregues</PendingText>
           </TouchableOpacity>
 
         </FilterContent>
@@ -165,7 +177,6 @@ export default function Order({ navigation }) {
         onEndReached={getOrders}
         onEndReachedThreshold={0.2}
         data={orders}
-        extraData={orders}
         keyExtractor={item => String(item.id)}
         renderItem={({ item }) => renderList(item)}
         ListFooterComponent={renderFooter}

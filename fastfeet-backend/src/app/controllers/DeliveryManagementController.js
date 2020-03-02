@@ -4,12 +4,13 @@ import {
 import { Op } from 'sequelize';
 import DeliveryMan from '../models/DeliveryMan';
 import Order from '../models/Order';
-
+import Recipient from '../models/Recipient';
 
 class DeliveryManagementController {
   async update(req, res) {
+    console.log('cheguei');
     const { deliveryManId, orderId } = req.params;
-    const { actualDate, endDate } = req.body;
+    const { startDate, endDate } = req.body;
     const deliveryMan = await DeliveryMan.findByPk(deliveryManId);
 
     if (!deliveryMan) return res.status(400).json({ error: 'DeliveryMan does not exist' });
@@ -29,27 +30,39 @@ class DeliveryManagementController {
       return res.status(401).json({ error: 'Limit of 5 orders exceeded' });
     }
 
-    const startDate = parseISO(actualDate);
+    const actualDate = parseISO(startDate);
 
     const beginOfWork = setSeconds(setMinutes(setHours(new Date(), 8), 0), 0);
-    const endOfWork = setSeconds(setMinutes(setHours(new Date(), 18), 0), 0);
+    const endOfWork = setSeconds(setMinutes(setHours(new Date(), 23), 0), 0);
 
-    if (isBefore(startDate, beginOfWork) || isAfter(startDate, endOfWork)) {
-      return res.status(401).json({ error: 'We are close for deliveries' });
+    if (isBefore(actualDate, beginOfWork) || isAfter(actualDate, endOfWork)) {
+      return res.status(401).json({ error: 'Estamos fechados para retirada' });
     }
     const order = await Order.findByPk(orderId);
 
-    if (!order) return res.status(400).json({ error: 'Order not found' });
-    if (actualDate) {
-      order.startDate = startDate;
-    }
+    if (!order) return res.status(400).json({ error: 'Pedido não encontrado' });
+
     if (endDate) {
       if (!order.signatureId) {
-        return res.status(401).json({ error: 'Signature must be send' });
+        return res.status(401).json({ error: 'Assinatura deve ser enviada' });
       }
-      order.endDate = endDate;
     }
-    const updatedOrder = await order.update();
+    await order.update({
+      startDate,
+      endDate,
+    });
+    const updatedOrder = await Order.findByPk(orderId, {
+      include: [
+        {
+          model: Recipient,
+          attributes: ['id', 'name', 'city', 'state'],
+        },
+        {
+          model: DeliveryMan,
+          attributes: ['id', 'name'],
+        },
+      ],
+    });
     return res.json(updatedOrder);
   }
 }

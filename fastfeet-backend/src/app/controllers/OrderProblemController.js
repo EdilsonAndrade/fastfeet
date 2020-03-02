@@ -1,3 +1,4 @@
+import { Op } from 'sequelize';
 import DeliveryMan from '../models/DeliveryMan';
 import Order from '../models/Order';
 import OrderProblem from '../models/OrderProblem';
@@ -10,7 +11,12 @@ class OrderProblemController {
       const orderProblem = await OrderProblem.findAndCountAll({
         limit: Number(limit),
         offset: (page - 1) * limit,
-        where: { orderId },
+        where: {
+          orderId,
+
+          description: { [Op.not]: null },
+
+        },
         include: [
           {
             model: Order,

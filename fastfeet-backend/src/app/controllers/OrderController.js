@@ -50,6 +50,9 @@ class OrderController {
       const orders = await Order.findAndCountAll({
         limit: Number(limit),
         offset: (page - 1) * limit,
+        order: [
+          ['createdAt', 'ASC'],
+        ],
         where: {
           [Op.or]: [
             {
@@ -84,6 +87,9 @@ class OrderController {
       const orders = await Order.findAndCountAll({
         limit: Number(limit),
         offset: (page - 1) * limit,
+        order: [
+          ['createdAt', 'ASC'],
+        ],
         include: [
           {
             model: Recipient,
@@ -103,6 +109,9 @@ class OrderController {
         const myOrders = await Order.findAndCountAll({
           limit: Number(limit),
           offset: (page - 1) * limit,
+          order: [
+            ['createdAt', 'ASC'],
+          ],
           where: {
             canceledAt: null,
             endDate: null,
@@ -123,6 +132,9 @@ class OrderController {
       const myOrders = await Order.findAndCountAll({
         limit: Number(limit),
         offset: (page - 1) * limit,
+        order: [
+          ['createdAt', 'ASC'],
+        ],
         where: {
           canceledAt: null,
           endDate: { [Op.not]: null },

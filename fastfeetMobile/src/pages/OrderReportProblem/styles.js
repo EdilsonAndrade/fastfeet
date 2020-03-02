@@ -20,7 +20,7 @@ border-radius:4px;
 border: 1px solid #707070;
 `;
 
-export const DetailText = styled.TextInput.attrs({
+export const ProblemDescription = styled.TextInput.attrs({
   placeholderTextColor:"#999999"
 })`
 text-align: ${props=>props.textAlign ? props.textAlign : 'left'};
@@ -44,7 +44,7 @@ export const Send = styled(RectButton)`
   align-items:center;
   justify-content:center;
   background:#7D40E7;
-  align-self:stretch
+  align-self:stretch;
 `;
 export const SendText = styled.Text`
 color:#fff;
