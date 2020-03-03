@@ -2,7 +2,8 @@ import styled from 'styled-components/native';
 import {FlatList} from 'react-native';
 export const Container = styled.View`
   background:#fff;
-  flex:1;
+  height:100%;
+
 `;
 export const OrderDetailContainer = styled.View`
   height:18%;
@@ -20,15 +21,16 @@ export const ProblemsContainer = styled.View`
 margin-top: ${props=>props.space ?props.space : '15px'};
 top:-13%;
 width:100%;
+height:90%;
 border-radius:4px;
 
 `;
 
 export const Problems = styled(FlatList).attrs({
 })`
-width:100%;
 padding:20px;
-height:480px;
+
+
 `;
 
 export const ProblemContent = styled.View`

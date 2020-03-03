@@ -10,6 +10,7 @@ import FileUploadController from './app/controllers/FileUploadController';
 import OrderController from './app/controllers/OrderController';
 import DeliveryManagementController from './app/controllers/DeliveryManagementController';
 import OrderProblemController from './app/controllers/OrderProblemController';
+import DeliveryFinishController from './app/controllers/DeliveryFinishController';
 
 
 const routes = new Router();
@@ -26,7 +27,7 @@ routes.get('/deliveryman/:deliveryManId/orders', OrderController.index);
 routes.put('/deliveryman/:deliveryManId/orders/:orderId', DeliveryManagementController.update);
 routes.get('/deliveryman/:deliveryManId', DeliveryManController.index);
 // free routes - user signature file route for order
-routes.put('/files/:orderId', upload.single('file'), FileUploadController.update);
+routes.post('/orders/:orderId/enddelivery', upload.single('signature'), DeliveryFinishController.store);
 
 // free routes - order problem
 routes.post('/orders/:orderId/problems', OrderProblemController.store);

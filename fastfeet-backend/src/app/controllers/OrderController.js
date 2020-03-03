@@ -3,9 +3,11 @@ import { Op } from 'sequelize';
 import Order from '../models/Order';
 import Recipient from '../models/Recipient';
 import DeliveryMan from '../models/DeliveryMan';
+import File from '../models/File';
 import DeliveryCreatedMail from '../jobs/DeliveryCreatedMail';
 import DeliveryCanceledMail from '../jobs/DeliveryCanceledMail';
 import Queue from '../../lib/Queue';
+
 
 class OrderController {
   async store(req, res) {
@@ -78,6 +80,9 @@ class OrderController {
             model: DeliveryMan,
             attributes: ['id', 'name'],
           },
+          {
+            model: File,
+          },
         ],
       });
       return res.json(orders);
@@ -98,6 +103,9 @@ class OrderController {
           {
             model: DeliveryMan,
             attributes: ['id', 'name'],
+          },
+          {
+            model: File,
           },
         ],
       });
@@ -125,6 +133,9 @@ class OrderController {
             {
               model: Recipient,
             },
+            {
+              model: File,
+            },
           ],
         });
         return res.json(myOrders);
@@ -147,6 +158,9 @@ class OrderController {
           },
           {
             model: Recipient,
+          },
+          {
+            model: File,
           },
         ],
       });
@@ -184,7 +198,6 @@ class OrderController {
 
   async delete(req, res) {
     const { orderId } = req.params;
-    console.log(orderId);
     const order = await Order.findByPk(orderId, {
       include: [{
         model: DeliveryMan,

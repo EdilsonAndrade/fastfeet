@@ -74,7 +74,6 @@ export default function Order({ navigation }) {
 
   useEffect(() => {
     if(isFocused){
-      console.tron.warn('foquei e vou chamar o getOrders')
       getOrders();
     }else{
       setPage(1);
@@ -105,6 +104,7 @@ export default function Order({ navigation }) {
   }
 
   const handleShowOrderDetail = (orderSelect) => {
+    console.tron.warn(`order selecionada = ${JSON.stringify(orderSelect)}`)
     dispatch(OrderActions.selectOrder(orderSelect))
     navigation.navigate('OrderDetail');
   }
@@ -174,7 +174,7 @@ export default function Order({ navigation }) {
         </FilterContent>
       </SubHeader>
       <Deliveries
-        onEndReached={getOrders}
+        onEndReached={()=>getOrders}
         onEndReachedThreshold={0.2}
         data={orders}
         keyExtractor={item => String(item.id)}

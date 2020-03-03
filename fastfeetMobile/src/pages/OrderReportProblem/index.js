@@ -19,7 +19,6 @@ export default function OrderReportProblem({ route, navigation }) {
   useEffect(() => {
     const { orderId } = route.params;
     setOrderId(orderId)
-    console.tron.warn(route.params)
 
   }, [])
   const [loading, setLoading] = useState(false);

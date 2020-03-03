@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import {format, parseISO} from 'date-fns';
-import { Alert } from 'react-native';
+import { Alert , View, ActivityIndicator} from 'react-native';
 import {
   Container,
   OrderDetailContainer,
@@ -22,19 +22,24 @@ export default function ListProblem({ route, navigation }) {
   const { orderId } = route.params;
 
   const getProblems = async () => {
+    setLoading(true);
     try {
-      const response = await api.get(`/orders/${orderId}/problems?limit=5&page=${page}`);
+      const response = await api.get(`/orders/${orderId}/problems?limit=8&page=${page}`);
 
       const rows = response.data.rows.map(p=>({
         ...p,
         formattedData: format(parseISO(p.createdAt),'dd/MM/yy')
       }))
-      setProblems([...problems, ...rows])
-      setPage(page + 1);
+      if(response.data.count > problems.length){
+        setProblems([...problems, ...rows])
+        setPage(page + 1);
+      }
+
 
     } catch (error) {
         Alert.alert("Erro", "Ocorreu um erro, tente novamente em alguns minutos");
     }
+    setLoading(false);
   }
   useEffect(() => {
     getProblems();
@@ -67,7 +72,7 @@ export default function ListProblem({ route, navigation }) {
       <ProblemsContainer>
         <Problems
         onEndReached={getProblems}
-        onEndReachedThreshold={0.1}
+        onEndReachedThreshold={0}
         data={problems}
         keyExtractor={item => String(item.id)}
         renderItem={({ item }) => renderList(item)}

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-
+import Icon from 'react-native-vector-icons/MaterialIcons'
 import { Alert, ActivityIndicator, StyleSheet } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { format, parseISO } from 'date-fns';
@@ -55,7 +55,7 @@ export default function OrderDetail({ navigation }) {
   }, [order])
 
   const handleDelivered = () => {
-    navigation.navigate('ConfirmDelivery', { orderId: order.id })
+    navigation.navigate('ConfirmDelivery', { order: order })
   }
 
   const handleListProblems = () => {
@@ -87,6 +87,9 @@ export default function OrderDetail({ navigation }) {
 
   }
 
+  const handleViewSignature = ()=>{
+    navigation.navigate('ConfirmDelivery', { order: order, fileUrl: order.File.url})
+  }
 
   return (
     <Container>
@@ -108,7 +111,7 @@ export default function OrderDetail({ navigation }) {
         <OrderInfoContent space="10px">
           <RowDirection>
             <AgendaImage source={Agenda}></AgendaImage>
-            <DetailTextColor>Situação de entregha</DetailTextColor>
+            <DetailTextColor>Situação da entrega</DetailTextColor>
           </RowDirection>
           <DetailText>STATUS</DetailText>
           <DetailText>{status}</DetailText>
@@ -127,7 +130,7 @@ export default function OrderDetail({ navigation }) {
         <OrderInfoContent space="10px">
           <RowDirection>
             {
-              order.startDate ?
+              (order.startDate && !order.endDate)?
                 <>
 
                   <ButtonContent backColor="#eee" title="Reportar problema" onPress={handleSendAProblem}>
@@ -143,6 +146,18 @@ export default function OrderDetail({ navigation }) {
                     <DetailText fontSize="12px" textAlign="center">Confirmar Entrega</DetailText>
                   </ButtonContent>
                 </>
+                :
+                order.endDate ?
+                <>
+                 <ButtonContent backColor="#eee" title="See Problems" onPress={handleListProblems}>
+                    <SeeProblems source={SeeProblemsImg}></SeeProblems>
+                    <DetailText fontSize="12px" textAlign="center">Visualizar Problemas</DetailText>
+                  </ButtonContent>
+                  <ButtonContent backColor="#eee" title="Cofirm Delivery" onPress={handleViewSignature}>
+                    <Icon size={42} color="#444" name="camera-enhance" />
+                    <DetailText fontSize="12px" textAlign="center">Visualizar Assinatura</DetailText>
+                  </ButtonContent>
+                  </>
                 :
                 <StartDelivery onLongPress={handleStartDelivery} onShowUnderlay={()=>setLoading(!loading)} onHideUnderlay={()=>setLoading(!loading)}>
                   {
