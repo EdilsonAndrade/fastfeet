@@ -74,7 +74,7 @@ class OrderController {
         include: [
           {
             model: Recipient,
-            attributes: ['id', 'name', 'city', 'state'],
+
           },
           {
             model: DeliveryMan,
@@ -98,7 +98,7 @@ class OrderController {
         include: [
           {
             model: Recipient,
-            attributes: ['id', 'name', 'city', 'state'],
+
           },
           {
             model: DeliveryMan,
@@ -121,9 +121,19 @@ class OrderController {
             ['createdAt', 'ASC'],
           ],
           where: {
-            canceledAt: null,
-            endDate: null,
             deliverymanId: deliveryManId,
+            [Op.or]: [
+              {
+                canceledAt: null,
+                endDate: null,
+              },
+              {
+                startDate: { [Op.not]: null },
+                canceledAt: { [Op.not]: null },
+                endDate: null,
+              },
+            ],
+
           },
           include: [
             {
@@ -147,7 +157,6 @@ class OrderController {
           ['createdAt', 'ASC'],
         ],
         where: {
-          canceledAt: null,
           endDate: { [Op.not]: null },
           deliverymanId: deliveryManId,
         },

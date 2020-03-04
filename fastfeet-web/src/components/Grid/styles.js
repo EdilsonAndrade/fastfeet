@@ -16,6 +16,7 @@ export const Content = styled.table`
     }
   }
   tr {
+    line-height: 50px;
     :hover {
       background: #eeee;
       cursor: pointer;
@@ -25,6 +26,7 @@ export const Content = styled.table`
       margin: 0;
       padding: 10px 5px;
       border-bottom: 1px solid #979797;
+
       button {
         border: none;
         background: none;

@@ -40,27 +40,34 @@ export default function Order({ navigation }) {
   const [loading, setLoading] = useState(false);
   const [filter, setFilter] = useState('AWAITING');
   const isFocused = useIsFocused();
+  const [count, setCount] = useState(0)
 
   const handleLogout = () => {
     dispatch(signoutRequest())
   }
   async function getOrders() {
-    setLoading(true);
-    let response = null;
-    if (filter === 'DELIVERED') {
-      response = await api.get(`/deliveryman/${deliveryMan.id}/orders?limit=3&page=${page}&done=true`)
+    if (count === 0 || count > orders.length) {
+      setLoading(true);
+      let response = null;
 
-    } else {
-      response = await api.get(`/deliveryman/${deliveryMan.id}/orders?limit=3&page=${page}`)
+      if (filter === 'DELIVERED') {
+        response = await api.get(`/deliveryman/${deliveryMan.id}/orders?limit=3&page=${page}&done=true`)
+
+      } else {
+        response = await api.get(`/deliveryman/${deliveryMan.id}/orders?limit=3&page=${page}`)
+      }
+      const rows = response.data.rows.map(d => ({
+        ...d,
+        formattedDate: format(parseISO(d.createdAt), 'dd/MM/yy HH:mm:ss')
+      }))
+
+      if (response.data.count > orders.length) {
+        setOrders([...orders, ...rows])
+        setPage(page + 1);
+      }
+
+      setCount(response.data.count)
     }
-    const rows = response.data.rows.map(d => ({
-      ...d,
-      formattedDate: format(parseISO(d.createdAt), 'dd/MM/yy')
-    }))
-
-    setOrders([...orders, ...rows])
-    setPage(page + 1);
-
     setLoading(false);
   }
   useEffect(() => {
@@ -73,9 +80,9 @@ export default function Order({ navigation }) {
   }, [filter]);
 
   useEffect(() => {
-    if(isFocused){
+    if (isFocused) {
       getOrders();
-    }else{
+    } else {
       setPage(1);
       setOrders([]);
     }
@@ -84,12 +91,14 @@ export default function Order({ navigation }) {
 
   const handleGetDelivered = () => {
     setOrders([])
+    setCount(0);
     setFilter('DELIVERED')
     setPage(1);
   }
 
   const handleGetOrders = () => {
     setOrders([]);
+    setCount(0);
     setFilter('AWAITING')
     setPage(1);
   }
@@ -104,7 +113,6 @@ export default function Order({ navigation }) {
   }
 
   const handleShowOrderDetail = (orderSelect) => {
-    console.tron.warn(`order selecionada = ${JSON.stringify(orderSelect)}`)
     dispatch(OrderActions.selectOrder(orderSelect))
     navigation.navigate('OrderDetail');
   }
@@ -113,21 +121,19 @@ export default function Order({ navigation }) {
       <DeliveryContent key={item.id}>
         <TopContent>
           <TruckImage source={Truck}></TruckImage>
-          <DeliveryCountText>Encomenda {item.id}</DeliveryCountText>
+          <DeliveryCountText canceled={item.canceledAt}>Encomenda {item.id}</DeliveryCountText>
         </TopContent>
-        <TrackContent>
-          <SmallDot active={item.createdAt && !item.startDate}>
+        <TrackContent canceled={item.canceledAt}>
+          <SmallDot canceled={item.canceledAt} active={(item.createdAt || item.startDate)}>
             <SmallDotText>Aguardando Retirada</SmallDotText>
           </SmallDot>
-
-          <SingleLine></SingleLine>
-          <SmallDot active={item.startDate}>
+          <SingleLine canceled={item.canceledAt}></SingleLine>
+          <SmallDot canceled={item.canceledAt} active={item.startDate}>
             <SmallDotText>Retirada</SmallDotText>
           </SmallDot>
-          <SingleLine>
-
+          <SingleLine canceled={item.canceledAt}>
           </SingleLine>
-          <SmallDot active={item.endDate}><SmallDotText>Entregue</SmallDotText></SmallDot>
+          <SmallDot canceled={item.canceledAt} active={item.endDate}><SmallDotText>Entregue</SmallDotText></SmallDot>
         </TrackContent>
 
         <LocationDateContent>
@@ -140,7 +146,7 @@ export default function Order({ navigation }) {
             <StrongText>São Paulo</StrongText>
           </CityContent>
           <TouchableOpacity onPress={() => handleShowOrderDetail(item)}>
-            <Details>Ver Detalhes</Details>
+            <Details canceled={item.canceledAt}>Ver Detalhes</Details>
           </TouchableOpacity>
         </LocationDateContent>
       </DeliveryContent>
@@ -174,7 +180,7 @@ export default function Order({ navigation }) {
         </FilterContent>
       </SubHeader>
       <Deliveries
-        onEndReached={()=>getOrders}
+        onEndReached={getOrders}
         onEndReachedThreshold={0.2}
         data={orders}
         keyExtractor={item => String(item.id)}

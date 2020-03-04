@@ -23,7 +23,10 @@ export default function OrderNavigator() {
         options={{headerShown:true, headerTitle:"Visualizar problemas", headerStyle: { backgroundColor: "#7D40E7", elevation: 0 }, headerTintColor:"#fff"}}
       />
        <Stack.Screen name="ConfirmDelivery"  component={ConfirmDelivery}
-        options={{headerShown:true, headerTitle:"Confirmar entrega", headerStyle: { backgroundColor: "#7D40E7", elevation: 0 }, headerTintColor:"#fff"}}
+        options={({route})=>({headerShown:true,
+          title: route.params.title,
+          headerStyle: { backgroundColor: "#7D40E7", elevation: 0 },
+          headerTintColor:"#fff"})}
       />
     </Stack.Navigator>
   )

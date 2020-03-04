@@ -4,8 +4,9 @@ import { toast } from 'react-toastify';
 import Grid from '../../components/Grid';
 import api from '~/services/api';
 import Pagination from '~/components/Pagination';
-import { ProblemTopContent } from './styles';
+import ProblemTopContent from './styles';
 import ContextMenu from '~/components/ContextMenu';
+import Modal from '~/components/Modal';
 
 export default function Problem() {
   const [problems, setProblems] = useState([]);
@@ -15,15 +16,18 @@ export default function Problem() {
   const [orderId, setOrderId] = useState(0);
   const [problemsCount, setProblemsCount] = useState(0);
   const totalPages = 2;
+  const [text, setText] = useState('');
+  const [open, setOpen] = useState(false);
+  const [problemVisible, setProblemVisible] = useState(null);
 
-  const [anchorEl, setAnchorEl] = React.useState(null);
+  const handleClick = id => {
+    if (id === problemVisible) {
+      setProblemVisible(0);
+    } else {
+      setProblemVisible(id);
+    }
 
-  const handleClick = (event, id) => {
-    setAnchorEl(event.currentTarget);
     setOrderId(id);
-  };
-  const handleClose = () => {
-    setAnchorEl(null);
   };
 
   const handlePreviousPage = () => {
@@ -46,7 +50,6 @@ export default function Problem() {
   }
 
   async function handleDelete() {
-    setAnchorEl(null);
     if (window.confirm('Tem certeza que quer excluir este registro?')) {
       try {
         let pageOnDelete = page;
@@ -65,7 +68,13 @@ export default function Problem() {
   useEffect(() => {
     getProblems();
   }, [previousPage, nextPage]);
-
+  const handleView = text => {
+    setText(text);
+    setOpen(true);
+  };
+  const handleClose = () => {
+    setOpen(false);
+  };
   return (
     <>
       <ProblemTopContent>
@@ -88,7 +97,7 @@ export default function Problem() {
                 <button
                   aria-controls="contextMenu"
                   aria-haspopup="true"
-                  onClick={e => handleClick(e, problem.id)}
+                  onClick={() => handleClick(problem.id)}
                   type="button"
                 >
                   <ul>
@@ -96,17 +105,19 @@ export default function Problem() {
                     <li>.</li>
                     <li>.</li>
                   </ul>
+                  <ContextMenu
+                    larger
+                    problem
+                    id={problem.id}
+                    visible={problemVisible}
+                    handleDelete={handleDelete}
+                    handleView={() => handleView(problem.description)}
+                  />
                 </button>
               </td>
             </tr>
           ))}
         </tbody>
-        <ContextMenu
-          anchorEl={anchorEl}
-          handleClose={handleClose}
-          handleDelete={handleDelete}
-          menuId="contextMenu"
-        />
       </Grid>
       <Pagination
         handleBackPage={() => handlePreviousPage(previousPage)}
@@ -114,6 +125,7 @@ export default function Problem() {
         showForward={problemsCount / totalPages > page}
         handleForwardPage={() => handleNextPage(nextPage)}
       />
+      <Modal text={text} handleClose={handleClose} open={open} />
     </>
   );
 }

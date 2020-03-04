@@ -24,7 +24,9 @@ export const StatusContent = styled.div`
       width: 15px;
       background: ${props => props.status.color};
       left: 9px;
+      top: 8px;
       border-radius: 50%;
+      margin-right: 5px;
     }
   }
 `;

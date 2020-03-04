@@ -22,8 +22,7 @@ export default function DeliveryMan() {
   const [deliveryManId, setDeliveryManId] = useState(0);
   const [deliveryManCount, setDeliveryManCount] = useState(0);
   const totalPages = 2;
-
-  const [anchorEl, setAnchorEl] = React.useState(null);
+  const [deliveryManVisible, setDeliveryManVisible] = React.useState(0);
 
   async function handleSearch(e) {
     const response = await api.get(
@@ -33,12 +32,13 @@ export default function DeliveryMan() {
     setDeliveryManCount(data.count);
     dispatch(loadSuccess(data.rows));
   }
-  const handleClick = (event, id) => {
-    setAnchorEl(event.currentTarget);
+  const handleClick = id => {
+    if (id === deliveryManVisible) {
+      setDeliveryManVisible(0);
+    } else {
+      setDeliveryManVisible(id);
+    }
     setDeliveryManId(id);
-  };
-  const handleClose = () => {
-    setAnchorEl(null);
   };
 
   const handleCadastrar = () => {
@@ -66,14 +66,12 @@ export default function DeliveryMan() {
   }
   const handleEdit = () => {
     dispatch(saveSuccess(deliveryMans.find(d => d.id === +deliveryManId)));
-    setAnchorEl(null);
     history.push({
       pathname: '/deliveryman/deliverymanform',
     });
   };
 
   async function handleDelete() {
-    setAnchorEl(null);
     if (window.confirm('Tem certeza que quer excluir este registro?')) {
       try {
         let pageOnDelete = page;
@@ -147,7 +145,7 @@ export default function DeliveryMan() {
                 <button
                   aria-controls="contextMenu"
                   aria-haspopup="true"
-                  onClick={e => handleClick(e, deliveryman.id)}
+                  onClick={() => handleClick(deliveryman.id)}
                   type="button"
                 >
                   <ul>
@@ -155,18 +153,18 @@ export default function DeliveryMan() {
                     <li>.</li>
                     <li>.</li>
                   </ul>
+                  <ContextMenu
+                    id={deliveryman.id}
+                    visible={deliveryManVisible}
+                    handleDelete={handleDelete}
+                    handleEdit={handleEdit}
+                    menuId="contextMenu"
+                  />
                 </button>
               </td>
             </tr>
           ))}
         </tbody>
-        <ContextMenu
-          anchorEl={anchorEl}
-          handleClose={handleClose}
-          handleDelete={handleDelete}
-          handleEdit={handleEdit}
-          menuId="contextMenu"
-        />
       </Grid>
       <Pagination
         handleBackPage={() => handlePreviousPage(previousPage)}

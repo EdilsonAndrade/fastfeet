@@ -35,26 +35,26 @@ export default function OrderDetail({ navigation }) {
   const [loading, setLoading] = useState(false);
   const order = useSelector(state => state.order);
   const deliveryMan = useSelector(state => state.auth);
-
   const dispatch = useDispatch();
   useEffect(() => {
     if (order.canceledAt) {
       setStatus("Cancelada")
-      setStartDate(format(parseISO(order.startDate), 'dd/MM/yy'))
+      setStartDate(format(parseISO(order.startDate), 'dd/MM/yy HH:mm:ss'))
     } else if (order.endDate) {
-      setEndDate(format(parseISO(order.endDate), 'dd/MM/yy'))
-      setStartDate(format(parseISO(order.startDate), 'dd/MM/yy'))
+      setEndDate(format(parseISO(order.endDate), 'dd/MM/yy HH:mm:ss'))
+      setStartDate(format(parseISO(order.startDate), 'dd/MM/yy HH:mm:ss'))
       setStatus("Entregue")
     } else {
       setStatus("Pendente");
       if (order.startDate) {
-        setStartDate(format(parseISO(order.startDate), 'dd/MM/yy'))
+        setStartDate(format(parseISO(order.startDate), 'dd/MM/yy HH:mm:ss'))
       }
     }
 
   }, [order])
 
   const handleDelivered = () => {
+
     navigation.navigate('ConfirmDelivery', { order: order })
   }
 
@@ -65,30 +65,33 @@ export default function OrderDetail({ navigation }) {
     navigation.navigate('OrderReportProblem', { orderId: order.id })
   }
   const handleStartDelivery = () => {
-    Alert.alert("Iniciar entrega", 'Tem certeza que deseja iniciar esta entrega?',[
-      {text:'Sim', onPress: async ()=>{
-        try {
-          const response = await api.put(`/deliveryman/${deliveryMan.id}/orders/${order.id}`,{
-            startDate:new Date()
-          });
+    Alert.alert("Iniciar entrega", 'Tem certeza que deseja iniciar esta entrega?', [
+      {
+        text: 'Sim', onPress: async () => {
+          try {
+            const response = await api.put(`/deliveryman/${deliveryMan.id}/orders/${order.id}`, {
+              startDate: new Date()
+            });
 
-          dispatch(OrderActions.selectOrder(response.data));
+            dispatch(OrderActions.selectOrder(response.data));
 
-        } catch ({response}) {
+          } catch ({ response }) {
 
-          Alert.alert("Erro", `${JSON.stringify(response.data.error)} `);
+            Alert.alert("Erro", `${JSON.stringify(response.data.error)} `);
+          }
         }
-      }}
+      }
       ,
       {
-        text:'Não',
+        text: 'Não',
       }
     ])
 
   }
 
-  const handleViewSignature = ()=>{
-    navigation.navigate('ConfirmDelivery', { order: order, fileUrl: order.File.url})
+  const handleViewSignature = () => {
+
+    navigation.navigate('ConfirmDelivery', { order: order, fileUrl: order.File.url })
   }
 
   return (
@@ -114,7 +117,7 @@ export default function OrderDetail({ navigation }) {
             <DetailTextColor>Situação da entrega</DetailTextColor>
           </RowDirection>
           <DetailText>STATUS</DetailText>
-          <DetailText>{status}</DetailText>
+          <DetailText bold={order.canceledAt} color={order.canceledAt ?"#DE3B3B" :'#666' } >{status}</DetailText>
           <OrderDates>
             <DateInfo>
               <DetailText>DATA DE RETIRADA</DetailText>
@@ -130,47 +133,55 @@ export default function OrderDetail({ navigation }) {
         <OrderInfoContent space="10px">
           <RowDirection>
             {
-              (order.startDate && !order.endDate)?
+              order.canceledAt ?
                 <>
-
-                  <ButtonContent backColor="#eee" title="Reportar problema" onPress={handleSendAProblem}>
-                    <ProblemImage source={ReportProblem}></ProblemImage>
-                    <DetailText fontSize="12px" textAlign="center">Informar Problema</DetailText>
-                  </ButtonContent>
-                  <ButtonContent backColor="#eee" title="See Problems" onPress={handleListProblems}>
-                    <SeeProblems source={SeeProblemsImg}></SeeProblems>
-                    <DetailText fontSize="12px" textAlign="center">Visualizar Problemas</DetailText>
-                  </ButtonContent>
-                  <ButtonContent backColor="#eee" title="Cofirm Delivery" onPress={handleDelivered}>
-                    <ConfirmDelivery source={ConfirmDeliveryImg}></ConfirmDelivery>
-                    <DetailText fontSize="12px" textAlign="center">Confirmar Entrega</DetailText>
-                  </ButtonContent>
+                  <DetailText  bold color="#DE3B3B" fontSize="16px" textAlign="center">Infelizmente este pedido foi cancelado,
+                 mas fique tranquilo, como você ja saiu com ele, irá receber o valor da taxa de entrega.
+                 </DetailText>
                 </>
-                :
-                order.endDate ?
-                <>
-                 <ButtonContent backColor="#eee" title="See Problems" onPress={handleListProblems}>
-                    <SeeProblems source={SeeProblemsImg}></SeeProblems>
-                    <DetailText fontSize="12px" textAlign="center">Visualizar Problemas</DetailText>
-                  </ButtonContent>
-                  <ButtonContent backColor="#eee" title="Cofirm Delivery" onPress={handleViewSignature}>
-                    <Icon size={42} color="#444" name="camera-enhance" />
-                    <DetailText fontSize="12px" textAlign="center">Visualizar Assinatura</DetailText>
-                  </ButtonContent>
-                  </>
-                :
-                <StartDelivery onLongPress={handleStartDelivery} onShowUnderlay={()=>setLoading(!loading)} onHideUnderlay={()=>setLoading(!loading)}>
-                  {
-                    !loading ?
-                      <DetailText bold color="#fff" fontSize="12px" textAlign="center">Sair para entrega</DetailText>
-                      :
-                      <>
-                      <ActivityIndicator size={22} color="#fff"></ActivityIndicator>
-                      <DetailText bold color="#fff" fontSize="12px" textAlign="center">Segure</DetailText>
-                      </>
-                  }
 
-                </StartDelivery>
+                :
+                (order.startDate && !order.endDate) ?
+                  <>
+
+                    <ButtonContent backColor="#eee" title="Reportar problema" onPress={handleSendAProblem}>
+                      <ProblemImage source={ReportProblem}></ProblemImage>
+                      <DetailText fontSize="12px" textAlign="center">Informar Problema</DetailText>
+                    </ButtonContent>
+                    <ButtonContent backColor="#eee" title="See Problems" onPress={handleListProblems}>
+                      <SeeProblems source={SeeProblemsImg}></SeeProblems>
+                      <DetailText fontSize="12px" textAlign="center">Visualizar Problemas</DetailText>
+                    </ButtonContent>
+                    <ButtonContent backColor="#eee" title="Cofirm Delivery" onPress={handleDelivered}>
+                      <ConfirmDelivery source={ConfirmDeliveryImg}></ConfirmDelivery>
+                      <DetailText fontSize="12px" textAlign="center">Confirmar Entrega</DetailText>
+                    </ButtonContent>
+                  </>
+                  :
+                  order.endDate ?
+                    <>
+                      <ButtonContent backColor="#eee" title="See Problems" onPress={handleListProblems}>
+                        <SeeProblems source={SeeProblemsImg}></SeeProblems>
+                        <DetailText fontSize="12px" textAlign="center">Visualizar Problemas</DetailText>
+                      </ButtonContent>
+                      <ButtonContent backColor="#eee" title="Cofirm Delivery" onPress={handleViewSignature}>
+                        <Icon size={22} color="#444" name="camera-enhance" />
+                        <DetailText fontSize="12px" textAlign="center">Visualizar Assinatura</DetailText>
+                      </ButtonContent>
+                    </>
+                    :
+                    <StartDelivery onLongPress={handleStartDelivery} onShowUnderlay={() => setLoading(!loading)} onHideUnderlay={() => setLoading(!loading)}>
+                      {
+                        !loading ?
+                          <DetailText bold color="#fff" fontSize="12px" textAlign="center">Sair para entrega</DetailText>
+                          :
+                          <>
+                            <ActivityIndicator size={22} color="#fff"></ActivityIndicator>
+                            <DetailText bold color="#fff" fontSize="12px" textAlign="center">Segure</DetailText>
+                          </>
+                      }
+
+                    </StartDelivery>
             }
 
           </RowDirection>

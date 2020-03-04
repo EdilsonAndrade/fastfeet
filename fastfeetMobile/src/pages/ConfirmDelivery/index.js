@@ -27,8 +27,13 @@ export default function ConfirmDelivery({ route, navigation }) {
     const { order, fileUrl } = route.params;
     if (fileUrl) {
       setPicture(fileUrl);
+      navigation.setOptions({title:'Assinatura do cliente'});
+    }else{
+      navigation.setOptions({title:'Confirmar a entrega'});
     }
     setOrder(order)
+
+
 
   }, [])
 

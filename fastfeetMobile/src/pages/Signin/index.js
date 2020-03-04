@@ -27,15 +27,25 @@ export default function Signin({ navigation }) {
           'Número de cadastro',
           'Informe um número de registro válido'
         )
-        setLoading(false);
+
       } else {
-        const response = await api.get(`/deliveryman/${deliveryManId}`);
-        dispatch(signinRequest(response.data));
-      }
+          const response = await api.get(`/deliveryman/${deliveryManId}`, {timeout: 5000});
+          dispatch(signinRequest(response.data));
+          setLoading(false);
+        }
 
     } catch (error) {
+
       setLoading(false);
+      const {message} = error;
+      if(message.includes("timeout"))
+      {
+        Alert.alert('Erro', 'Tempo de 5 segundos de conexão expirou, verifique sua internet ou a mesma rede wi-fi');
+      }else{
+        Alert.alert('Erro', JSON.stringify(error));
+      }
     }
+    setLoading(false);
 
   }
   return (

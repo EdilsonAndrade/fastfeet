@@ -9,6 +9,7 @@ import api from '~/services/api';
 import { saveSuccess } from '~/store/modules/order/actions';
 import Pagination from '~/components/Pagination';
 import ContextMenu from '~/components/ContextMenu';
+import Modal from '~/components/Modal';
 
 export default function Order() {
   const dispatch = useDispatch();
@@ -19,9 +20,11 @@ export default function Order() {
   const [page, setPage] = useState(1);
   const [ordersCount, setOrdersCount] = useState(0);
   const totalPages = 2;
-  const [anchorEl, setAnchorEl] = React.useState(null);
+  const [orderVisible, setOrderVisible] = React.useState(0);
   const [orderId, setOrderId] = useState(0);
-
+  const [open, setOpen] = useState(false);
+  const [orderImageUrl, setOrderImageUrl] = useState();
+  const [order, setOrder] = useState({});
   const handleCadastrar = () => {
     dispatch(saveSuccess(''));
     history.push('/order/orderform');
@@ -29,18 +32,26 @@ export default function Order() {
 
   const handleEdit = () => {
     dispatch(saveSuccess(orders.find(d => d.id === +orderId)));
-    setAnchorEl(null);
     history.push({
       pathname: '/order/orderform',
     });
   };
 
-  const handleClick = (event, id) => {
-    setAnchorEl(event.currentTarget);
-    setOrderId(id);
+  const handleView = imageUrl => {
+    setOrderImageUrl(imageUrl);
+    setOpen(true);
   };
   const handleClose = () => {
-    setAnchorEl(null);
+    setOpen(false);
+  };
+  const handleClick = (selectedOrder, id) => {
+    if (id === orderVisible) {
+      setOrderVisible(0);
+    } else {
+      setOrderVisible(id);
+    }
+    setOrderId(id);
+    setOrder(selectedOrder);
   };
 
   const handlePreviousPage = () => {
@@ -52,17 +63,17 @@ export default function Order() {
     setPage(page + 1);
   };
 
-  const getFormatedStatus = order => {
+  const getFormatedStatus = selectedOrder => {
     let status = {};
-    if (order.canceledAt) {
+    if (selectedOrder.canceledAt) {
       status = { text: 'CANCELADA', background: '#FAB0B0', color: '#DE3B3B' };
       return status;
     }
-    if (order.endDate) {
+    if (selectedOrder.endDate) {
       status = { text: 'ENTREGUE', background: '#DFF0DF', color: '#2CA42B' };
       return status;
     }
-    if (order.startDate) {
+    if (selectedOrder.startDate) {
       status = { text: 'RETIRADA', background: '#BAD2FF', color: '#4D85EE' };
       return status;
     }
@@ -101,7 +112,7 @@ export default function Order() {
   }
 
   async function handleDelete() {
-    setAnchorEl(null);
+    setOrderVisible(0);
     if (window.confirm('Tem certeza que quer excluir este registro?')) {
       try {
         await api.delete(`/orders/${orderId}`);
@@ -156,8 +167,8 @@ export default function Order() {
           {orders.map(order => (
             <tr key={order.id}>
               <td>{order.id}</td>
-              <td>{order.Recipient.name}</td>
-              <td>{order.DeliveryMan.name}</td>
+              <td style={{ width: 420 }}>{order.Recipient.name}</td>
+              <td style={{ width: 420 }}>{order.DeliveryMan.name}</td>
               <td>{order.Recipient.city}</td>
               <td>{order.Recipient.state}</td>
               <td>
@@ -168,9 +179,7 @@ export default function Order() {
               <td>
                 {order.canceledAt ? null : (
                   <button
-                    aria-controls="contextMenu"
-                    aria-haspopup="true"
-                    onClick={e => handleClick(e, order.id)}
+                    onClick={() => handleClick(order, order.id)}
                     type="button"
                   >
                     <ul>
@@ -178,25 +187,34 @@ export default function Order() {
                       <li>.</li>
                       <li>.</li>
                     </ul>
+                    <ContextMenu
+                      id={order.id}
+                      order={order && order.endDate}
+                      visible={orderVisible}
+                      handleDelete={handleDelete}
+                      handleEdit={handleEdit}
+                      handleView={() => handleView(order.File.url)}
+                      menuId="contextMenu"
+                    />
                   </button>
                 )}
               </td>
             </tr>
           ))}
         </tbody>
-        <ContextMenu
-          anchorEl={anchorEl}
-          handleClose={handleClose}
-          handleDelete={handleDelete}
-          handleEdit={handleEdit}
-          menuId="contextMenu"
-        />
       </Grid>
       <Pagination
         handleBackPage={() => handlePreviousPage(previousPage)}
         showBack={page > 1}
         showForward={ordersCount / totalPages > page}
         handleForwardPage={() => handleNextPage(nextPage)}
+      />
+      <Modal
+        recipient={order.Recipient}
+        order={order}
+        imageUrl={orderImageUrl}
+        handleClose={handleClose}
+        open={open}
       />
     </>
   );

@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-export const ProblemTopContent = styled.div`
+const ProblemTopContent = styled.div`
   display: flex;
   flex-direction: column;
   align-items: baseline;
@@ -31,3 +31,4 @@ export const ProblemTopContent = styled.div`
     }
   }
 `;
+export default ProblemTopContent;

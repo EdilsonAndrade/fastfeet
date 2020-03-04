@@ -65,7 +65,6 @@ text-align:center;
 flex:1;
 margin: 1px;
 background: ${props => props.backColor ? props.backColor : '#fff'};
-
 padding:15px;
 border-radius:6px;
 `;

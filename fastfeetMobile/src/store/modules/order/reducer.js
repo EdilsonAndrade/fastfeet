@@ -20,7 +20,6 @@ export default function order(state = INITIAL_DATA, action) {
         break;
       }
       case "@order/SELECT_ONE_ORDER": {
-        console.tron.warn(JSON.stringify(action.payload));
         const { id, product, Recipient, DeliveryMan, canceledAt, createdAt, endDate, startDate, File } = action.payload;
         draft.product = product;
         draft.recipient = Recipient;

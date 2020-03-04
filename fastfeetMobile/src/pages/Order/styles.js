@@ -4,7 +4,7 @@ export const OrderContainer = styled.View`
   display:flex;
   justify-content:center;
   align-items:center;
-  flex:1;
+  height:100%;
   background:#fff;
 
 `;
@@ -78,6 +78,7 @@ export const DeliveredText = styled.Text``;
 export const Deliveries = styled(FlatList).attrs({
 })`
 width:100%;
+
 padding:20px;
 
 `;
@@ -100,9 +101,10 @@ export const TopContent = styled.View`
 export const TruckImage = styled.Image`
   margin-right:10px;
 
+
 `;
 export const DeliveryCountText = styled.Text`
-  color:#7D40E7;
+  color:${props=>props.canceled ? '#DE3B3B' : '#7D40E7'};;
   font-size:14px;
   font-weight:bold;
 
@@ -111,11 +113,10 @@ export const DeliveryCountText = styled.Text`
 export const TrackContent = styled.View`
   flex-direction:row;
   align-items:center;
-
   justify-content:space-between;
   margin-top:38px;
   width:80%;
-  border:1px solid #7D40E7;
+  border:1px solid ${props=>props.canceled ? '#DE3B3B' : '#7D40E7'};
 
 
 `;
@@ -125,15 +126,18 @@ export const SmallDotContent = styled.View`
 
 `;
 export const SmallDot = styled.View`
-  background: ${props=>props.active ? '#7D40E7' : '#fff'};
+  background: ${props=>props.active ? props.canceled ? '#DE3B3B' : '#7D40E7' : '#fff'};
   border:2px solid #7D40E7;
+  border-color:${props=>props.canceled ? '#DE3B3B' : '#7D40E7'};
   width:10px;
   height:10px;
   border-radius: 5px;
   margin:-5px;
 
 `;
-export const SingleLine = styled.View``;
+export const SingleLine = styled.View`
+
+`;
 export const SmallDotText = styled.Text`
   text-align:center;
   font-size:8px;
@@ -167,6 +171,6 @@ font-weight:bold;
 export const CityContent = styled.View``;
 export const Details = styled.Text`
   margin-top:10px;
-  color: #7D40E7;
+  color: ${props=>props.canceled ? '#DE3B3B' : '#7D40E7'};
   font-weight:bold;
 `;

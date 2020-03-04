@@ -1,32 +1,93 @@
 import React from 'react';
-import Menu from '@material-ui/core/Menu';
-import MenuItem from '@material-ui/core/MenuItem';
-import { MdEdit, MdDeleteForever } from 'react-icons/md';
+import { MdEdit, MdDeleteForever, MdRemoveRedEye } from 'react-icons/md';
+import { Menu, ItemMenu } from './styles';
 
 export default function ContextMenu({
-  anchorEl,
-  handleClose,
+  order,
+  id,
   handleEdit,
   handleDelete,
-  menuId,
+  handleView,
+  visible,
+  problem,
+  larger,
 }) {
-  return (
-    <Menu
-      id={menuId}
-      anchorEl={anchorEl}
-      keepMounted
-      open={Boolean(anchorEl)}
-      onClose={handleClose}
-    >
-      <MenuItem onClick={handleEdit}>
-        <MdEdit size={22} color="#4d85ee" />
-        Editar
-      </MenuItem>
+  const getItemsMenu = () => {
+    if (problem) {
+      return (
+        <>
+          <ItemMenu onClick={handleView}>
+            <div>
+              <MdRemoveRedEye
+                size={22}
+                color="#4d85ee"
+                style={{ marginRight: 10 }}
+              />
+              <strong>Visualizar</strong>
+            </div>
+          </ItemMenu>
 
-      <MenuItem onClick={handleDelete}>
-        <MdDeleteForever size={22} color="#de3b3b" />
-        Excluir
-      </MenuItem>
+          <ItemMenu onClick={handleEdit}>
+            <div>
+              <MdDeleteForever
+                size={22}
+                color="#de3b3b"
+                style={{ marginRight: 10 }}
+              />
+              <strong>Excluir encomenda</strong>
+            </div>
+          </ItemMenu>
+        </>
+      );
+    }
+
+    if (order) {
+      return (
+        <>
+          <ItemMenu onClick={handleView}>
+            <div>
+              <MdRemoveRedEye
+                size={22}
+                color="#4d85ee"
+                style={{ marginRight: 10 }}
+              />
+              <strong>Visualizar</strong>
+            </div>
+          </ItemMenu>
+
+          <ItemMenu onClick={handleEdit}>
+            <div>
+              <MdEdit size={22} color="#4d85ee" style={{ marginRight: 10 }} />
+              <strong>Editar</strong>
+            </div>
+          </ItemMenu>
+        </>
+      );
+    }
+    return (
+      <>
+        <ItemMenu onClick={handleEdit}>
+          <div>
+            <MdEdit size={22} color="#4d85ee" />
+            <strong>Editar</strong>
+          </div>
+        </ItemMenu>
+        <ItemMenu onClick={handleDelete}>
+          <div>
+            <MdDeleteForever
+              size={22}
+              color="#de3b3b"
+              style={{ marginRight: 10 }}
+            />
+            <strong>Excluir</strong>
+          </div>
+        </ItemMenu>
+      </>
+    );
+  };
+  return (
+    <Menu id={id} larger={larger} visible={visible}>
+      {getItemsMenu()}
     </Menu>
   );
 }
