@@ -19,7 +19,7 @@ export default function Routes() {
       <Route path="/deliveryman" exact component={DeliveryMan} isPrivate />
       <Route path="/recipients" exact component={Recipient} isPrivate />
       <Route path="/problem" component={Problem} isPrivate />
-      <Route path="/order/orderform" component={OrderForm} isPrivate />
+      <Route path="/orders/orderform" component={OrderForm} isPrivate />
       <Route
         path="/recipients/recipientform"
         component={RegistrationForm}

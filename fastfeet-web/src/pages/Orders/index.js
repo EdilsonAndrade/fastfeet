@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { toast } from 'react-toastify';
+import { format } from 'date-fns';
+import pt from 'date-fns/locale/pt';
+import { zonedTimeToUtc } from 'date-fns-tz';
 import history from '../../services/history';
 import Button from '../../components/Button';
 import Grid from '../../components/Grid';
-import { ButtonDiv, StatusContent } from './styles';
+import { ButtonDiv, StatusContent, DeliveryAvatar } from './styles';
 import api from '~/services/api';
 import { saveSuccess } from '~/store/modules/order/actions';
 import Pagination from '~/components/Pagination';
@@ -33,7 +36,7 @@ export default function Order() {
   const handleEdit = () => {
     dispatch(saveSuccess(orders.find(d => d.id === +orderId)));
     history.push({
-      pathname: '/order/orderform',
+      pathname: '/orders/orderform',
     });
   };
 
@@ -96,6 +99,8 @@ export default function Order() {
   }
 
   async function getOrders(onDeletePage) {
+    const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
     const response = await api.get(
       `/orders?limit=2&page=${onDeletePage || page}`
     );
@@ -104,7 +109,18 @@ export default function Order() {
     const dataWithStatusFormated = data.rows.map(d => ({
       ...d,
       formattedStatus: getFormatedStatus(d),
+      formatedStartDate: d.startDate
+        ? format(zonedTimeToUtc(d.startDate, timezone), 'dd/MM/yyyy HH:mm:ss', {
+            locale: pt,
+          })
+        : '',
+      formatedEndDate: d.endDate
+        ? format(zonedTimeToUtc(d.endDate, timezone), 'dd/MM/yyyy HH:mm:ss', {
+            locale: pt,
+          })
+        : '',
     }));
+
     setOrders(dataWithStatusFormated);
     if (response.data.length <= 0) {
       setPage(page - 1);
@@ -156,6 +172,7 @@ export default function Order() {
           <tr>
             <th>ID</th>
             <th>Destinatário</th>
+            <th>Foto</th>
             <th>Entregador</th>
             <th>Cidade</th>
             <th>Estado</th>
@@ -164,36 +181,45 @@ export default function Order() {
           </tr>
         </thead>
         <tbody>
-          {orders.map(order => (
-            <tr key={order.id}>
-              <td>{order.id}</td>
-              <td style={{ width: 420 }}>{order.Recipient.name}</td>
-              <td style={{ width: 420 }}>{order.DeliveryMan.name}</td>
-              <td>{order.Recipient.city}</td>
-              <td>{order.Recipient.state}</td>
+          {orders.map(o => (
+            <tr key={o.id}>
+              <td>{o.id}</td>
+              <td style={{ width: 320 }}>{o.Recipient.name}</td>
               <td>
-                <StatusContent id="status" status={order.formattedStatus}>
-                  <span>{order.formattedStatus.text}</span>
+                <DeliveryAvatar>
+                  {o.DeliveryMan.avatar ? (
+                    <img src={o.DeliveryMan.avatar.url} alt="avatar" />
+                  ) : (
+                    <img
+                      src={`https://avatar.oxro.io/avatar?name=${o.DeliveryMan.name}`}
+                      alt="avatar"
+                    />
+                  )}
+                </DeliveryAvatar>
+              </td>
+              <td style={{ width: 420 }}>{o.DeliveryMan.name}</td>
+              <td>{o.Recipient.city}</td>
+              <td>{o.Recipient.state}</td>
+              <td>
+                <StatusContent id="status" status={o.formattedStatus}>
+                  <span>{o.formattedStatus.text}</span>
                 </StatusContent>
               </td>
               <td>
-                {order.canceledAt ? null : (
-                  <button
-                    onClick={() => handleClick(order, order.id)}
-                    type="button"
-                  >
+                {o.canceledAt ? null : (
+                  <button onClick={() => handleClick(o, o.id)} type="button">
                     <ul>
                       <li>.</li>
                       <li>.</li>
                       <li>.</li>
                     </ul>
                     <ContextMenu
-                      id={order.id}
-                      order={order && order.endDate}
+                      id={o.id}
+                      order={o && o.endDate}
                       visible={orderVisible}
                       handleDelete={handleDelete}
                       handleEdit={handleEdit}
-                      handleView={() => handleView(order.File.url)}
+                      handleView={() => handleView(o.File.url)}
                       menuId="contextMenu"
                     />
                   </button>

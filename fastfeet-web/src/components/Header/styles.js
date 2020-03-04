@@ -42,7 +42,7 @@ export const Content = styled.div`
     display: flex;
     flex-direction: column;
     button {
-      color: #7d40e7;
+      color: #de3b3b;
       border: none;
       background: none;
     }

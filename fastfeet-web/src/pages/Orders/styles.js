@@ -6,7 +6,7 @@ export const ButtonDiv = styled.div`
 `;
 
 export const StatusContent = styled.div`
-  width: 130px;
+  width: 137px;
   height: 30px;
   background: ${props => props.status.background};
   color: ${props => props.status.color};
@@ -26,7 +26,19 @@ export const StatusContent = styled.div`
       left: 9px;
       top: 8px;
       border-radius: 50%;
-      margin-right: 5px;
+      margin-right: 15px;
     }
+  }
+`;
+export const DeliveryAvatar = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  img {
+    margin-right: 5px;
+    width: 30px;
+    height: 30px;
+    border-radius: 15px;
   }
 `;

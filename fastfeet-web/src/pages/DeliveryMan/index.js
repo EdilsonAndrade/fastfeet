@@ -134,7 +134,7 @@ export default function DeliveryMan() {
                   src={
                     deliveryman.avatar
                       ? deliveryman.avatar.url
-                      : AvatarPreviewDefault
+                      : `https://avatar.oxro.io/avatar?name=${deliveryman.name}`
                   }
                   alt="avatar"
                 />

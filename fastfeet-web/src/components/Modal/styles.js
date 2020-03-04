@@ -5,33 +5,38 @@ export const CloseButton = styled.button`
   background: transparent;
   position: absolute;
   left: 355px;
+  margin: 0 31px;
 `;
 export const Modal = styled.div`
   div {
     display: flex;
     flex-direction: column;
     width: 100%;
-    padding: 5px;
+    padding: 10px;
+    hr {
+      background: #eee;
+      margin: 10px 0;
+    }
     > div {
       border-radius: 6px;
       width: 392px;
       strong {
-        font-size: 22px;
+        font-size: 16px;
       }
       span {
-        font-size: 18px;
+        font-size: 16px;
+        color: #444;
+        text-transform: capitalize;
       }
     }
     img {
       padding-right: 5px;
-      width: 392px;
-      height: 100px;
+      max-width: 392px;
     }
 
-    div#order {
-      span {
-        text-transform: capitalize;
-      }
+    div#datas {
+      margin-top: 6px;
+      padding: 0;
     }
 
     div#retirada,
@@ -39,8 +44,12 @@ export const Modal = styled.div`
       margin-top: 5px;
       padding: 0;
       display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
+      flex-direction: row;
+      justify-content: flex-start;
+      align-items: center;
+      strong {
+        margin-right: 5px;
+      }
     }
   }
 `;

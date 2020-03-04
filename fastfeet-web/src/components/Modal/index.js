@@ -1,7 +1,7 @@
 import React from 'react';
 import { Dialog } from '@material-ui/core';
 import PropTypes from 'prop-types';
-import { MdHighlightOff } from 'react-icons/md';
+import { MdClear } from 'react-icons/md';
 import { CloseButton, Modal } from './styles';
 
 export default function ModalDialog({
@@ -19,13 +19,15 @@ export default function ModalDialog({
       open={open}
     >
       <CloseButton type="button" id="closeme" onClick={handleClose}>
-        <MdHighlightOff size={42} color="#7159c1" />
+        <MdClear size={22} color="#7159c1" />
       </CloseButton>
+
       <Modal>
         <div>
           {text ? (
             <div>
               <strong>Visualizar Problema</strong>
+              <hr />
               <span>{text}</span>
             </div>
           ) : (
@@ -34,16 +36,20 @@ export default function ModalDialog({
               <span>{` ${recipient.addressLine}, ${recipient.number}`}</span>
               <span>{` ${recipient.city} - ${recipient.state}`}</span>
               <span>{recipient.zipCode}</span>
-              <strong>Datas</strong>
-              <div id="retirada">
-                <strong>Retirada:</strong>
-                <span>{order.startDate}</span>
+              <hr />
+              <div id="datas">
+                <strong>Datas</strong>
+                <div id="retirada">
+                  <strong>Retirada:</strong>
+                  <span>{order.formatedStartDate}</span>
+                </div>
+                <div id="entrega">
+                  <strong>Retirada:</strong>
+                  <span>{order.formatedEndDate}</span>
+                </div>
               </div>
-              <div id="entrega">
-                <strong>Retirada:</strong>
-                <span>{order.endDate}</span>
-              </div>
-
+              <hr />
+              <strong>Assinatura do cliente</strong>
               <img src={imageUrl} alt="signature" />
             </div>
           )}
@@ -58,8 +64,8 @@ ModalDialog.propTypes = {
   handleClose: PropTypes.func,
   open: PropTypes.bool,
   order: PropTypes.shape({
-    startDate: PropTypes.string,
-    endDate: PropTypes.string,
+    formatedStartDate: PropTypes.string,
+    formatedEndDate: PropTypes.string,
   }),
   recipient: PropTypes.shape({
     addressLine: PropTypes.string,
@@ -76,8 +82,8 @@ ModalDialog.defaultProps = {
   imageUrl: '',
   open: false,
   order: {
-    startDate: '',
-    endDate: '',
+    formatedStartDate: '',
+    formatedEndDate: '',
   },
   recipient: {
     addressLine: '',

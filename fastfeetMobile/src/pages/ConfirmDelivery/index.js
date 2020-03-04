@@ -108,7 +108,6 @@ export default function ConfirmDelivery({ route, navigation }) {
             }}
 
             onGoogleVisionBarcodesDetected={({ barcodes }) => {
-              console.tron.warn(barcodes);
             }}
           >
             <ButtonShot onPress={takePicture} >

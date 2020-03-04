@@ -60,5 +60,5 @@ export const Content = styled.div`
 `;
 
 export const AsyncSelectRecipient = styled(AsyncSelect)`
-  width: 520px;
+  width: 691px;
 `;
