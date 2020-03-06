@@ -2,7 +2,7 @@ import File from '../models/File';
 import Order from '../models/Order';
 
 class DeliveryFinishController {
-  async store(req, res) {
+  async update(req, res) {
     const { orderId } = req.params;
 
     const { originalname: name, filename: path } = req.file;

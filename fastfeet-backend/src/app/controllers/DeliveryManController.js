@@ -54,7 +54,6 @@ class DeliveryManController {
 
         ],
       });
-      console.log(`vou devolver = ${JSON.stringify(deliveryMan)}`);
       return res.json(deliveryMan);
     }
 

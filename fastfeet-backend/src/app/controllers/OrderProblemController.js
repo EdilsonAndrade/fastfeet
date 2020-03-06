@@ -7,7 +7,6 @@ class OrderProblemController {
   async index(req, res) {
     const { orderId } = req.params;
     const { limit, page } = req.query;
-    console.log(` order id = ${orderId}`);
     if (orderId) {
       const orderProblem = await OrderProblem.findAndCountAll({
         limit: Number(limit),

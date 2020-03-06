@@ -12,42 +12,32 @@ import DeliveryManagementController from './app/controllers/DeliveryManagementCo
 import OrderProblemController from './app/controllers/OrderProblemController';
 import DeliveryFinishController from './app/controllers/DeliveryFinishController';
 
-
 const routes = new Router();
-
 const upload = multer(multerConfig);
-// free routes - sessions
+
 routes.post('/sessions', SessionController.store);
-
-// free routes - users
 routes.post('/users', UserController.store);
-
-// free routes - deliveryman
 routes.get('/deliveryman/:deliveryManId/orders', OrderController.index);
-routes.put('/deliveryman/:deliveryManId/orders/:orderId', DeliveryManagementController.update);
+routes.put('/deliveryman/:deliveryManId/deliverymanagements/:orderId', DeliveryManagementController.update);
 routes.get('/deliveryman/:deliveryManId', DeliveryManController.index);
-// free routes - user signature file route for order
-routes.post('/orders/:orderId/enddelivery', upload.single('signature'), DeliveryFinishController.store);
-
-// free routes - order problem
+routes.put('/orders/:orderId/enddelivery', upload.single('signature'), DeliveryFinishController.update);
 routes.post('/orders/:orderId/problems', OrderProblemController.store);
 routes.get('/orders/:orderId/problems', OrderProblemController.index);
+
 routes.use(authMiddleware);
 
-// recipients routes
 routes.post('/recipients', RecipientController.store);
 routes.put('/recipients/:recipientId', RecipientController.update);
 routes.delete('/recipients/:recipientId', RecipientController.delete);
 routes.get('/recipients', RecipientController.index);
 
-// deliveryman routes
 routes.post('/deliveryman', DeliveryManController.store);
 routes.put('/deliveryman/:deliveryManId', DeliveryManController.update);
 routes.delete('/deliveryman/:deliveryManId', DeliveryManController.delete);
 routes.get('/deliveryman', DeliveryManController.index);
+
 routes.post('/files', upload.single('file'), FileUploadController.store);
 
-// orders route
 routes.post('/orders', OrderController.store);
 routes.put('/orders/:orderId', OrderController.update);
 routes.delete('/orders/:orderId', OrderController.delete);

@@ -14,7 +14,6 @@ class DeliveryManagementController {
 
     if (!deliveryMan) return res.status(400).json({ error: 'DeliveryMan does not exist' });
 
-
     const countOfOrderDelivered = await Order.findAll({
       where: {
         startDate: {
@@ -26,17 +25,18 @@ class DeliveryManagementController {
 
     });
     if (countOfOrderDelivered.length === 5) {
-      return res.status(401).json({ error: 'Limit of 5 orders exceeded' });
+      return res.status(401).json({ error: 'Limite de 5 pedidos excedido' });
     }
 
     const actualDate = parseISO(startDate);
 
     const beginOfWork = setSeconds(setMinutes(setHours(new Date(), 8), 0), 0);
-    const endOfWork = setSeconds(setMinutes(setHours(new Date(), 23), 59), 0);
+    const endOfWork = setSeconds(setMinutes(setHours(new Date(), 18), 0), 0);
 
     if (isBefore(actualDate, beginOfWork) || isAfter(actualDate, endOfWork)) {
       return res.status(401).json({ error: 'Estamos fechados para retirada' });
     }
+
     const order = await Order.findByPk(orderId);
 
     if (!order) return res.status(400).json({ error: 'Pedido não encontrado' });

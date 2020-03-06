@@ -127,7 +127,7 @@ describe('DeliveryMan', () => {
     expect(deliveryman.body.rows.length).toBeGreaterThan(1);
   });
 
-  it('should list not canceled and not delivered orders ', async () => {
+  it('should list canceled and not delivered orders ', async () => {
     const deliveryMan = await factory.create('DeliveryMan');
     let recipient = await factory.create('Recipient');
 
@@ -143,10 +143,9 @@ describe('DeliveryMan', () => {
     });
 
     const myOrders = await request(app)
-      .get(`/deliveryman/${deliveryMan.id}/orders`);
+      .get(`/deliveryman/${deliveryMan.id}/orders?limit=100&page=1`);
 
-
-    expect(myOrders.body.length).toBeGreaterThan(1);
+    expect(myOrders.body.count).toBeGreaterThan(1);
   });
 
   it('when delivery man get order, update start date', async () => {
@@ -158,7 +157,7 @@ describe('DeliveryMan', () => {
       deliverymanId: fakeDeliveryMan.id,
     });
     const updatedResponse = await request(app)
-      .put(`/deliveryman/${fakeDeliveryMan.id}/orders/${fakeOrder.id}`);
+      .put(`/deliveryman/${fakeDeliveryMan.id}/deliverymanagements/${fakeOrder.id}`);
 
     expect(updatedResponse.body.startDate).toBeDefined();
   });
@@ -172,7 +171,7 @@ describe('DeliveryMan', () => {
       deliverymanId: fakeDeliveryMan.id,
     });
     const updatedResponse = await request(app)
-      .put(`/deliveryman/15000/orders/${fakeOrder.id}`);
+      .put(`/deliveryman/15000/deliverymanagements/${fakeOrder.id}`);
 
     expect(updatedResponse.body.error).toBe('DeliveryMan does not exist');
   });
@@ -186,9 +185,9 @@ describe('DeliveryMan', () => {
       deliverymanId: fakeDeliveryMan.id,
     });
     const updatedResponse = await request(app)
-      .put(`/deliveryman/${fakeDeliveryMan.id}/orders/2500`);
+      .put(`/deliveryman/${fakeDeliveryMan.id}/deliverymanagements/2500`);
 
-    expect(updatedResponse.body.error).toBe('Order not found');
+    expect(updatedResponse.body.error).toBe('Pedido não encontrado');
   });
 
   it('deliveryman can get only 5 orders by day should return limit order exceed', async () => {
@@ -226,10 +225,10 @@ describe('DeliveryMan', () => {
       deliverymanId: fakeDeliveryMan.id,
     });
     const updatedResponse = await request(app)
-      .put(`/deliveryman/${fakeDeliveryMan.id}/orders/${fakeOrder.id}`)
-      .send({ actualDate: setHours(new Date(), 19) });
+      .put(`/deliveryman/${fakeDeliveryMan.id}/deliverymanagements/${fakeOrder.id}`)
+      .send({ startDate: setHours(new Date(), 19) });
 
-    expect(updatedResponse.body.error).toBe('Limit of 5 orders exceeded');
+    expect(updatedResponse.body.error).toBe('Limite de 5 pedidos excedido');
   });
 
   it('deliveryman can get package between 8am and 6pm', async () => {
@@ -242,10 +241,9 @@ describe('DeliveryMan', () => {
       deliverymanId: fakeDeliveryMan.id,
     });
     const updatedResponse = await request(app)
-      .put(`/deliveryman/${fakeDeliveryMan.id}/orders/${fakeOrder.id}`)
-      .send({ actualDate: setHours(new Date(), 19) });
-
-    expect(updatedResponse.body.error).toBe('We are close for deliveries');
+      .put(`/deliveryman/${fakeDeliveryMan.id}/deliverymanagements/${fakeOrder.id}`)
+      .send({ startDate: setHours(new Date(), 19) });
+    expect(updatedResponse.body.error).toBe('Estamos fechados para retirada');
   });
 
   it('end delivery without signature must raise error', async () => {
@@ -257,10 +255,10 @@ describe('DeliveryMan', () => {
     });
     const endDate = new Date();
     const updatedResponse = await request(app)
-      .put(`/deliveryman/${fakeDeliveryMan.id}/orders/${fakeOrder.id}`)
+      .put(`/deliveryman/${fakeDeliveryMan.id}/deliverymanagements/${fakeOrder.id}`)
       .send({ endDate });
 
-    expect(updatedResponse.body.error).toEqual('Signature must be send');
+    expect(updatedResponse.body.error).toEqual('Assinatura deve ser enviada');
   });
 
   it('end delivery', async () => {
@@ -275,9 +273,9 @@ describe('DeliveryMan', () => {
     const uploadPath = resolve(__dirname, '..', '..', 'tmp', 'uploads');
 
     const response = await request(app)
-      .put(`/files/${fakeOrder.id}`)
-      .field('name', 'file')
-      .attach('file', filePath);
+      .put(`/orders/${fakeOrder.id}/enddelivery`)
+      .field('name', 'signature')
+      .attach('signature', filePath);
 
     await fs.unlink(resolve(uploadPath, response.body.File.path));
 
@@ -285,7 +283,7 @@ describe('DeliveryMan', () => {
 
     const endDate = new Date();
     const updatedResponse = await request(app)
-      .put(`/deliveryman/${fakeDeliveryMan.id}/orders/${fakeOrder.id}`)
+      .put(`/deliveryman/${fakeDeliveryMan.id}/deliverymanagements/${fakeOrder.id}`)
       .send({ endDate });
     expect(parseISO(updatedResponse.body.endDate)).toEqual(endDate);
   });
