@@ -55,7 +55,7 @@ export default function ConfirmDelivery({ route, navigation }) {
           uri: Platform.OS === "android" ? picture : picture.replace("file://", ""),
           name: picture.split("/")[9]
         });
-      const response = await api.post(`/orders/${order.id}/enddelivery`, data)
+      const response = await api.put(`/orders/${order.id}/enddelivery`, data)
       if (response.data.File) {
         Alert.alert('Sucesso', 'Entrega finalizada com sucesso');
         navigation.push('Dashboard')

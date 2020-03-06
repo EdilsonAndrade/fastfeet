@@ -27,7 +27,7 @@ export default function ContextMenu({
             </div>
           </ItemMenu>
 
-          <ItemMenu onClick={handleEdit}>
+          <ItemMenu onClick={handleDelete}>
             <div>
               <MdDeleteForever
                 size={22}

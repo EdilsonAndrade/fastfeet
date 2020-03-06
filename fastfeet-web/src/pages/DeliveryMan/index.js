@@ -8,7 +8,6 @@ import Grid from '../../components/Grid';
 import api from '~/services/api';
 import { saveSuccess, loadSuccess } from '~/store/modules/deliveryman/actions';
 import Pagination from '~/components/Pagination';
-import AvatarPreviewDefault from '~/assets/avatar.svg';
 import { Avatar, DeliveryManTopContent } from './styles';
 import ContextMenu from '~/components/ContextMenu';
 

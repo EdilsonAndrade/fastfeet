@@ -20,7 +20,7 @@ class OrderProblemController {
         include: [
           {
             model: Order,
-            attributes: ['id', 'product', 'startDate', 'endDate'],
+            attributes: ['id', 'product', 'startDate', 'endDate', 'canceledAt'],
             include: [
               {
                 model: DeliveryMan,
@@ -39,8 +39,35 @@ class OrderProblemController {
     const orderProblem = await OrderProblem.findAndCountAll({
       limit: Number(limit),
       offset: (page - 1) * limit,
+      include: [
+        {
+          model: Order,
+          attributes: ['id', 'product', 'startDate', 'endDate', 'canceledAt'],
+          include: [
+            {
+              model: DeliveryMan,
+              attributes: ['name', 'email'],
+            },
+          ],
+        },
+      ],
     });
     return res.json(orderProblem);
+  }
+
+  async delete(req, res) {
+    const { orderId } = req.params;
+
+    const order = await Order.findByPk(orderId);
+    if (!order) {
+      return res.status(401).json({ error: 'Order not found' });
+    }
+
+    const updatedOrder = order.update({
+      canceledAt: new Date(),
+    });
+
+    return res.json(updatedOrder);
   }
 
   async store(req, res) {

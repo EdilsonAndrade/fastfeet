@@ -40,7 +40,8 @@ module.exports = {
     "quotes":['error', 'single'],
     "react/jsx-props-no-spreading": "off",
     "jsx-a11y/control-has-associated-label": ["off"],
-    "jsx-a11y/label-has-associated-control": ["off"]
+    "jsx-a11y/label-has-associated-control": ["off"],
+    "react/forbid-prop-types": ["off"]
 
   },
 };

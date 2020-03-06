@@ -5,13 +5,13 @@ import { format } from 'date-fns';
 import pt from 'date-fns/locale/pt';
 import { zonedTimeToUtc } from 'date-fns-tz';
 import history from '../../services/history';
-import Button from '../../components/Button';
-import Grid from '../../components/Grid';
-import { ButtonDiv, StatusContent, DeliveryAvatar } from './styles';
+import Top from './Top';
+import OrdersTable from './OrdersTable';
 import api from '~/services/api';
 import { saveSuccess } from '~/store/modules/order/actions';
+import { signOutSuccess } from '~/store/modules/signin/actions';
 import Pagination from '~/components/Pagination';
-import ContextMenu from '~/components/ContextMenu';
+
 import Modal from '~/components/Modal';
 
 export default function Order() {
@@ -28,9 +28,10 @@ export default function Order() {
   const [open, setOpen] = useState(false);
   const [orderImageUrl, setOrderImageUrl] = useState();
   const [order, setOrder] = useState({});
+
   const handleCadastrar = () => {
     dispatch(saveSuccess(''));
-    history.push('/order/orderform');
+    history.push('/orders/orderform');
   };
 
   const handleEdit = () => {
@@ -86,7 +87,7 @@ export default function Order() {
 
   async function handleSearchStudent(e) {
     const response = await api.get(
-      `/orders?limit=${totalPages}&page=${page}&name=${e}`
+      `/orders?limit=${totalPages}&page=${page}&search=${e}`
     );
     const { data } = response;
     const dataWithStatusFormated = data.rows.map(d => ({
@@ -95,35 +96,45 @@ export default function Order() {
     }));
     setOrders(dataWithStatusFormated);
     setOrdersCount(data.count);
-    setOrders(data.rows);
+    setOrders(dataWithStatusFormated);
   }
 
   async function getOrders(onDeletePage) {
     const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    try {
+      const response = await api.get(
+        `/orders?limit=2&page=${onDeletePage || page}`
+      );
 
-    const response = await api.get(
-      `/orders?limit=2&page=${onDeletePage || page}`
-    );
-    setOrdersCount(response.data.count);
-    const { data } = response;
-    const dataWithStatusFormated = data.rows.map(d => ({
-      ...d,
-      formattedStatus: getFormatedStatus(d),
-      formatedStartDate: d.startDate
-        ? format(zonedTimeToUtc(d.startDate, timezone), 'dd/MM/yyyy HH:mm:ss', {
-            locale: pt,
-          })
-        : '',
-      formatedEndDate: d.endDate
-        ? format(zonedTimeToUtc(d.endDate, timezone), 'dd/MM/yyyy HH:mm:ss', {
-            locale: pt,
-          })
-        : '',
-    }));
+      setOrdersCount(response.data.count);
+      const { data } = response;
+      const dataWithStatusFormated = data.rows.map(d => ({
+        ...d,
+        formattedStatus: getFormatedStatus(d),
+        formatedStartDate: d.startDate
+          ? format(
+              zonedTimeToUtc(d.startDate, timezone),
+              'dd/MM/yyyy HH:mm:ss',
+              {
+                locale: pt,
+              }
+            )
+          : '',
+        formatedEndDate: d.endDate
+          ? format(zonedTimeToUtc(d.endDate, timezone), 'dd/MM/yyyy HH:mm:ss', {
+              locale: pt,
+            })
+          : '',
+      }));
 
-    setOrders(dataWithStatusFormated);
-    if (response.data.length <= 0) {
-      setPage(page - 1);
+      setOrders(dataWithStatusFormated);
+      if (response.data.length <= 0) {
+        setPage(page - 1);
+      }
+    } catch (error) {
+      toast.warn('Ocorreu um erro, favor logar novamente');
+      dispatch(signOutSuccess());
+      history.push('Signin');
     }
   }
 
@@ -145,90 +156,20 @@ export default function Order() {
 
   return (
     <>
-      <div>
-        <strong>Gerenciando encomendas</strong>
-        <ButtonDiv>
-          <Button
-            buttonType="button"
-            saveButton
-            icon="add"
-            handleClick={handleCadastrar}
-          >
-            Cadastrar
-          </Button>
-          <input
-            type="text"
-            value={searchValue}
-            placeholder="Buscar aluno"
-            onChange={e => {
-              setSearchValue(e.target.value);
-              handleSearchStudent(e.target.value);
-            }}
-          />
-        </ButtonDiv>
-      </div>
-      <Grid>
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Destinatário</th>
-            <th>Foto</th>
-            <th>Entregador</th>
-            <th>Cidade</th>
-            <th>Estado</th>
-            <th>Status</th>
-            <th>Ações</th>
-          </tr>
-        </thead>
-        <tbody>
-          {orders.map(o => (
-            <tr key={o.id}>
-              <td>{o.id}</td>
-              <td style={{ width: 320 }}>{o.Recipient.name}</td>
-              <td>
-                <DeliveryAvatar>
-                  {o.DeliveryMan.avatar ? (
-                    <img src={o.DeliveryMan.avatar.url} alt="avatar" />
-                  ) : (
-                    <img
-                      src={`https://avatar.oxro.io/avatar?name=${o.DeliveryMan.name}`}
-                      alt="avatar"
-                    />
-                  )}
-                </DeliveryAvatar>
-              </td>
-              <td style={{ width: 420 }}>{o.DeliveryMan.name}</td>
-              <td>{o.Recipient.city}</td>
-              <td>{o.Recipient.state}</td>
-              <td>
-                <StatusContent id="status" status={o.formattedStatus}>
-                  <span>{o.formattedStatus.text}</span>
-                </StatusContent>
-              </td>
-              <td>
-                {o.canceledAt ? null : (
-                  <button onClick={() => handleClick(o, o.id)} type="button">
-                    <ul>
-                      <li>.</li>
-                      <li>.</li>
-                      <li>.</li>
-                    </ul>
-                    <ContextMenu
-                      id={o.id}
-                      order={o && o.endDate}
-                      visible={orderVisible}
-                      handleDelete={handleDelete}
-                      handleEdit={handleEdit}
-                      handleView={() => handleView(o.File.url)}
-                      menuId="contextMenu"
-                    />
-                  </button>
-                )}
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </Grid>
+      <Top
+        setSearchValue={setSearchValue}
+        searchValue={searchValue}
+        handleCadastrar={handleCadastrar}
+        handleSearchStudent={handleSearchStudent}
+      />
+      <OrdersTable
+        data={orders}
+        orderVisible={orderVisible}
+        handleDelete={handleDelete}
+        handleEdit={handleEdit}
+        handleView={handleView}
+        handleClick={handleClick}
+      />
       <Pagination
         handleBackPage={() => handlePreviousPage(previousPage)}
         showBack={page > 1}

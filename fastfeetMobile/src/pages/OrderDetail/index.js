@@ -69,7 +69,7 @@ export default function OrderDetail({ navigation }) {
       {
         text: 'Sim', onPress: async () => {
           try {
-            const response = await api.put(`/deliveryman/${deliveryMan.id}/orders/${order.id}`, {
+            const response = await api.put(`/deliveryman/${deliveryMan.id}/deliverymanagements/${order.id}`, {
               startDate: new Date()
             });
 

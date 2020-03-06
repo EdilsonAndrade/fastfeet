@@ -20,26 +20,17 @@ export const Content = styled.div`
   justify-content: flex-start;
   align-items: flex-start;
   padding: 20px 0;
+
   label {
     font-weight: bold;
     text-transform: uppercase;
   }
-  > span {
-    display: flex;
-
-    > span {
-      display: flex;
-      flex-direction: column;
-      justify-content: flex-start;
-      margin-left: 10px;
-      margin-bottom: 10px;
-      > div {
-        height: 45px;
-        > div {
-          height: 45px;
-        }
-      }
-    }
+  > span#grid {
+    width: 94%;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-gap: 6px;
+    margin-left: 9px;
   }
 
   div#productDiv {
@@ -59,6 +50,4 @@ export const Content = styled.div`
   }
 `;
 
-export const AsyncSelectRecipient = styled(AsyncSelect)`
-  width: 691px;
-`;
+export const AsyncSelectRecipient = styled(AsyncSelect)``;

@@ -68,8 +68,8 @@ export default function Problem() {
   useEffect(() => {
     getProblems();
   }, [previousPage, nextPage]);
-  const handleView = text => {
-    setText(text);
+  const handleView = description => {
+    setText(description);
     setOpen(true);
   };
   const handleClose = () => {
@@ -92,7 +92,9 @@ export default function Problem() {
           {problems.map(problem => (
             <tr key={problem.orderId}>
               <td>{problem.id}</td>
-              <td>{problem.description}</td>
+              <td color={problem.Order.canceledAt ? '#de3b3b' : '#4444'}>
+                {problem.description}
+              </td>
               <td>
                 <button
                   aria-controls="contextMenu"
@@ -110,7 +112,7 @@ export default function Problem() {
                     problem
                     id={problem.id}
                     visible={problemVisible}
-                    handleDelete={handleDelete}
+                    handleDelete={() => handleDelete()}
                     handleView={() => handleView(problem.description)}
                   />
                 </button>

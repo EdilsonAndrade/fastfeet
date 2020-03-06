@@ -25,6 +25,7 @@ routes.post('/orders/:orderId/problems', OrderProblemController.store);
 routes.get('/orders/:orderId/problems', OrderProblemController.index);
 
 routes.use(authMiddleware);
+routes.delete('/orders/:orderId/problems', OrderProblemController.delete);
 
 routes.post('/recipients', RecipientController.store);
 routes.put('/recipients/:recipientId', RecipientController.update);

@@ -23,6 +23,7 @@ export const Content = styled.table`
     }
     color: #666666;
     td {
+      color: ${props => (props.color ? props.color : '#66666')};
       margin: 0;
       padding: 10px 5px;
       border-bottom: 1px solid #979797;

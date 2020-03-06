@@ -20,14 +20,14 @@ export default function OrderForm() {
   const [product, setProduct] = useState(order.product);
   const [deliverymanId, setDeliveryManId] = useState();
 
-  const [defaultDeliveryMan, setDefaultDeliveryMan] = useState({
+  const defaultDeliveryMan = {
     value: order.DeliveryMan && order.DeliveryMan.id,
     label: order.DeliveryMan && order.DeliveryMan.name,
-  });
-  const [defaultRecipient, setDefaultRecipient] = useState({
+  };
+  const defaultRecipient = {
     value: order.Recipient && order.Recipient.id,
     label: order.Recipient && order.Recipient.name,
-  });
+  };
   async function handleSearchRecipient(newValue) {
     const inputValue = newValue.replace(/\W/g, '');
     const response = await api.get(
@@ -113,7 +113,7 @@ export default function OrderForm() {
       </div>
 
       <Content>
-        <span>
+        <span id="grid">
           <span>
             <label htmlFor="recipient">Destinário</label>
             <AsyncSelectRecipient
@@ -141,6 +141,7 @@ export default function OrderForm() {
             />
           </span>
         </span>
+
         <div id="productDiv">
           <label htmlFor="product">Product</label>
           <input
