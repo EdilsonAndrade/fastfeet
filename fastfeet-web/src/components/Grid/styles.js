@@ -5,11 +5,14 @@ export const Container = styled.div`
   display: flex;
   flex-direction: column;
   border-radius: 4px;
+  min-height: 230px;
+  border-radius: 6px;
 `;
 export const Content = styled.table`
   width: 95%;
   padding: 12px;
   border-spacing: 0;
+
   thead {
     tr {
       text-align: left;
@@ -17,13 +20,13 @@ export const Content = styled.table`
   }
   tr {
     line-height: 50px;
+    color: ${props => (props.color ? props.color : '#666666')};
     :hover {
       background: #eeee;
       cursor: pointer;
     }
-    color: #666666;
     td {
-      color: ${props => (props.color ? props.color : '#66666')};
+      color: ${props => (props.color ? props.color : '#666666')};
       margin: 0;
       padding: 10px 5px;
       border-bottom: 1px solid #979797;

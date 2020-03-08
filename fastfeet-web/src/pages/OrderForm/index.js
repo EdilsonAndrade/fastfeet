@@ -73,12 +73,12 @@ export default function OrderForm() {
   };
 
   useEffect(() => {
-    if (order.id) {
+    if (order.id && order.Recipient.id && order.DeliveryMan.id) {
       setEditMode(true);
       setDeliveryManId(order.DeliveryMan.id);
       setRecipientId(order.Recipient.id);
     }
-  }, []);
+  }, [order.id, order.DeliveryMan.id, order.Recipient.id]);
 
   const handleBack = () => {
     history.push('/orders');

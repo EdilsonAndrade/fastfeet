@@ -28,7 +28,7 @@ export default function Order() {
   const [open, setOpen] = useState(false);
   const [orderImageUrl, setOrderImageUrl] = useState();
   const [order, setOrder] = useState({});
-
+  const [deleted, setDeleted] = useState(false);
   const handleCadastrar = () => {
     dispatch(saveSuccess(''));
     history.push('/orders/orderform');
@@ -99,51 +99,12 @@ export default function Order() {
     setOrders(dataWithStatusFormated);
   }
 
-  async function getOrders(onDeletePage) {
-    const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-    try {
-      const response = await api.get(
-        `/orders?limit=2&page=${onDeletePage || page}`
-      );
-
-      setOrdersCount(response.data.count);
-      const { data } = response;
-      const dataWithStatusFormated = data.rows.map(d => ({
-        ...d,
-        formattedStatus: getFormatedStatus(d),
-        formatedStartDate: d.startDate
-          ? format(
-              zonedTimeToUtc(d.startDate, timezone),
-              'dd/MM/yyyy HH:mm:ss',
-              {
-                locale: pt,
-              }
-            )
-          : '',
-        formatedEndDate: d.endDate
-          ? format(zonedTimeToUtc(d.endDate, timezone), 'dd/MM/yyyy HH:mm:ss', {
-              locale: pt,
-            })
-          : '',
-      }));
-
-      setOrders(dataWithStatusFormated);
-      if (response.data.length <= 0) {
-        setPage(page - 1);
-      }
-    } catch (error) {
-      toast.warn('Ocorreu um erro, favor logar novamente');
-      dispatch(signOutSuccess());
-      history.push('Signin');
-    }
-  }
-
   async function handleDelete() {
     setOrderVisible(0);
     if (window.confirm('Tem certeza que quer excluir este registro?')) {
       try {
         await api.delete(`/orders/${orderId}`);
-        getOrders(page);
+        setDeleted(!deleted);
       } catch (error) {
         toast.error(`Ocorreu um erro : ${error}`);
       }
@@ -151,10 +112,50 @@ export default function Order() {
   }
 
   useEffect(() => {
-    if (page > 0) {
-      getOrders();
+    async function getOrders(onDeletePage) {
+      const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+      try {
+        const response = await api.get(
+          `/orders?limit=2&page=${onDeletePage || page}`
+        );
+
+        setOrdersCount(response.data.count);
+        const { data } = response;
+        const dataWithStatusFormated = data.rows.map(d => ({
+          ...d,
+          formattedStatus: getFormatedStatus(d),
+          formatedStartDate: d.startDate
+            ? format(
+                zonedTimeToUtc(d.startDate, timezone),
+                'dd/MM/yyyy HH:mm:ss',
+                {
+                  locale: pt,
+                }
+              )
+            : '',
+          formatedEndDate: d.endDate
+            ? format(
+                zonedTimeToUtc(d.endDate, timezone),
+                'dd/MM/yyyy HH:mm:ss',
+                {
+                  locale: pt,
+                }
+              )
+            : '',
+        }));
+
+        setOrders(dataWithStatusFormated);
+        if (response.data.length <= 0) {
+          setPage(page - 1);
+        }
+      } catch (error) {
+        toast.warn('Ocorreu um erro, favor logar novamente');
+        dispatch(signOutSuccess());
+        history.push('Signin');
+      }
     }
-  }, [page]);
+    getOrders();
+  }, [page, deleted, dispatch]);
 
   return (
     <>

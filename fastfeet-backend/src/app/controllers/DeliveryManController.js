@@ -2,6 +2,7 @@ import * as Yup from 'yup';
 import { Op } from 'sequelize';
 import DeliveryMan from '../models/DeliveryMan';
 import File from '../models/File';
+import Order from '../models/Order';
 
 class DeliveryManController {
   async store(req, res) {
@@ -30,6 +31,11 @@ class DeliveryManController {
 
   async delete(req, res) {
     const { deliveryManId } = req.params;
+
+    const order = await Order.findOne({ where: { deliverymanId: deliveryManId } });
+    if (order) {
+      return res.status(401).json({ error: 'Delivery man cant be deleted, associated to an order' });
+    }
     const deliveryMan = await DeliveryMan.findByPk(deliveryManId);
     if (!deliveryMan) {
       return res.status(400).json({ error: 'DeliveryMan does not exist' });
@@ -46,6 +52,9 @@ class DeliveryManController {
 
     if (deliveryManId) {
       const deliveryMan = await DeliveryMan.findByPk(deliveryManId, {
+        order: [
+          ['createdAt', 'ASC'],
+        ],
         include: [
           {
             model: File,
@@ -61,6 +70,9 @@ class DeliveryManController {
       const deliveryMen = await DeliveryMan.findAndCountAll({
         limit: Number(limit),
         offset: (page - 1) * limit,
+        order: [
+          ['createdAt', 'ASC'],
+        ],
         where: {
           [Op.or]: [
             {
@@ -91,6 +103,9 @@ class DeliveryManController {
       const deliveryMen = await DeliveryMan.findAndCountAll({
         limit: Number(limit),
         offset: (page - 1) * limit,
+        order: [
+          ['createdAt', 'ASC'],
+        ],
         include: [
           {
             model: File,

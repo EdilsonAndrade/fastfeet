@@ -1,6 +1,7 @@
 import * as Yup from 'yup';
 import { Op } from 'sequelize';
 import Recipient from '../models/Recipient';
+import Order from '../models/Order';
 
 class RecipientController {
   async store(req, res) {
@@ -35,9 +36,15 @@ class RecipientController {
     const { recipientId } = req.params;
     const recipient = await Recipient.findByPk(recipientId);
     if (!recipient) {
-      return res.status(400).json({ error: 'Recipient does not exist' });
+      return res.status(400).json({ error: 'Client does not exist' });
     }
+    const order = await Order.findOne({ where: { recipientId } });
+    if (order) {
+      return res.status(400).json({ error: 'Client has an product associated, cant be deleted' });
+    }
+
     await recipient.destroy();
+
 
     return res.json({ message: 'Recipient deleted success' });
   }

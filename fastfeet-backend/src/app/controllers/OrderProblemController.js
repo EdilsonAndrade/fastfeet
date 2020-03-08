@@ -58,7 +58,7 @@ class OrderProblemController {
   async delete(req, res) {
     const { orderId } = req.params;
 
-    const order = await Order.findByPk(orderId);
+    const order = await Order.findOne({ where: { id: orderId, endDate: { [Op.not]: null } } });
     if (!order) {
       return res.status(401).json({ error: 'Order not found' });
     }

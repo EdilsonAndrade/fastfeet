@@ -16,7 +16,7 @@ export default function ContextMenu({
     if (problem) {
       return (
         <>
-          <ItemMenu onClick={handleView}>
+          <ItemMenu onClick={handleView} id="1">
             <div>
               <MdRemoveRedEye
                 size={22}
@@ -44,7 +44,7 @@ export default function ContextMenu({
     if (order) {
       return (
         <>
-          <ItemMenu onClick={handleView}>
+          <ItemMenu onClick={handleView} id="2">
             <div>
               <MdRemoveRedEye
                 size={22}

@@ -21,8 +21,9 @@ export default function Recipient() {
   const [recipientId, setRecipientId] = useState(0);
   const [recipientCount, setRecipientCount] = useState(0);
   const totalPages = 2;
-
+  const [pageRows, setPageRows] = useState(0);
   const [recipientVisible, setRecipientVisible] = useState(0);
+  const [deletedRow, setDeletedRow] = useState(false);
 
   async function handleSearch(e) {
     const response = await api.get(
@@ -59,18 +60,6 @@ export default function Recipient() {
     setPage(page + 1);
   };
 
-  async function getRecipients(pageOnDeleted) {
-    const response = await api.get(
-      `/recipients?limit=${totalPages}&page=${pageOnDeleted || page}`
-    );
-    const { data } = response;
-    const dataFormated = data.rows.map(d => ({
-      ...d,
-      fullAddress: `${d.addressLine}, ${d.number} ${d.addressLineTwo} - ${d.city} - ${d.state}`,
-    }));
-    setRecipientCount(data.count);
-    dispatch(loadSuccess(dataFormated));
-  }
   const handleEdit = () => {
     dispatch(saveSuccess(recipients.find(d => d.id === +recipientId)));
     history.push({
@@ -82,26 +71,51 @@ export default function Recipient() {
     if (window.confirm('Tem certeza que quer excluir este registro?')) {
       try {
         let pageOnDelete = page;
-        if (recipientCount - 1 <= totalPages) {
+        if (pageRows - 1 < 1) {
           pageOnDelete -= 1;
         }
+
         await api.delete(`/recipients/${recipientId}`);
-        getRecipients(pageOnDelete);
         setPage(pageOnDelete);
-      } catch (error) {
-        toast.error(`Ocorreu um erro : ${error}`);
+        setDeletedRow(!deletedRow);
+      } catch ({ response }) {
+        if (response.data) {
+          const { error } = response.data;
+          if (error) {
+            if (error.includes('associated')) {
+              toast.error(
+                'Cliente possui um pedido associado, não é possível remover'
+              );
+            }
+          }
+        } else {
+          toast.error(`Ocorreu um erro sistêmico : ${response}`);
+        }
       }
     }
   }
 
   useEffect(() => {
+    async function getRecipients(pageOnDeleted) {
+      const response = await api.get(
+        `/recipients?limit=${totalPages}&page=${pageOnDeleted || page}`
+      );
+      const { data } = response;
+      const dataFormated = data.rows.map(d => ({
+        ...d,
+        fullAddress: `${d.addressLine}, ${d.number} ${d.addressLineTwo} - ${d.city} - ${d.state}`,
+      }));
+      setRecipientCount(data.count);
+      dispatch(loadSuccess(dataFormated));
+      setPageRows(data.rows.length);
+    }
     getRecipients();
-  }, [previousPage, nextPage]);
+  }, [page, deletedRow, dispatch]);
 
   return (
     <>
       <RecipientTopContent>
-        <strong>Gerenciando entregadores</strong>
+        <strong>Gerenciando destinatário</strong>
         <div>
           <label htmlFor="search">
             <MdSearch color="#ccc" size={22} />
@@ -109,7 +123,7 @@ export default function Recipient() {
               id="search"
               type="text"
               value={searchValue}
-              placeholder="Buscar por entregadores"
+              placeholder="Buscar por destinatário"
               onChange={e => {
                 setSearchValue(e.target.value);
                 handleSearch(e.target.value);

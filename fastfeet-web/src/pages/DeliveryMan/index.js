@@ -23,6 +23,7 @@ export default function DeliveryMan() {
   const totalPages = 2;
   const [deliveryManVisible, setDeliveryManVisible] = useState(0);
   const [pageRows, setPageRows] = useState(0);
+  const [deleted, setDeleted] = useState(false);
   async function handleSearch(e) {
     const response = await api.get(
       `/deliveryman?limit=${totalPages}&page=${page}&search=${e}`
@@ -55,16 +56,6 @@ export default function DeliveryMan() {
     setPage(page + 1);
   };
 
-  async function getDeliveryMan(pageOnDeleted) {
-    const response = await api.get(
-      `/deliveryman?limit=${totalPages}&page=${pageOnDeleted || page}`
-    );
-    const { data } = response;
-
-    setDeliveryManCount(data.count);
-    setPageRows(data.rows.length);
-    dispatch(loadSuccess(data.rows));
-  }
   const handleEdit = () => {
     dispatch(saveSuccess(deliveryMans.find(d => d.id === +deliveryManId)));
     history.push({
@@ -75,23 +66,45 @@ export default function DeliveryMan() {
   async function handleDelete() {
     if (window.confirm('Tem certeza que quer excluir este registro?')) {
       try {
+        console.tron.warn('entre');
         await api.delete(`/deliveryman/${deliveryManId}`);
         let pageOnDelete = page;
         if (pageRows - 1 < 1) {
           pageOnDelete -= 1;
         }
 
-        getDeliveryMan(pageOnDelete);
         setPage(pageOnDelete);
-      } catch (error) {
-        toast.error(`Ocorreu um erro : ${error}`);
+        setDeleted(!deleted);
+      } catch ({ response }) {
+        const { error } = response.data;
+        if (error) {
+          if (error.includes('associated')) {
+            toast.error(
+              'Entregador não pode ser excluido quanto associado a um pedido'
+            );
+          } else {
+            toast.error(error);
+          }
+        } else {
+          toast.error(`Ocorreu um erro : ${error}`);
+        }
       }
     }
   }
 
   useEffect(() => {
+    async function getDeliveryMan(pageOnDeleted) {
+      const response = await api.get(
+        `/deliveryman?limit=${totalPages}&page=${pageOnDeleted || page}`
+      );
+      const { data } = response;
+
+      setDeliveryManCount(data.count);
+      setPageRows(data.rows.length);
+      dispatch(loadSuccess(data.rows));
+    }
     getDeliveryMan();
-  }, [page]);
+  }, [page, dispatch, deleted]);
 
   return (
     <>

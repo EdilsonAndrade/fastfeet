@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from 'react';
-
+import React, { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import Grid from '../../components/Grid';
 import api from '~/services/api';
@@ -20,14 +19,14 @@ export default function Problem() {
   const [open, setOpen] = useState(false);
   const [problemVisible, setProblemVisible] = useState(null);
 
-  const handleClick = id => {
+  const handleClick = (id, idOrder) => {
     if (id === problemVisible) {
       setProblemVisible(0);
     } else {
       setProblemVisible(id);
     }
 
-    setOrderId(id);
+    setOrderId(idOrder);
   };
 
   const handlePreviousPage = () => {
@@ -39,16 +38,17 @@ export default function Problem() {
     setNextPage(nextPage + 1);
     setPage(page + 1);
   };
-
-  async function getProblems(pageOnDeleted) {
-    const response = await api.get(
-      `/problems?limit=${totalPages}&page=${pageOnDeleted || page}`
-    );
-    const { data } = response;
-    setProblemsCount(data.count);
-    setProblems(data.rows);
-  }
-
+  useEffect(() => {
+    async function loadFirstData() {
+      const response = await api.get(
+        `/problems?limit=${totalPages}&page=${page}`
+      );
+      const { data } = response;
+      setProblemsCount(data.count);
+      setProblems(data.rows);
+    }
+    loadFirstData();
+  }, [page]);
   async function handleDelete() {
     if (window.confirm('Tem certeza que quer excluir este registro?')) {
       try {
@@ -57,17 +57,18 @@ export default function Problem() {
           pageOnDelete -= 1;
         }
         await api.delete(`/orders/${orderId}/problems`);
-        getProblems(pageOnDelete);
         setPage(pageOnDelete);
-      } catch (error) {
-        toast.error(`Ocorreu um erro : ${error}`);
+      } catch ({ response }) {
+        const { error } = response.data;
+        if (error) {
+          toast.error(error);
+        } else {
+          toast.error(`Ocorreu um erro : ${error}`);
+        }
       }
     }
   }
 
-  useEffect(() => {
-    getProblems();
-  }, [previousPage, nextPage]);
   const handleView = description => {
     setText(description);
     setOpen(true);
@@ -90,16 +91,14 @@ export default function Problem() {
         </thead>
         <tbody>
           {problems.map(problem => (
-            <tr key={problem.orderId}>
+            <tr key={problem.id}>
               <td>{problem.id}</td>
-              <td color={problem.Order.canceledAt ? '#de3b3b' : '#4444'}>
-                {problem.description}
-              </td>
+              <td>{problem.description}</td>
               <td>
                 <button
                   aria-controls="contextMenu"
                   aria-haspopup="true"
-                  onClick={() => handleClick(problem.id)}
+                  onClick={() => handleClick(problem.id, problem.Order.id)}
                   type="button"
                 >
                   <ul>
@@ -109,7 +108,7 @@ export default function Problem() {
                   </ul>
                   <ContextMenu
                     larger
-                    problem
+                    problem={problem}
                     id={problem.id}
                     visible={problemVisible}
                     handleDelete={() => handleDelete()}

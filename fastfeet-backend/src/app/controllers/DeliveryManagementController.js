@@ -25,7 +25,7 @@ class DeliveryManagementController {
 
     });
     if (countOfOrderDelivered.length === 5) {
-      return res.status(401).json({ error: 'Limite de 5 pedidos excedido' });
+      return res.status(401).json({ error: 'The limit of 5 orders is exceeded' });
     }
 
     const actualDate = parseISO(startDate);
@@ -34,16 +34,16 @@ class DeliveryManagementController {
     const endOfWork = setSeconds(setMinutes(setHours(new Date(), 18), 0), 0);
 
     if (isBefore(actualDate, beginOfWork) || isAfter(actualDate, endOfWork)) {
-      return res.status(401).json({ error: 'Estamos fechados para retirada' });
+      return res.status(401).json({ error: 'We are closed for deliveries' });
     }
 
     const order = await Order.findByPk(orderId);
 
-    if (!order) return res.status(400).json({ error: 'Pedido não encontrado' });
+    if (!order) return res.status(400).json({ error: 'Order not found' });
 
     if (endDate) {
       if (!order.signatureId) {
-        return res.status(401).json({ error: 'Assinatura deve ser enviada' });
+        return res.status(401).json({ error: 'Signature must be send' });
       }
     }
     await order.update({

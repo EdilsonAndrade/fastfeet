@@ -41,7 +41,9 @@ module.exports = {
     "react/jsx-props-no-spreading": "off",
     "jsx-a11y/control-has-associated-label": ["off"],
     "jsx-a11y/label-has-associated-control": ["off"],
-    "react/forbid-prop-types": ["off"]
+    "react/forbid-prop-types": ["off"],
+    "react-hooks/exhaustive-deps": "warn",
+    "no-alert": ["off"]
 
   },
 };

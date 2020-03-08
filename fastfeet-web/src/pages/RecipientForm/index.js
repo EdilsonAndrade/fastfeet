@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-
 import { Input, Form } from '@rocketseat/unform';
 import history from '../../services/history';
 import Button from '../../components/Button';
@@ -21,7 +20,7 @@ export default function RecipientForm() {
     if (recipientData.id) {
       setEditMode(true);
     }
-  }, []);
+  }, [recipientData.id]);
 
   const handleBack = () => {
     history.push('/recipients');

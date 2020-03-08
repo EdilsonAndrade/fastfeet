@@ -31,7 +31,7 @@ export default function DeliveryManForm() {
     if (deliveryManData.id) {
       setEditMode(true);
     }
-  }, []);
+  }, [deliveryManData.id]);
 
   const handleBack = () => {
     history.push('/deliveryman');
