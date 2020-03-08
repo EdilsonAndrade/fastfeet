@@ -187,7 +187,7 @@ describe('DeliveryMan', () => {
     const updatedResponse = await request(app)
       .put(`/deliveryman/${fakeDeliveryMan.id}/deliverymanagements/2500`);
 
-    expect(updatedResponse.body.error).toBe('Pedido não encontrado');
+    expect(updatedResponse.body.error).toBe('Order not found');
   });
 
   it('deliveryman can get only 5 orders by day should return limit order exceed', async () => {
@@ -228,7 +228,7 @@ describe('DeliveryMan', () => {
       .put(`/deliveryman/${fakeDeliveryMan.id}/deliverymanagements/${fakeOrder.id}`)
       .send({ startDate: setHours(new Date(), 19) });
 
-    expect(updatedResponse.body.error).toBe('Limite de 5 pedidos excedido');
+    expect(updatedResponse.body.error).toBe('The limit of 5 orders is exceeded');
   });
 
   it('deliveryman can get package between 8am and 6pm', async () => {
@@ -243,7 +243,7 @@ describe('DeliveryMan', () => {
     const updatedResponse = await request(app)
       .put(`/deliveryman/${fakeDeliveryMan.id}/deliverymanagements/${fakeOrder.id}`)
       .send({ startDate: setHours(new Date(), 19) });
-    expect(updatedResponse.body.error).toBe('Estamos fechados para retirada');
+    expect(updatedResponse.body.error).toBe('We are closed for deliveries');
   });
 
   it('end delivery without signature must raise error', async () => {
@@ -258,7 +258,7 @@ describe('DeliveryMan', () => {
       .put(`/deliveryman/${fakeDeliveryMan.id}/deliverymanagements/${fakeOrder.id}`)
       .send({ endDate });
 
-    expect(updatedResponse.body.error).toEqual('Assinatura deve ser enviada');
+    expect(updatedResponse.body.error).toEqual('Signature must be send');
   });
 
   it('end delivery', async () => {

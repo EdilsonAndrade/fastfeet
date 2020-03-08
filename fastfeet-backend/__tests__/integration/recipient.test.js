@@ -70,7 +70,7 @@ describe('Recipient', () => {
     expect(name).toEqual('Edilson Recipient');
   });
 
-  it('should error recipient does not exist', async () => {
+  it('should error client does not exist', async () => {
     const user = await factory.create('User');
     const updatedRecipient = await request(app)
       .put('/recipients/0')
@@ -99,7 +99,7 @@ describe('Recipient', () => {
     const deleted = await request(app)
       .delete('/recipients/0')
       .set('Authorization', `Bearer ${user.generateToken().token}`);
-    expect(deleted.body.error).toEqual('Recipient does not exist');
+    expect(deleted.body.error).toEqual('Client does not exist');
   });
 
   it('should list recipients', async () => {
