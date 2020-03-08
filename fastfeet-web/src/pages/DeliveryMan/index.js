@@ -21,8 +21,8 @@ export default function DeliveryMan() {
   const [deliveryManId, setDeliveryManId] = useState(0);
   const [deliveryManCount, setDeliveryManCount] = useState(0);
   const totalPages = 2;
-  const [deliveryManVisible, setDeliveryManVisible] = React.useState(0);
-
+  const [deliveryManVisible, setDeliveryManVisible] = useState(0);
+  const [pageRows, setPageRows] = useState(0);
   async function handleSearch(e) {
     const response = await api.get(
       `/deliveryman?limit=${totalPages}&page=${page}&search=${e}`
@@ -60,7 +60,9 @@ export default function DeliveryMan() {
       `/deliveryman?limit=${totalPages}&page=${pageOnDeleted || page}`
     );
     const { data } = response;
+
     setDeliveryManCount(data.count);
+    setPageRows(data.rows.length);
     dispatch(loadSuccess(data.rows));
   }
   const handleEdit = () => {
@@ -73,11 +75,12 @@ export default function DeliveryMan() {
   async function handleDelete() {
     if (window.confirm('Tem certeza que quer excluir este registro?')) {
       try {
+        await api.delete(`/deliveryman/${deliveryManId}`);
         let pageOnDelete = page;
-        if (deliveryManCount - 1 <= totalPages) {
+        if (pageRows - 1 < 1) {
           pageOnDelete -= 1;
         }
-        await api.delete(`/deliveryman/${deliveryManId}`);
+
         getDeliveryMan(pageOnDelete);
         setPage(pageOnDelete);
       } catch (error) {
@@ -88,7 +91,7 @@ export default function DeliveryMan() {
 
   useEffect(() => {
     getDeliveryMan();
-  }, [dispatch, previousPage, nextPage]);
+  }, [page]);
 
   return (
     <>
