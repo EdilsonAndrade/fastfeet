@@ -6,7 +6,7 @@ import { ButtonDiv, ContainerButtonSearch, TopContainer } from '../styles';
 
 export default function Top({
   setSearchValue,
-  handleSearchStudent,
+  handleSearch,
   handleCadastrar,
   searchValue,
 }) {
@@ -23,7 +23,7 @@ export default function Top({
             placeholder="Buscar encomenda"
             onChange={e => {
               setSearchValue(e.target.value);
-              handleSearchStudent(e.target.value);
+              handleSearch(e.target.value);
             }}
           />
         </label>
@@ -44,7 +44,7 @@ export default function Top({
 }
 Top.propTypes = {
   setSearchValue: PropTypes.func.isRequired,
-  handleSearchStudent: PropTypes.func.isRequired,
+  handleSearch: PropTypes.func.isRequired,
   handleCadastrar: PropTypes.func.isRequired,
   searchValue: PropTypes.string,
 };

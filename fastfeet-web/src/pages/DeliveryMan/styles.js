@@ -33,7 +33,7 @@ export const DeliveryManTopContent = styled.div`
 `;
 
 export const Avatar = styled.img`
-  width: 50px;
-  height: 48px;
+  width: 38px;
+  height: 38px;
   border-radius: 50%;
 `;
