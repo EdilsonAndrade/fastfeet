@@ -85,7 +85,7 @@ export default function Order() {
     return status;
   };
 
-  async function handleSearchStudent(e) {
+  async function handleSearch(e) {
     const response = await api.get(
       `/orders?limit=${totalPages}&page=${page}&search=${e}`
     );
@@ -151,7 +151,9 @@ export default function Order() {
   }
 
   useEffect(() => {
-    getOrders();
+    if (page > 0) {
+      getOrders();
+    }
   }, [page]);
 
   return (
@@ -160,7 +162,7 @@ export default function Order() {
         setSearchValue={setSearchValue}
         searchValue={searchValue}
         handleCadastrar={handleCadastrar}
-        handleSearchStudent={handleSearchStudent}
+        handleSearch={handleSearch}
       />
       <OrdersTable
         data={orders}
