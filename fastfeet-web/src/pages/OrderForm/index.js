@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-
 import history from '../../services/history';
 import Button from '../../components/Button';
 import { Content, Spinner, AsyncSelectRecipient } from './styles';
@@ -73,12 +72,14 @@ export default function OrderForm() {
   };
 
   useEffect(() => {
-    if (order.id && order.Recipient.id && order.DeliveryMan.id) {
+    if (order) {
       setEditMode(true);
-      setDeliveryManId(order.DeliveryMan.id);
-      setRecipientId(order.Recipient.id);
+      if (order.DeliveryMan) {
+        setDeliveryManId(order.DeliveryMan.id);
+        setRecipientId(order.Recipient.id);
+      }
     }
-  }, [order.id, order.DeliveryMan.id, order.Recipient.id]);
+  }, [order]);
 
   const handleBack = () => {
     history.push('/orders');

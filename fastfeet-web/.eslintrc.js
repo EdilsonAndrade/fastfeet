@@ -43,7 +43,8 @@ module.exports = {
     "jsx-a11y/label-has-associated-control": ["off"],
     "react/forbid-prop-types": ["off"],
     "react-hooks/exhaustive-deps": "warn",
-    "no-alert": ["off"]
+    "no-alert": ["off"],
+    "react-hooks/exhaustive-deps": "warn"
 
   },
 };

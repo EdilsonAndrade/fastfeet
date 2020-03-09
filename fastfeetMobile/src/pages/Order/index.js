@@ -61,11 +61,8 @@ export default function Order({ navigation }) {
         formattedDate: format(parseISO(d.createdAt), 'dd/MM/yy HH:mm:ss')
       }))
 
-      if (response.data.count > orders.length) {
-        setOrders([...orders, ...rows])
-        setPage(page + 1);
-      }
-
+      setOrders([...orders, ...rows])
+      setPage(page + 1);
       setCount(response.data.count)
     }
     setLoading(false);
@@ -181,7 +178,7 @@ export default function Order({ navigation }) {
       </SubHeader>
       <Deliveries
         onEndReached={getOrders}
-        onEndReachedThreshold={0.2}
+        onEndReachedThreshold={0.1}
         data={orders}
         keyExtractor={item => String(item.id)}
         renderItem={({ item }) => renderList(item)}

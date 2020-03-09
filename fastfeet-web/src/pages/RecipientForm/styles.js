@@ -19,10 +19,23 @@ export const Content = styled.div`
   background: #fff;
   justify-content: flex-start;
   padding: 20px;
-
+  span {
+    color: rgba(213, 36, 36, 1);
+    width: 100%;
+    text-align: left;
+  }
   > div {
     width: 100%;
-    display: flex;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-gap: 30px;
+
+    div {
+      margin: 10px;
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+    }
   }
 
   > label,
@@ -42,6 +55,6 @@ export const Content = styled.div`
   input {
     padding: 10px;
     border: 1px solid #eee;
-    margin: 10px 10px;
+    margin: 10px 0 10px;
   }
 `;

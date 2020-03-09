@@ -6,8 +6,8 @@ import { useField } from '@rocketseat/unform';
 export default function InputMaskForm({ name, label, ...rest }) {
   const ref = useRef();
 
-  const { fieldName, registerField, error, defaultValue } = useField(name);
-  const [value, setValue] = useState(defaultValue);
+  const { fieldName, registerField, error } = useField(name);
+  const [value, setValue] = useState('');
   useEffect(() => {
     registerField({
       name: fieldName,
@@ -28,6 +28,7 @@ export default function InputMaskForm({ name, label, ...rest }) {
       <InputMask
         {...props}
         ref={ref}
+        value={value}
         onChange={e => {
           setValue(e.target.value);
         }}
