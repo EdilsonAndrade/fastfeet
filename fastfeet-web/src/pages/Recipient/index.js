@@ -27,7 +27,7 @@ export default function Recipient() {
 
   async function handleSearch(e) {
     const response = await api.get(
-      `/recipients?limit=${totalPages}&page=${page}&search=${e}`
+      `/recipients?limit=${totalPages}&page=1&search=${e}`
     );
     const { data } = response;
     const dataFormated = data.rows.map(d => ({

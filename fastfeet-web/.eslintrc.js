@@ -44,7 +44,5 @@ module.exports = {
     "react/forbid-prop-types": ["off"],
     "react-hooks/exhaustive-deps": "warn",
     "no-alert": ["off"],
-    "react-hooks/exhaustive-deps": "warn"
-
   },
 };

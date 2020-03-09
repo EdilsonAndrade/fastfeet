@@ -87,7 +87,7 @@ export default function Order() {
 
   async function handleSearch(e) {
     const response = await api.get(
-      `/orders?limit=${totalPages}&page=${page}&search=${e}`
+      `/orders?limit=${totalPages}&page=1&search=${e}`
     );
     const { data } = response;
     const dataWithStatusFormated = data.rows.map(d => ({

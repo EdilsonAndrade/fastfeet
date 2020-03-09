@@ -22,7 +22,6 @@ export default function ListProblem({ route, navigation }) {
   const { orderId } = route.params;
 
   const getProblems = async () => {
-    setLoading(true);
     try {
       const response = await api.get(`/orders/${orderId}/problems?limit=8&page=${page}`);
 
@@ -39,21 +38,13 @@ export default function ListProblem({ route, navigation }) {
     } catch (error) {
         Alert.alert("Erro", "Ocorreu um erro, tente novamente em alguns minutos");
     }
-    setLoading(false);
   }
   useEffect(() => {
     getProblems();
   }, [])
 
 
-  const renderFooter = () => {
-    if (!loading) return null;
-    return (
-      <View >
-        <ActivityIndicator />
-      </View>
-    );
-  }
+
   const renderList = (item) => {
     return (
       <ProblemContent key={item.id}>
@@ -72,11 +63,12 @@ export default function ListProblem({ route, navigation }) {
       <ProblemsContainer>
         <Problems
         onEndReached={getProblems}
-        onEndReachedThreshold={0}
+        onEndReachedThreshold={.2}
         data={problems}
         keyExtractor={item => String(item.id)}
         renderItem={({ item }) => renderList(item)}
-        ListFooterComponent={renderFooter}
+        refreshing={loading}
+        onRefresh={getProblems}
       />
         </ProblemsContainer>
     </Container>

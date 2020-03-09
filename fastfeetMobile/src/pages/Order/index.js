@@ -100,14 +100,6 @@ export default function Order({ navigation }) {
     setPage(1);
   }
 
-  const renderFooter = () => {
-    if (!loading) return null;
-    return (
-      <View >
-        <ActivityIndicator />
-      </View>
-    );
-  }
 
   const handleShowOrderDetail = (orderSelect) => {
     dispatch(OrderActions.selectOrder(orderSelect))
@@ -178,11 +170,12 @@ export default function Order({ navigation }) {
       </SubHeader>
       <Deliveries
         onEndReached={getOrders}
-        onEndReachedThreshold={0.1}
+        onEndReachedThreshold={0.2}
         data={orders}
         keyExtractor={item => String(item.id)}
         renderItem={({ item }) => renderList(item)}
-        ListFooterComponent={renderFooter}
+        refreshing={loading}
+        onRefresh={getOrders}
       />
     </OrderContainer>
   );

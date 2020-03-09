@@ -24,9 +24,10 @@ export default function DeliveryMan() {
   const [deliveryManVisible, setDeliveryManVisible] = useState(0);
   const [pageRows, setPageRows] = useState(0);
   const [deleted, setDeleted] = useState(false);
+
   async function handleSearch(e) {
     const response = await api.get(
-      `/deliveryman?limit=${totalPages}&page=${page}&search=${e}`
+      `/deliveryman?limit=${totalPages}&page=1&search=${e}`
     );
     const { data } = response;
     setDeliveryManCount(data.count);
@@ -66,7 +67,6 @@ export default function DeliveryMan() {
   async function handleDelete() {
     if (window.confirm('Tem certeza que quer excluir este registro?')) {
       try {
-        console.tron.warn('entre');
         await api.delete(`/deliveryman/${deliveryManId}`);
         let pageOnDelete = page;
         if (pageRows - 1 < 1) {
