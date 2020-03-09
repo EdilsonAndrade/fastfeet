@@ -312,4 +312,30 @@ describe('DeliveryMan', () => {
 
     expect(deliveryman.body.rows[0].name).toBe('Edilson Andrade');
   });
+
+  it('delete delivery man cant be deleted when has an order', async () => {
+    const fakeDeliveryMan = await factory.create('DeliveryMan');
+    const fakeRecipient = await factory.create('Recipient');
+
+    await factory.create('Order', {
+      recipientId: fakeRecipient.id,
+      deliverymanId: fakeDeliveryMan.id,
+    });
+    const response = await request(app)
+      .delete(`/deliveryman/${fakeDeliveryMan.id}`)
+      .set('Authorization', `Bearer ${user.generateToken().token}`);
+
+    expect(response.body.error).toEqual('Delivery man cant be deleted, associated to an order');
+  });
+
+
+  it('get delivery man id', async () => {
+    const fakeDeliveryman = await factory.create('DeliveryMan');
+
+    const deliveryman = await request(app)
+      .get(`/deliveryman/${fakeDeliveryman.id}`)
+      .set('Authorization', `Bearer ${user.generateToken().token}`);
+
+    expect(deliveryman.body.id).toEqual(fakeDeliveryman.id);
+  });
 });

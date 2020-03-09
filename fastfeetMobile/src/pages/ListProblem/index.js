@@ -23,7 +23,7 @@ export default function ListProblem({ route, navigation }) {
 
   const getProblems = async () => {
     try {
-      const response = await api.get(`/orders/${orderId}/problems?limit=8&page=${page}`);
+      const response = await api.get(`/orders/${orderId}/problems?limit=5&page=${page}`);
 
       const rows = response.data.rows.map(p=>({
         ...p,
