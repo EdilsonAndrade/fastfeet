@@ -143,8 +143,8 @@ export default function DeliveryMan() {
         <tbody>
           {deliveryMans.map(deliveryman => (
             <tr key={deliveryman.id}>
-              <td>{deliveryman.id}</td>
-              <td>
+              <td style={{ width: 50 }}>{deliveryman.id}</td>
+              <td style={{ width: 140 }}>
                 <Avatar
                   src={
                     deliveryman.avatar
@@ -154,9 +154,9 @@ export default function DeliveryMan() {
                   alt="avatar"
                 />
               </td>
-              <td>{deliveryman.name}</td>
-              <td>{deliveryman.email}</td>
-              <td>
+              <td style={{ width: 420 }}>{deliveryman.name}</td>
+              <td style={{ width: 420 }}>{deliveryman.email}</td>
+              <td style={{ width: 120 }}>
                 <button
                   aria-controls="contextMenu"
                   aria-haspopup="true"

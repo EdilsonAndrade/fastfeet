@@ -29,7 +29,7 @@ export default function OrdersTable({
       <tbody>
         {data.map(order => (
           <tr key={order.id}>
-            <td>{order.id}</td>
+            <td style={{ width: 50 }}>{order.id}</td>
             <td style={{ width: 320 }}>{order.Recipient.name}</td>
             <td>
               <DeliveryAvatar>
@@ -55,7 +55,7 @@ export default function OrdersTable({
                 </span>
               </StatusContent>
             </td>
-            <td>
+            <td style={{ width: 120 }}>
               {order.canceledAt ? null : (
                 <button
                   onClick={() => handleClick(order, order.id)}

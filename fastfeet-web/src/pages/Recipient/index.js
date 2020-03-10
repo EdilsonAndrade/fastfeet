@@ -148,10 +148,10 @@ export default function Recipient() {
         <tbody>
           {recipients.map(recipient => (
             <tr key={recipient.id}>
-              <td>{recipient.id}</td>
-              <td>{recipient.name}</td>
+              <td style={{ width: 50 }}>{recipient.id}</td>
+              <td style={{ width: 320 }}>{recipient.name}</td>
               <td>{recipient.fullAddress}</td>
-              <td>
+              <td style={{ width: 120 }}>
                 <button onClick={() => handleClick(recipient.id)} type="button">
                   <ul>
                     <li>.</li>

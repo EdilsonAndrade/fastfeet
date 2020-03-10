@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import { toast } from 'react-toastify';
 import history from '../../services/history';
 import Button from '../../components/Button';
 import { Content, Spinner, AsyncSelectRecipient } from './styles';
@@ -85,10 +86,14 @@ export default function OrderForm() {
     history.push('/orders');
   };
   const handleSave = () => {
-    dispatch(startLoading());
-    dispatch(
-      saveRequest({ deliverymanId, recipientId, product, id: order.id })
-    );
+    if (!deliverymanId || !recipientId || !product) {
+      toast.error('Todos os campos devem ser preenchidos');
+    } else {
+      dispatch(startLoading());
+      dispatch(
+        saveRequest({ deliverymanId, recipientId, product, id: order.id })
+      );
+    }
   };
 
   return (
