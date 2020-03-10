@@ -27,7 +27,7 @@ import {
 
 } from './styles';
 
-import Truck from '~/assets/truck.png';
+import Icon from 'react-native-vector-icons/MaterialIcons'
 import * as OrderActions from '~/store/modules/order/actions';
 import { signoutRequest } from '~/store/modules/auth/actions'
 import api from '~/services/api';
@@ -109,7 +109,7 @@ export default function Order({ navigation }) {
     return (
       <DeliveryContent key={item.id}>
         <TopContent>
-          <TruckImage source={Truck}></TruckImage>
+          <Icon name="local-shipping" size={22} color={item.canceledAt ? "#DE3B3B" : "#7D40E7"}/>
           <DeliveryCountText canceled={item.canceledAt}>Encomenda {item.id}</DeliveryCountText>
         </TopContent>
         <TrackContent canceled={item.canceledAt}>

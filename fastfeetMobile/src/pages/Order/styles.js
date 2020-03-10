@@ -107,6 +107,7 @@ export const DeliveryCountText = styled.Text`
   color:${props=>props.canceled ? '#DE3B3B' : '#7D40E7'};;
   font-size:14px;
   font-weight:bold;
+  margin-left:10px;
 
 
 `;
