@@ -20,7 +20,7 @@ export const Content = styled.div`
   justify-content: flex-start;
   padding: 20px;
   span {
-    color: rgba(213, 36, 36, 1);
+    color: #de3b3b;
     width: 100%;
     text-align: left;
   }

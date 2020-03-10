@@ -19,7 +19,7 @@ export default function ModalDialog({
       open={open}
     >
       <CloseButton type="button" id="closeme" onClick={handleClose}>
-        <MdClear size={22} color="#7159c1" />
+        <MdClear size={22} color="#7D40E7" />
       </CloseButton>
 
       <Modal>
