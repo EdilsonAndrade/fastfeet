@@ -109,7 +109,6 @@ export default function Problem() {
                     <li>.</li>
                   </ul>
                   <ContextMenu
-                    canCancel={!problem.Order.endDate}
                     larger
                     problem
                     id={problem.id}

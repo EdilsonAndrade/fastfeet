@@ -12,7 +12,6 @@ export default function ContextMenu({
   visible,
   problem,
   larger,
-  canCancel,
   delivered,
 }) {
   const getItemsMenu = () => {
@@ -107,7 +106,6 @@ ContextMenu.propTypes = {
   visible: PropTypes.number,
   problem: PropTypes.bool,
   larger: PropTypes.bool,
-  canCancel: PropTypes.bool,
   delivered: PropTypes.bool,
 };
 
@@ -120,6 +118,5 @@ ContextMenu.defaultProps = {
   problem: false,
   visible: 0,
   handleView: () => {},
-  canCancel: false,
   delivered: false,
 };
