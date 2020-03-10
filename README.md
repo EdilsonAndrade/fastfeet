@@ -93,6 +93,7 @@ yarn start
 ```json
 yarn
 ```
+1.1. Crie um arquivo .env e coloque um conteúdo como exemplo do arquivo [.env.example deste link](https://github.com/EdilsonAndrade/fastfeet/blob/master/fastfeetMobile/.env.example)
 
 2. Abra duas abas do terminal
 
