@@ -1,5 +1,6 @@
 import React from 'react';
 import { MdEdit, MdDeleteForever, MdRemoveRedEye } from 'react-icons/md';
+import PropTypes from 'prop-types';
 import { Menu, ItemMenu } from './styles';
 
 export default function ContextMenu({
@@ -11,6 +12,7 @@ export default function ContextMenu({
   visible,
   problem,
   larger,
+  canCancel,
 }) {
   const getItemsMenu = () => {
     if (problem) {
@@ -26,17 +28,20 @@ export default function ContextMenu({
               <strong>Visualizar</strong>
             </div>
           </ItemMenu>
-
-          <ItemMenu onClick={handleDelete}>
-            <div>
-              <MdDeleteForever
-                size={22}
-                color="#de3b3b"
-                style={{ marginRight: 10 }}
-              />
-              <strong>Excluir encomenda</strong>
-            </div>
-          </ItemMenu>
+          {canCancel ? (
+            <ItemMenu onClick={handleDelete}>
+              <div>
+                <MdDeleteForever
+                  size={22}
+                  color="#de3b3b"
+                  style={{ marginRight: 10 }}
+                />
+                <strong>Excluir encomenda</strong>
+              </div>
+            </ItemMenu>
+          ) : (
+            ''
+          )}
         </>
       );
     }
@@ -91,3 +96,27 @@ export default function ContextMenu({
     </Menu>
   );
 }
+
+ContextMenu.propTypes = {
+  order: PropTypes.string,
+  id: PropTypes.number,
+  handleEdit: PropTypes.func,
+  handleDelete: PropTypes.func,
+  handleView: PropTypes.func,
+  visible: PropTypes.number,
+  problem: PropTypes.object,
+  larger: PropTypes.bool,
+  canCancel: PropTypes.bool,
+};
+
+ContextMenu.defaultProps = {
+  id: 0,
+  order: '',
+  handleEdit: () => {},
+  handleDelete: () => {},
+  larger: false,
+  problem: {},
+  visible: 0,
+  handleView: () => {},
+  canCancel: false,
+};

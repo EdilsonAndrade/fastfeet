@@ -21,7 +21,8 @@ module.exports = {
   },
   plugins: [
     'react',
-    'prettier'
+    'prettier',
+    'react-hooks'
   ],
   settings:{
     'import/resolver':{

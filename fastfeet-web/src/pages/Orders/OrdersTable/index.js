@@ -68,11 +68,12 @@ export default function OrdersTable({
                   </ul>
                   <ContextMenu
                     id={order.id}
+                    canCancel={!order.endDate}
                     order={order && order.endDate}
                     visible={orderVisible}
                     handleDelete={handleDelete}
                     handleEdit={handleEdit}
-                    handleView={() => handleView(order.File.url)}
+                    handleView={() => handleView(order.File && order.File.url)}
                     menuId="contextMenu"
                   />
                 </button>
