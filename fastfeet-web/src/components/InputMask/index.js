@@ -1,7 +1,7 @@
 import React, { useRef, useEffect, useState } from 'react';
 import InputMask from 'react-input-mask';
 import PropTypes from 'prop-types';
-import { useField } from '@rocketseat/unform';
+import { useField } from '@unform/core';
 
 export default function InputMaskForm({ name, label, ...rest }) {
   const ref = useRef();

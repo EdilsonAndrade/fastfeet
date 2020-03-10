@@ -20,7 +20,7 @@ export default function Recipient() {
   const [page, setPage] = useState(1);
   const [recipientId, setRecipientId] = useState(0);
   const [recipientCount, setRecipientCount] = useState(0);
-  const totalPages = 2;
+  const totalPages = 6;
   const [pageRows, setPageRows] = useState(0);
   const [recipientVisible, setRecipientVisible] = useState(0);
   const [deletedRow, setDeletedRow] = useState(false);

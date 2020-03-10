@@ -14,7 +14,7 @@ export default function Problem() {
   const [page, setPage] = useState(1);
   const [orderId, setOrderId] = useState(0);
   const [problemsCount, setProblemsCount] = useState(0);
-  const totalPages = 2;
+  const totalPages = 6;
   const [text, setText] = useState('');
   const [open, setOpen] = useState(false);
   const [problemVisible, setProblemVisible] = useState(null);
@@ -92,7 +92,9 @@ export default function Problem() {
         <tbody>
           {problems.map(problem => (
             <tr key={problem.id}>
-              <td>{problem.id}</td>
+              <td>
+                <span canceled={problem.Order.canceledAt}>{problem.id}</span>
+              </td>
               <td>{problem.description}</td>
               <td>
                 <button
@@ -109,7 +111,7 @@ export default function Problem() {
                   <ContextMenu
                     canCancel={!problem.Order.endDate}
                     larger
-                    problem={problem}
+                    problem
                     id={problem.id}
                     visible={problemVisible}
                     handleDelete={() => handleDelete()}

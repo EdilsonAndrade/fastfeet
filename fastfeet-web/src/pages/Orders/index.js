@@ -22,7 +22,7 @@ export default function Order() {
   const [nextPage, setNextPage] = useState(2);
   const [page, setPage] = useState(1);
   const [ordersCount, setOrdersCount] = useState(0);
-  const totalPages = 2;
+  const totalPages = 6;
   const [orderVisible, setOrderVisible] = React.useState(0);
   const [orderId, setOrderId] = useState(0);
   const [open, setOpen] = useState(false);
@@ -116,7 +116,7 @@ export default function Order() {
       const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
       try {
         const response = await api.get(
-          `/orders?limit=2&page=${onDeletePage || page}`
+          `/orders?limit=6&page=${onDeletePage || page}`
         );
 
         setOrdersCount(response.data.count);

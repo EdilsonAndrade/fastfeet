@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { useField } from '@rocketseat/unform';
+import { useField } from '@unform/core';
 import AvatarPreviewDefault from '~/assets/avatar.svg';
 import Container from './styles';
 import api from '~/services/api';

@@ -30,7 +30,9 @@ export const Content = styled.table`
       margin: 0;
       padding: 10px 5px;
       border-bottom: 1px solid #979797;
-
+      span {
+        color: ${props => (props.canceled ? '#de3b3b' : '#666666')};
+      }
       button {
         border: none;
         background: none;

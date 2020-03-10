@@ -4,6 +4,7 @@ const ProblemTopContent = styled.div`
   display: flex;
   flex-direction: column;
   align-items: baseline;
+
   strong {
     width: 100%;
   }

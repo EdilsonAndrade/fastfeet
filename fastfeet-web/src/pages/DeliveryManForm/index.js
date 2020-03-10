@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
-import { Input, Form } from '@rocketseat/unform';
+import { Form } from '@unform/web';
 import * as Yup from 'yup';
+import Input from '~/components/Input';
 import history from '../../services/history';
 import Button from '../../components/Button';
 import { Content, Spinner } from './styles';
@@ -11,17 +12,9 @@ import { saveRequest } from '~/store/modules/deliveryman/actions';
 
 import AvatarInput from './AvatarInput/index';
 
-const schema = Yup.object().shape({
-  name: Yup.string().required('Name deve ser informado'),
-  email: Yup.string('E-mail deve ser informado')
-    .required('E-mail deve ser informado')
-    .email('E-mail deve ser informado'),
-  avatar_id: Yup.number(),
-});
-
 export default function DeliveryManForm() {
   const dispatch = useDispatch();
-
+  const formRef = useRef(null);
   const deliveryManData = useSelector(state => state.deliveryman);
   const loading = useSelector(state => state.load.loading);
 
@@ -36,13 +29,33 @@ export default function DeliveryManForm() {
   const handleBack = () => {
     history.push('/deliveryman');
   };
-  const handleSave = data => {
-    dispatch(startLoading());
-    dispatch(saveRequest({ ...data, id: deliveryManData.id }));
+  const handleSubmit = async data => {
+    try {
+      const schema = Yup.object().shape({
+        name: Yup.string().required('Name deve ser informado'),
+        email: Yup.string('E-mail deve ser informado')
+          .required('E-mail deve ser informado')
+          .email('E-mail deve ser informado'),
+        avatar_id: Yup.number(),
+      });
+      await schema.validate(data, {
+        abortEarly: false,
+      });
+      dispatch(startLoading());
+      dispatch(saveRequest({ ...data, id: deliveryManData.id }));
+    } catch (err) {
+      const validationErrors = {};
+      if (err instanceof Yup.ValidationError) {
+        err.inner.forEach(error => {
+          validationErrors[error.path] = error.message;
+        });
+        formRef.current.setErrors(validationErrors);
+      }
+    }
   };
 
   return (
-    <Form schema={schema} onSubmit={handleSave} initialData={deliveryManData}>
+    <Form ref={formRef} onSubmit={handleSubmit} initialData={deliveryManData}>
       <div>
         <strong>
           {editMode ? 'Edição do entregador' : 'Cadastro do entregador'}

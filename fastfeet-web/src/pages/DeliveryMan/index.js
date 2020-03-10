@@ -20,7 +20,7 @@ export default function DeliveryMan() {
   const [page, setPage] = useState(1);
   const [deliveryManId, setDeliveryManId] = useState(0);
   const [deliveryManCount, setDeliveryManCount] = useState(0);
-  const totalPages = 2;
+  const totalPages = 6;
   const [deliveryManVisible, setDeliveryManVisible] = useState(0);
   const [pageRows, setPageRows] = useState(0);
   const [deleted, setDeleted] = useState(false);

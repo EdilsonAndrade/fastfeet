@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import * as Yup from 'yup';
-import { Input, Form } from '@rocketseat/unform';
+import { Form } from '@unform/web';
+import Input from '~/components/Input';
 import history from '../../services/history';
 import Button from '../../components/Button';
 import { Content, Spinner } from './styles';
@@ -10,29 +11,14 @@ import { saveRequest } from '~/store/modules/recipient/actions';
 import InputMaskForm from '~/components/InputMask';
 
 export default function RecipientForm() {
+  const formRef = useRef(null);
   const dispatch = useDispatch();
 
   const recipientData = useSelector(state => state.recipient);
   const loading = useSelector(state => state.load.loading);
 
   const [editMode, setEditMode] = useState(false);
-  const schema = Yup.object().shape({
-    name: Yup.string().required('Nome deve ser informado'),
-    addressLine: Yup.string('Endereço deve ser informado').required(
-      'Endereço deve ser informado'
-    ),
-    number: Yup.string().required('Número deve ser informado'),
-    addressLineTwo: Yup.string(),
-    zipCode: Yup.string('Cep deve ser informado').required(
-      'Cep deve ser informado'
-    ),
-    city: Yup.string('Cidade deve ser informado').required(
-      'Cidade deve ser informado'
-    ),
-    cityState: Yup.string('Estado deve ser informado').required(
-      'Estado deve ser informado'
-    ),
-  });
+
   useEffect(() => {
     if (recipientData.id) {
       setEditMode(true);
@@ -42,13 +28,43 @@ export default function RecipientForm() {
   const handleBack = () => {
     history.push('/recipients');
   };
-  const handleSave = data => {
-    dispatch(startLoading());
-    dispatch(saveRequest({ ...data, id: recipientData.id }));
+  const handleSubmit = async data => {
+    try {
+      const schema = Yup.object().shape({
+        name: Yup.string().required('Nome deve ser informado'),
+        addressLine: Yup.string('Endereço deve ser informado').required(
+          'Endereço deve ser informado'
+        ),
+        number: Yup.string().required('Número deve ser informado'),
+        addressLineTwo: Yup.string(),
+        zipCode: Yup.string('Cep deve ser informado').required(
+          'Cep deve ser informado'
+        ),
+        city: Yup.string('Cidade deve ser informado').required(
+          'Cidade deve ser informado'
+        ),
+        cityState: Yup.string('Estado deve ser informado').required(
+          'Estado deve ser informado'
+        ),
+      });
+      await schema.validate(data, {
+        abortEarly: false,
+      });
+      dispatch(startLoading());
+      dispatch(saveRequest({ ...data, id: recipientData.id }));
+    } catch (err) {
+      const validationErrors = {};
+      if (err instanceof Yup.ValidationError) {
+        err.inner.forEach(error => {
+          validationErrors[error.path] = error.message;
+        });
+        formRef.current.setErrors(validationErrors);
+      }
+    }
   };
 
   return (
-    <Form schema={schema} onSubmit={handleSave} initialData={recipientData}>
+    <Form ref={formRef} onSubmit={handleSubmit} initialData={recipientData}>
       <div>
         <strong>
           {editMode ? 'Edição do destinatário' : 'Cadastro do destinatário'}

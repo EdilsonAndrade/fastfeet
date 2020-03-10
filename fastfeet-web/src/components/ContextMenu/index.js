@@ -17,7 +17,6 @@ export default function ContextMenu({
 }) {
   const getItemsMenu = () => {
     if (problem) {
-      console.tron.warn('problem');
       return (
         <>
           <ItemMenu onClick={handleView} id="1">
@@ -30,26 +29,22 @@ export default function ContextMenu({
               <strong>Visualizar</strong>
             </div>
           </ItemMenu>
-          {canCancel ? (
-            <ItemMenu onClick={handleDelete}>
-              <div>
-                <MdDeleteForever
-                  size={22}
-                  color="#de3b3b"
-                  style={{ marginRight: 10 }}
-                />
-                <strong>Excluir encomenda</strong>
-              </div>
-            </ItemMenu>
-          ) : (
-            ''
-          )}
+
+          <ItemMenu onClick={handleDelete}>
+            <div>
+              <MdDeleteForever
+                size={22}
+                color="#de3b3b"
+                style={{ marginRight: 10 }}
+              />
+              <strong>Excluir encomenda</strong>
+            </div>
+          </ItemMenu>
         </>
       );
     }
 
     if (order) {
-      console.tron.warn('order');
       return (
         <>
           <ItemMenu onClick={handleView} id="2">
