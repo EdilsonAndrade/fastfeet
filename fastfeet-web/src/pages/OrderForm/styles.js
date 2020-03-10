@@ -48,6 +48,11 @@ export const Content = styled.div`
       height: 45px;
     }
   }
+  span.error {
+    color: rgba(213, 36, 36, 1);
+    width: 100%;
+    text-align: left;
+  }
 `;
 
-export const AsyncSelectRecipient = styled(AsyncSelect)``;
+export const AsyncSelectField = styled(AsyncSelect)``;

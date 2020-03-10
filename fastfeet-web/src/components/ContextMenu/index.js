@@ -13,9 +13,11 @@ export default function ContextMenu({
   problem,
   larger,
   canCancel,
+  delivered,
 }) {
   const getItemsMenu = () => {
     if (problem) {
+      console.tron.warn('problem');
       return (
         <>
           <ItemMenu onClick={handleView} id="1">
@@ -47,6 +49,7 @@ export default function ContextMenu({
     }
 
     if (order) {
+      console.tron.warn('order');
       return (
         <>
           <ItemMenu onClick={handleView} id="2">
@@ -59,13 +62,16 @@ export default function ContextMenu({
               <strong>Visualizar</strong>
             </div>
           </ItemMenu>
-
-          <ItemMenu onClick={handleEdit}>
-            <div>
-              <MdEdit size={22} color="#4d85ee" style={{ marginRight: 10 }} />
-              <strong>Editar</strong>
-            </div>
-          </ItemMenu>
+          {!delivered ? (
+            <ItemMenu onClick={handleEdit}>
+              <div>
+                <MdEdit size={22} color="#4d85ee" style={{ marginRight: 10 }} />
+                <strong>Editar</strong>
+              </div>
+            </ItemMenu>
+          ) : (
+            ''
+          )}
         </>
       );
     }
@@ -104,9 +110,10 @@ ContextMenu.propTypes = {
   handleDelete: PropTypes.func,
   handleView: PropTypes.func,
   visible: PropTypes.number,
-  problem: PropTypes.object,
+  problem: PropTypes.bool,
   larger: PropTypes.bool,
   canCancel: PropTypes.bool,
+  delivered: PropTypes.bool,
 };
 
 ContextMenu.defaultProps = {
@@ -115,8 +122,9 @@ ContextMenu.defaultProps = {
   handleEdit: () => {},
   handleDelete: () => {},
   larger: false,
-  problem: {},
+  problem: false,
   visible: 0,
   handleView: () => {},
   canCancel: false,
+  delivered: false,
 };

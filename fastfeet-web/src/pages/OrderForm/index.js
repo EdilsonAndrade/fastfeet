@@ -1,14 +1,19 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { toast } from 'react-toastify';
+import * as Yup from 'yup';
+import { Form } from '@unform/web';
+import Input from '~/components/Input';
+import Select from './Select';
 import history from '../../services/history';
 import Button from '../../components/Button';
-import { Content, Spinner, AsyncSelectRecipient } from './styles';
+import { Content, Spinner } from './styles';
 import { startLoading } from '~/store/modules/loading/actions';
 import { saveRequest } from '~/store/modules/order/actions';
 import api from '~/services/api';
 
 export default function OrderForm() {
+  const formRef = useRef(null);
+
   const dispatch = useDispatch();
   const order = useSelector(state => state.order);
   const loading = useSelector(state => state.load.loading);
@@ -16,9 +21,6 @@ export default function OrderForm() {
   const [recipients, setRecipients] = useState([]);
   const [deliveryMans, setDeliveryMans] = useState([]);
   const [editMode, setEditMode] = useState(false);
-  const [recipientId, setRecipientId] = useState();
-  const [product, setProduct] = useState(order.product);
-  const [deliverymanId, setDeliveryManId] = useState();
 
   const defaultDeliveryMan = {
     value: order.DeliveryMan && order.DeliveryMan.id,
@@ -75,29 +77,42 @@ export default function OrderForm() {
   useEffect(() => {
     if (order) {
       setEditMode(true);
-      if (order.DeliveryMan) {
-        setDeliveryManId(order.DeliveryMan.id);
-        setRecipientId(order.Recipient.id);
-      }
     }
   }, [order]);
 
   const handleBack = () => {
     history.push('/orders');
   };
-  const handleSave = () => {
-    if (!deliverymanId || !recipientId || !product) {
-      toast.error('Todos os campos devem ser preenchidos');
-    } else {
+  const handleSubmit = async data => {
+    try {
+      const schema = Yup.object().shape({
+        deliverymanId: Yup.string().required('Selecione um entregador'),
+        recipientId: Yup.string().required('Selecione um destinatário'),
+        product: Yup.string()
+          .min(5, 'Digite o nome do produto')
+          .required('Digite o nome produto'),
+      });
+      await schema.validate(data, {
+        abortEarly: false,
+      });
+      const { deliverymanId, recipientId, product } = data;
       dispatch(startLoading());
       dispatch(
         saveRequest({ deliverymanId, recipientId, product, id: order.id })
       );
+    } catch (err) {
+      const validationErrors = {};
+      if (err instanceof Yup.ValidationError) {
+        err.inner.forEach(error => {
+          validationErrors[error.path] = error.message;
+        });
+        formRef.current.setErrors(validationErrors);
+      }
     }
   };
 
   return (
-    <form>
+    <Form ref={formRef} onSubmit={handleSubmit} initialData={order}>
       <div>
         <strong>
           {editMode ? 'Edição de encomendas' : 'Cadastro de encomendas'}
@@ -111,7 +126,7 @@ export default function OrderForm() {
               <Spinner size={20} color="#fff" />
             </Button>
           ) : (
-            <Button buttonType="button" handleClick={handleSave} saveButton>
+            <Button buttonType="submit" saveButton>
               SALVAR
             </Button>
           )}
@@ -122,43 +137,37 @@ export default function OrderForm() {
         <span id="grid">
           <span>
             <label htmlFor="recipient">Destinário</label>
-            <AsyncSelectRecipient
-              id="recipient"
+            <Select
+              id="recipientId"
               label="Destinatário"
               loadOptions={loadRecipients}
               onInputChange={handleSearchRecipient}
-              onChange={e => setRecipientId(e.value)}
               cacheOptions
               defaultOptions
               defaultValue={defaultRecipient}
+              name="recipientId"
             />
           </span>
           <span>
             <label htmlFor="deliveryman">Entregador</label>
-            <AsyncSelectRecipient
-              id="deliveryman"
+            <Select
+              id="deliverymanId"
               label="Entregador"
               loadOptions={loadDeliveryMan}
               onInputChange={handleSearchDeliveryMan}
-              onChange={e => setDeliveryManId(e.value)}
               cacheOptions
               defaultOptions
               defaultValue={defaultDeliveryMan}
+              name="deliverymanId"
             />
           </span>
         </span>
 
         <div id="productDiv">
           <label htmlFor="product">Product</label>
-          <input
-            id="product"
-            name="product"
-            value={product}
-            onChange={e => setProduct(e.target.value)}
-            type="text"
-          />
+          <Input id="product" name="product" type="text" />
         </div>
       </Content>
-    </form>
+    </Form>
   );
 }
