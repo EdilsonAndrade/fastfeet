@@ -69,7 +69,6 @@ export default function OrdersTable({
                   <ContextMenu
                     delivered={order.endDate !== null}
                     id={order.id}
-                    canCancel={!order.endDate}
                     order={order && order.endDate}
                     visible={orderVisible}
                     handleDelete={handleDelete}
