@@ -30,7 +30,7 @@ export default function OrdersTable({
         {data.map(order => (
           <tr key={order.id}>
             <td style={{ width: 50 }}>{order.id}</td>
-            <td style={{ width: 320 }}>{order.Recipient.name}</td>
+            <td style={{ width: 220 }}>{order.Recipient.name}</td>
             <td>
               <DeliveryAvatar>
                 {order.DeliveryMan.avatar ? (
@@ -43,7 +43,7 @@ export default function OrdersTable({
                 )}
               </DeliveryAvatar>
             </td>
-            <td style={{ width: 420 }}>{order.DeliveryMan.name}</td>
+            <td style={{ width: 220 }}>{order.DeliveryMan.name}</td>
             <td>{order.Recipient.city}</td>
             <td>{order.Recipient.state}</td>
             <td>

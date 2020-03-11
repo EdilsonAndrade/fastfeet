@@ -54,7 +54,6 @@ export default function OrderDetail({ navigation }) {
   }, [order])
 
   const handleDelivered = () => {
-
     navigation.navigate('ConfirmDelivery', { order: order })
   }
 
@@ -76,8 +75,13 @@ export default function OrderDetail({ navigation }) {
             dispatch(OrderActions.selectOrder(response.data));
 
           } catch ({ response }) {
+            const {error} = response.data;
+            if(error.includes("close")){
+              Alert.alert("Erro", `Estamos fechados para retirada`);
+            }else{
+              Alert.alert("Erro", `${JSON.stringify(response.data.error)} `);
+            }
 
-            Alert.alert("Erro", `${JSON.stringify(response.data.error)} `);
           }
         }
       }
@@ -117,7 +121,7 @@ export default function OrderDetail({ navigation }) {
             <DetailTextColor>Situação da entrega</DetailTextColor>
           </RowDirection>
           <DetailText>STATUS</DetailText>
-          <DetailText bold={order.canceledAt} color={order.canceledAt ?"#DE3B3B" :'#666' } >{status}</DetailText>
+          <DetailText bold={order.canceledAt} color={order.canceledAt ? "#DE3B3B" : '#666'} >{status}</DetailText>
           <OrderDates>
             <DateInfo>
               <DetailText>DATA DE RETIRADA</DetailText>
@@ -135,8 +139,8 @@ export default function OrderDetail({ navigation }) {
             {
               order.canceledAt ?
                 <>
-                  <DetailText  bold color="#DE3B3B" fontSize="16px" textAlign="center">Infelizmente este pedido foi cancelado,
-                 mas fique tranquilo, como você ja saiu com ele, irá receber o valor da taxa de entrega.
+                  <DetailText bold color="#DE3B3B" fontSize="16px" textAlign="center">Infelizmente este pedido foi cancelado,
+                  mas fique tranquilo, como você ja saiu com ele, irá receber o valor da taxa de entrega.
                  </DetailText>
                 </>
 

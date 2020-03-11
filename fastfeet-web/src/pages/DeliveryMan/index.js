@@ -10,6 +10,8 @@ import { saveSuccess, loadSuccess } from '~/store/modules/deliveryman/actions';
 import Pagination from '~/components/Pagination';
 import { Avatar, DeliveryManTopContent } from './styles';
 import ContextMenu from '~/components/ContextMenu';
+import NoData from '~/components/NoData';
+import Loading from '~/components/Loading';
 
 export default function DeliveryMan() {
   const dispatch = useDispatch();
@@ -22,8 +24,8 @@ export default function DeliveryMan() {
   const [deliveryManCount, setDeliveryManCount] = useState(0);
   const totalPages = 6;
   const [deliveryManVisible, setDeliveryManVisible] = useState(0);
-  const [pageRows, setPageRows] = useState(0);
   const [deleted, setDeleted] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   async function handleSearch(e) {
     const response = await api.get(
@@ -68,12 +70,6 @@ export default function DeliveryMan() {
     if (window.confirm('Tem certeza que quer excluir este registro?')) {
       try {
         await api.delete(`/deliveryman/${deliveryManId}`);
-        let pageOnDelete = page;
-        if (pageRows - 1 < 1) {
-          pageOnDelete -= 1;
-        }
-
-        setPage(pageOnDelete);
         setDeleted(!deleted);
       } catch ({ response }) {
         const { error } = response.data;
@@ -93,6 +89,7 @@ export default function DeliveryMan() {
   }
 
   useEffect(() => {
+    setLoading(true);
     async function getDeliveryMan(pageOnDeleted) {
       const response = await api.get(
         `/deliveryman?limit=${totalPages}&page=${pageOnDeleted || page}`
@@ -100,12 +97,84 @@ export default function DeliveryMan() {
       const { data } = response;
 
       setDeliveryManCount(data.count);
-      setPageRows(data.rows.length);
       dispatch(loadSuccess(data.rows));
+      setLoading(false);
     }
     getDeliveryMan();
   }, [page, dispatch, deleted]);
 
+  const renderPage = () => {
+    if (loading) {
+      return <Loading loading={loading} />;
+    }
+    return (
+      <>
+        {deliveryMans.length <= 0 ? (
+          <NoData text="Não há entregador cadastrado, clique em cadastrar" />
+        ) : (
+          <>
+            <Grid>
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Foto</th>
+                  <th>Nome</th>
+                  <th>Email</th>
+                  <th>Ações</th>
+                </tr>
+              </thead>
+              <tbody>
+                {deliveryMans.map(deliveryman => (
+                  <tr key={deliveryman.id}>
+                    <td style={{ width: 50 }}>{deliveryman.id}</td>
+                    <td style={{ width: 140 }}>
+                      <Avatar
+                        src={
+                          deliveryman.avatar
+                            ? deliveryman.avatar.url
+                            : `https://avatar.oxro.io/avatar?name=${deliveryman.name}`
+                        }
+                        alt="avatar"
+                      />
+                    </td>
+                    <td style={{ width: 420 }}>{deliveryman.name}</td>
+                    <td style={{ width: 420 }}>{deliveryman.email}</td>
+                    <td style={{ width: 120 }}>
+                      <button
+                        aria-controls="contextMenu"
+                        aria-haspopup="true"
+                        onClick={() => handleClick(deliveryman.id)}
+                        type="button"
+                      >
+                        <ul>
+                          <li>.</li>
+                          <li>.</li>
+                          <li>.</li>
+                        </ul>
+                        <ContextMenu
+                          id={deliveryman.id}
+                          visible={deliveryManVisible}
+                          handleDelete={handleDelete}
+                          handleEdit={handleEdit}
+                          menuId="contextMenu"
+                        />
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </Grid>
+            <Pagination
+              handleBackPage={() => handlePreviousPage(previousPage)}
+              showBack={page > 1}
+              showForward={deliveryManCount / totalPages > page}
+              handleForwardPage={() => handleNextPage(nextPage)}
+            />
+          </>
+        )}
+      </>
+    );
+  };
   return (
     <>
       <DeliveryManTopContent>
@@ -130,63 +199,7 @@ export default function DeliveryMan() {
           </Button>
         </div>
       </DeliveryManTopContent>
-      <Grid>
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Foto</th>
-            <th>Nome</th>
-            <th>Email</th>
-            <th>Ações</th>
-          </tr>
-        </thead>
-        <tbody>
-          {deliveryMans.map(deliveryman => (
-            <tr key={deliveryman.id}>
-              <td style={{ width: 50 }}>{deliveryman.id}</td>
-              <td style={{ width: 140 }}>
-                <Avatar
-                  src={
-                    deliveryman.avatar
-                      ? deliveryman.avatar.url
-                      : `https://avatar.oxro.io/avatar?name=${deliveryman.name}`
-                  }
-                  alt="avatar"
-                />
-              </td>
-              <td style={{ width: 420 }}>{deliveryman.name}</td>
-              <td style={{ width: 420 }}>{deliveryman.email}</td>
-              <td style={{ width: 120 }}>
-                <button
-                  aria-controls="contextMenu"
-                  aria-haspopup="true"
-                  onClick={() => handleClick(deliveryman.id)}
-                  type="button"
-                >
-                  <ul>
-                    <li>.</li>
-                    <li>.</li>
-                    <li>.</li>
-                  </ul>
-                  <ContextMenu
-                    id={deliveryman.id}
-                    visible={deliveryManVisible}
-                    handleDelete={handleDelete}
-                    handleEdit={handleEdit}
-                    menuId="contextMenu"
-                  />
-                </button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </Grid>
-      <Pagination
-        handleBackPage={() => handlePreviousPage(previousPage)}
-        showBack={page > 1}
-        showForward={deliveryManCount / totalPages > page}
-        handleForwardPage={() => handleNextPage(nextPage)}
-      />
+      {renderPage()}
     </>
   );
 }

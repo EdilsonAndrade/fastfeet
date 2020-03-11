@@ -164,8 +164,7 @@ export default function OrderForm() {
         </span>
 
         <div id="productDiv">
-          <label htmlFor="product">Product</label>
-          <Input id="product" name="product" type="text" />
+          <Input id="product" name="product" type="text" label="Produto" />
         </div>
       </Content>
     </Form>

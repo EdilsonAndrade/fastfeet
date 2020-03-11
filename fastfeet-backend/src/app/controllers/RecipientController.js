@@ -67,6 +67,11 @@ class RecipientController {
                 [Op.like]: `%${search.toString().toUpperCase()}%`,
               },
             },
+            {
+              name: {
+                [Op.like]: `%${search}%`,
+              },
+            },
 
           ],
 

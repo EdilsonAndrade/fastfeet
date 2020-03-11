@@ -82,9 +82,15 @@ class DeliveryManController {
             },
             {
               name: {
+                [Op.like]: `%${search}%`,
+              },
+            },
+            {
+              name: {
                 [Op.like]: `%${search.toString().toUpperCase()}%`,
               },
             },
+
 
           ],
 

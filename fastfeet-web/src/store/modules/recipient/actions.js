@@ -6,6 +6,7 @@ export const saveRequest = data => {
 };
 
 export const saveSuccess = data => {
+  console.tron.warn('entrei');
   return {
     type: '@recipient/SAVE_SUCCESS',
     payload: data,

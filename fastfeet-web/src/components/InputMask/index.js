@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useRef, useEffect } from 'react';
 import InputMask from 'react-input-mask';
 import PropTypes from 'prop-types';
 import { useField } from '@unform/core';
@@ -6,8 +6,8 @@ import { useField } from '@unform/core';
 export default function InputMaskForm({ name, label, ...rest }) {
   const ref = useRef();
 
-  const { fieldName, registerField, error } = useField(name);
-  const [value, setValue] = useState('');
+  const { fieldName, defaultValue = '', registerField, error } = useField(name);
+
   useEffect(() => {
     registerField({
       name: fieldName,
@@ -17,23 +17,12 @@ export default function InputMaskForm({ name, label, ...rest }) {
         maskRef.clear();
       },
     });
-  },[ref.current, fieldName]); // eslint-disable-line
-  const props = {
-    ...rest,
-    value,
-  };
+  }, [fieldName, registerField]);
+
   return (
     <>
       {label && <label htmlFor={fieldName}>{label}</label>}
-      <InputMask
-        {...props}
-        ref={ref}
-        value={value}
-        onChange={e => {
-          setValue(e.target.value);
-        }}
-        maskChar=""
-      />
+      <InputMask {...rest} defaultValue={defaultValue} maskChar="" ref={ref} />
       {error && <span>{error}</span>}
     </>
   );

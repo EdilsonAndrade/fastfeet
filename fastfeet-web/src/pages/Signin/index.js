@@ -20,7 +20,7 @@ export default function Signin() {
         email: Yup.string()
           .email('Digite um e-mail valido')
           .required('Digite um e-mail valido'),
-        password: Yup.string().required('Digite um passowrd válido'),
+        password: Yup.string().required('Digite um password válido'),
       });
       await schema.validate(data, {
         abortEarly: false,
@@ -42,12 +42,20 @@ export default function Signin() {
       <Form ref={formRef} onSubmit={handleLogin}>
         <LogoImage src={Logo} alt="logo" />
         <Email>
-          <strong>SEU E-MAIL</strong>
-          <Input name="email" type="email" placeholder="exemplo@email.com" />
+          <Input
+            name="email"
+            type="email"
+            placeholder="exemplo@email.com"
+            label="SEU E-MAIL"
+          />
         </Email>
         <Password>
-          <strong>SUA SENHA</strong>
-          <Input type="password" name="password" placeholder="*******" />
+          <Input
+            type="password"
+            name="password"
+            placeholder="*******"
+            label="SUA SENHA"
+          />
         </Password>
         <button type="submit">
           {loading ? 'Carregando' : 'Entrar no sistema'}

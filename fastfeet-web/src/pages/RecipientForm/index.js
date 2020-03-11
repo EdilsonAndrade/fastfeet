@@ -23,7 +23,7 @@ export default function RecipientForm() {
     if (recipientData.id) {
       setEditMode(true);
     }
-  }, [recipientData.id]);
+  }, [recipientData, recipientData.id]);
 
   const handleBack = () => {
     history.push('/recipients');

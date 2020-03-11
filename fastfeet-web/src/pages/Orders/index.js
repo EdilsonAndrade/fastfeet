@@ -11,7 +11,8 @@ import api from '~/services/api';
 import { saveSuccess } from '~/store/modules/order/actions';
 import { signOutSuccess } from '~/store/modules/signin/actions';
 import Pagination from '~/components/Pagination';
-
+import NoData from '~/components/NoData';
+import Loading from '~/components/Loading';
 import Modal from '~/components/Modal';
 
 export default function Order() {
@@ -29,6 +30,7 @@ export default function Order() {
   const [orderImageUrl, setOrderImageUrl] = useState();
   const [order, setOrder] = useState({});
   const [deleted, setDeleted] = useState(false);
+  const [loading, setLoading] = useState(false);
   const handleCadastrar = () => {
     dispatch(saveSuccess(''));
     history.push('/orders/orderform');
@@ -112,6 +114,7 @@ export default function Order() {
   }
 
   useEffect(() => {
+    setLoading(true);
     async function getOrders(onDeletePage) {
       const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
       try {
@@ -153,10 +156,47 @@ export default function Order() {
         dispatch(signOutSuccess());
         history.push('Signin');
       }
+      setLoading(false);
     }
     getOrders();
   }, [page, deleted, dispatch]);
 
+  const renderPage = () => {
+    if (loading) {
+      return <Loading loading={loading} />;
+    }
+    return (
+      <>
+        {orders.length <= 0 ? (
+          <NoData text="Não há encomendas cadastrada, clique em cadastrar" />
+        ) : (
+          <>
+            <OrdersTable
+              data={orders}
+              orderVisible={orderVisible}
+              handleDelete={handleDelete}
+              handleEdit={handleEdit}
+              handleView={handleView}
+              handleClick={handleClick}
+            />
+            <Pagination
+              handleBackPage={() => handlePreviousPage(previousPage)}
+              showBack={page > 1}
+              showForward={ordersCount / totalPages > page}
+              handleForwardPage={() => handleNextPage(nextPage)}
+            />
+            <Modal
+              recipient={order.Recipient}
+              order={order}
+              imageUrl={orderImageUrl}
+              handleClose={handleClose}
+              open={open}
+            />
+          </>
+        )}
+      </>
+    );
+  };
   return (
     <>
       <Top
@@ -165,27 +205,7 @@ export default function Order() {
         handleCadastrar={handleCadastrar}
         handleSearch={handleSearch}
       />
-      <OrdersTable
-        data={orders}
-        orderVisible={orderVisible}
-        handleDelete={handleDelete}
-        handleEdit={handleEdit}
-        handleView={handleView}
-        handleClick={handleClick}
-      />
-      <Pagination
-        handleBackPage={() => handlePreviousPage(previousPage)}
-        showBack={page > 1}
-        showForward={ordersCount / totalPages > page}
-        handleForwardPage={() => handleNextPage(nextPage)}
-      />
-      <Modal
-        recipient={order.Recipient}
-        order={order}
-        imageUrl={orderImageUrl}
-        handleClose={handleClose}
-        open={open}
-      />
+      {renderPage()}
     </>
   );
 }

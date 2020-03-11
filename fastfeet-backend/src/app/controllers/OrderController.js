@@ -67,6 +67,11 @@ class OrderController {
                 [Op.like]: `%${search.toString().toUpperCase()}%`,
               },
             },
+            {
+              product: {
+                [Op.like]: `%${search}%`,
+              },
+            },
 
           ],
 

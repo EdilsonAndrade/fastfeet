@@ -10,6 +10,8 @@ import { saveSuccess, loadSuccess } from '~/store/modules/recipient/actions';
 import Pagination from '~/components/Pagination';
 import RecipientTopContent from './styles';
 import ContextMenu from '~/components/ContextMenu';
+import NoData from '~/components/NoData';
+import Loading from '~/components/Loading';
 
 export default function Recipient() {
   const dispatch = useDispatch();
@@ -21,9 +23,9 @@ export default function Recipient() {
   const [recipientId, setRecipientId] = useState(0);
   const [recipientCount, setRecipientCount] = useState(0);
   const totalPages = 6;
-  const [pageRows, setPageRows] = useState(0);
   const [recipientVisible, setRecipientVisible] = useState(0);
-  const [deletedRow, setDeletedRow] = useState(false);
+  const [deleted, setdeleted] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   async function handleSearch(e) {
     const response = await api.get(
@@ -70,14 +72,8 @@ export default function Recipient() {
   async function handleDelete() {
     if (window.confirm('Tem certeza que quer excluir este registro?')) {
       try {
-        let pageOnDelete = page;
-        if (pageRows - 1 < 1) {
-          pageOnDelete -= 1;
-        }
-
         await api.delete(`/recipients/${recipientId}`);
-        setPage(pageOnDelete);
-        setDeletedRow(!deletedRow);
+        setdeleted(!deleted);
       } catch ({ response }) {
         if (response.data) {
           const { error } = response.data;
@@ -96,6 +92,7 @@ export default function Recipient() {
   }
 
   useEffect(() => {
+    setLoading(true);
     async function getRecipients(pageOnDeleted) {
       const response = await api.get(
         `/recipients?limit=${totalPages}&page=${pageOnDeleted || page}`
@@ -107,10 +104,69 @@ export default function Recipient() {
       }));
       setRecipientCount(data.count);
       dispatch(loadSuccess(dataFormated));
-      setPageRows(data.rows.length);
+      setLoading(false);
     }
     getRecipients();
-  }, [page, deletedRow, dispatch]);
+  }, [page, deleted, dispatch]);
+
+  const renderPage = () => {
+    if (loading) {
+      return <Loading loading={loading} />;
+    }
+    return (
+      <>
+        {recipients.length <= 0 ? (
+          <NoData text="Sem destinatário cadastrado, clique em cadastrar" />
+        ) : (
+          <>
+            <Grid>
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>NOME</th>
+                  <th>ENDEREÇO</th>
+                  <th>Ações</th>
+                </tr>
+              </thead>
+              <tbody>
+                {recipients.map(recipient => (
+                  <tr key={recipient.id}>
+                    <td style={{ width: 50 }}>{recipient.id}</td>
+                    <td style={{ width: 320 }}>{recipient.name}</td>
+                    <td>{recipient.fullAddress}</td>
+                    <td style={{ width: 120 }}>
+                      <button
+                        onClick={() => handleClick(recipient.id)}
+                        type="button"
+                      >
+                        <ul>
+                          <li>.</li>
+                          <li>.</li>
+                          <li>.</li>
+                        </ul>
+                        <ContextMenu
+                          id={recipient.id}
+                          visible={recipientVisible}
+                          handleDelete={handleDelete}
+                          handleEdit={handleEdit}
+                        />
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </Grid>
+            <Pagination
+              handleBackPage={() => handlePreviousPage(previousPage)}
+              showBack={page > 1}
+              showForward={recipientCount / totalPages > page}
+              handleForwardPage={() => handleNextPage(nextPage)}
+            />
+          </>
+        )}
+      </>
+    );
+  };
 
   return (
     <>
@@ -136,46 +192,7 @@ export default function Recipient() {
           </Button>
         </div>
       </RecipientTopContent>
-      <Grid>
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>NOME</th>
-            <th>ENDEREÇO</th>
-            <th>Ações</th>
-          </tr>
-        </thead>
-        <tbody>
-          {recipients.map(recipient => (
-            <tr key={recipient.id}>
-              <td style={{ width: 50 }}>{recipient.id}</td>
-              <td style={{ width: 320 }}>{recipient.name}</td>
-              <td>{recipient.fullAddress}</td>
-              <td style={{ width: 120 }}>
-                <button onClick={() => handleClick(recipient.id)} type="button">
-                  <ul>
-                    <li>.</li>
-                    <li>.</li>
-                    <li>.</li>
-                  </ul>
-                  <ContextMenu
-                    id={recipient.id}
-                    visible={recipientVisible}
-                    handleDelete={handleDelete}
-                    handleEdit={handleEdit}
-                  />
-                </button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </Grid>
-      <Pagination
-        handleBackPage={() => handlePreviousPage(previousPage)}
-        showBack={page > 1}
-        showForward={recipientCount / totalPages > page}
-        handleForwardPage={() => handleNextPage(nextPage)}
-      />
+      {renderPage()}
     </>
   );
 }

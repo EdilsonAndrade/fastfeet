@@ -36,9 +36,10 @@ export const Container = styled.div`
       }
     }
   }
-  strong {
+  label {
     font-size: 13px;
     color: #444444;
+    font-weight: bold;
   }
   input {
     margin: 8px 0;
