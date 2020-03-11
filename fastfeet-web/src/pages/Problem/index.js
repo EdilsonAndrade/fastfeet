@@ -21,6 +21,7 @@ export default function Problem() {
   const [open, setOpen] = useState(false);
   const [problemVisible, setProblemVisible] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [deleted, setDeleted] = useState(false);
 
   const handleClick = (id, idOrder) => {
     if (id === problemVisible) {
@@ -53,7 +54,7 @@ export default function Problem() {
       setLoading(false);
     }
     loadFirstData();
-  }, [page]);
+  }, [page, deleted]);
   async function handleDelete() {
     if (window.confirm('Tem certeza que quer excluir este registro?')) {
       try {
@@ -62,7 +63,8 @@ export default function Problem() {
           pageOnDelete -= 1;
         }
         await api.delete(`/orders/${orderId}/problems`);
-        setPage(pageOnDelete);
+        setPage(!pageOnDelete);
+        setDeleted(!deleted);
       } catch ({ response }) {
         const { error } = response.data;
         if (error) {
@@ -117,7 +119,8 @@ export default function Problem() {
                         aria-controls="contextMenu"
                         aria-haspopup="true"
                         onClick={() =>
-                          handleClick(problem.id, problem.Order.id)}
+                          handleClick(problem.id, problem.Order.id)
+                        }
                         type="button"
                       >
                         <ul>
