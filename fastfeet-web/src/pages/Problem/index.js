@@ -117,8 +117,7 @@ export default function Problem() {
                         aria-controls="contextMenu"
                         aria-haspopup="true"
                         onClick={() =>
-                          handleClick(problem.id, problem.Order.id)
-                        }
+                          handleClick(problem.id, problem.Order.id)}
                         type="button"
                       >
                         <ul>

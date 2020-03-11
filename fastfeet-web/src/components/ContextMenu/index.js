@@ -36,7 +36,7 @@ export default function ContextMenu({
                 color="#de3b3b"
                 style={{ marginRight: 10 }}
               />
-              <strong>Excluir encomenda</strong>
+              <strong>Cancelar encomenda</strong>
             </div>
           </ItemMenu>
         </>
