@@ -1,4 +1,3 @@
-
 module.exports = {
   up: (queryInterface, Sequelize) => queryInterface.createTable('delivery_mans', {
     id: {
@@ -23,7 +22,7 @@ module.exports = {
         key: 'id',
       },
       onUpdate: 'CASCADE',
-      onDelete: 'CASCADE',
+      onDelete: 'SET NULL',
     },
     created_at: {
       type: Sequelize.DATE,

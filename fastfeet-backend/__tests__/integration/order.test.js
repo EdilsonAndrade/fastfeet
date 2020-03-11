@@ -181,7 +181,7 @@ describe('Orders', () => {
       .delete(`/orders/${id}`)
       .set('Authorization', `Bearer ${user.generateToken().token}`);
 
-    expect(deleted.body).toHaveProperty('canceledAt');
+    expect(deleted.body.message).toEqual('Order deleted');
   });
 
   it('should delete order not found', async () => {
@@ -299,6 +299,6 @@ describe('Orders', () => {
       .get('/orders?limit=2&page=5')
       .set('Authorization', `Bearer ${user.generateToken().token}`);
     expect(response.body.rows.length).toBe(2);
-    expect(response.body.count).toBe(17);
+    expect(response.body.count).toBe(16);
   });
 });

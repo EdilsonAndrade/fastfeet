@@ -231,11 +231,9 @@ class OrderController {
         },
       });
     }
-    const deletedOrder = await order.update({
-      canceledAt: new Date(),
-    });
+    await order.destroy();
 
-    return res.json(deletedOrder);
+    return res.json({ message: 'Order deleted' });
   }
 }
 
