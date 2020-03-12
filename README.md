@@ -76,7 +76,8 @@ yarn
 ```
 
 2. Endereço de api
-2.1. Acesse a pasta no projeto src/services/api.js e modifique a base url para o ip de sua maquina.
+
+2.1. Acesse a pasta no projeto src/services/api.js e modifique a base url para ip da sua maquina ou localhost
 
 3. Rode o projeto
 
