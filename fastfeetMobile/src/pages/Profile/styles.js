@@ -21,7 +21,7 @@ export const SmallContainer = styled.View`
   justify-content:flex-start;
   align-items:flex-start;
   border:1px solid #eee;
-  padding:10px;
+  padding:20px 50px;
   border-radius:6px;
 
   `;
