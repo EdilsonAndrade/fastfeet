@@ -7,7 +7,6 @@ import ProblemTopContent from './styles';
 import ContextMenu from '~/components/ContextMenu';
 import Modal from '~/components/Modal';
 import NoData from '~/components/NoData';
-import Loading from '~/components/Loading';
 
 export default function Problem() {
   const [problems, setProblems] = useState([]);
@@ -20,7 +19,6 @@ export default function Problem() {
   const [text, setText] = useState('');
   const [open, setOpen] = useState(false);
   const [problemVisible, setProblemVisible] = useState(null);
-  const [loading, setLoading] = useState(false);
   const [deleted, setDeleted] = useState(false);
 
   const handleClick = (id, idOrder) => {
@@ -43,15 +41,14 @@ export default function Problem() {
     setPage(page + 1);
   };
   useEffect(() => {
-    setLoading(true);
     async function loadFirstData() {
       const response = await api.get(
         `/problems?limit=${totalPages}&page=${page}`
       );
+
       const { data } = response;
       setProblemsCount(data.count);
       setProblems(data.rows);
-      setLoading(false);
     }
     loadFirstData();
   }, [page, deleted]);
@@ -85,9 +82,6 @@ export default function Problem() {
   };
 
   const renderPage = () => {
-    if (loading) {
-      return <Loading loading={loading} />;
-    }
     return (
       <>
         {problems.length <= 0 ? (
@@ -118,8 +112,9 @@ export default function Problem() {
                       <button
                         aria-controls="contextMenu"
                         aria-haspopup="true"
-                        onClick={() =>
-                          handleClick(problem.id, problem.Order.id)
+                        onClick={
+                          () => handleClick(problem.id, problem.Order.id)
+                          // eslint-disable-next-line react/jsx-curly-newline
                         }
                         type="button"
                       >

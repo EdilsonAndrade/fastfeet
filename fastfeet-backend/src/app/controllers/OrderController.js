@@ -42,8 +42,7 @@ class OrderController {
   }
 
   async index(req, res) {
-    const { orderId } = req.body;
-    const { deliveryManId } = req.params;
+    const { deliveryManId, orderId } = req.params;
     const {
       search, limit, page, done,
     } = req.query;
@@ -117,7 +116,7 @@ class OrderController {
       return res.json(orders);
     }
 
-    if (deliveryManId) {
+    if (deliveryManId && !orderId) {
       if (!done) {
         const myOrders = await Order.findAndCountAll({
           limit: Number(limit),
@@ -181,7 +180,21 @@ class OrderController {
       return res.json(myOrders);
     }
 
-    const order = await Order.findByPk(orderId);
+    const order = await Order.findByPk(orderId, {
+      include: [
+        {
+          model: Recipient,
+
+        },
+        {
+          model: DeliveryMan,
+          attributes: ['id', 'email', 'name'],
+        },
+        {
+          model: File,
+        },
+      ],
+    });
     return res.json(order);
   }
 

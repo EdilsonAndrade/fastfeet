@@ -4,14 +4,14 @@ import { MdCached } from 'react-icons/md';
 import PropTypes from 'prop-types';
 import Container from './styles';
 
-export default function Loading({ loading }) {
+export default function LoadingPage({ rotate }) {
   return (
-    <Container loading={loading}>
+    <Container rotate={rotate}>
       <MdCached color="#7d40e7" size={62} />
     </Container>
   );
 }
 
-Loading.propTypes = {
-  loading: PropTypes.bool.isRequired,
+LoadingPage.propTypes = {
+  rotate: PropTypes.string.isRequired,
 };

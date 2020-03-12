@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import Icon from 'react-native-vector-icons/MaterialIcons'
-import { Alert, ActivityIndicator, StyleSheet } from 'react-native';
+import {useFocusEffect} from '@react-navigation/native';
+import { Alert, ActivityIndicator } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { format, parseISO } from 'date-fns';
 import {
@@ -92,7 +93,18 @@ export default function OrderDetail({ navigation }) {
     ])
 
   }
+  useFocusEffect(
+   useCallback(()=>{
+    const updateOrder = async () =>{
+      const response = await api.get(`/deliveryman/${deliveryMan.id}/orders/${order.id}`);
 
+      dispatch(OrderActions.selectOrder(response.data));
+
+    }
+    updateOrder();
+   },[order.startDate])
+
+  )
   const handleViewSignature = () => {
 
     navigation.navigate('ConfirmDelivery', { order: order, fileUrl: order.File.url })

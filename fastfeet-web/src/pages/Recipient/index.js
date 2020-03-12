@@ -25,7 +25,7 @@ export default function Recipient() {
   const totalPages = 6;
   const [recipientVisible, setRecipientVisible] = useState(0);
   const [deleted, setdeleted] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [rotate, setRotate] = useState(false);
 
   async function handleSearch(e) {
     const response = await api.get(
@@ -92,7 +92,7 @@ export default function Recipient() {
   }
 
   useEffect(() => {
-    setLoading(true);
+    setRotate(true);
     async function getRecipients(pageOnDeleted) {
       const response = await api.get(
         `/recipients?limit=${totalPages}&page=${pageOnDeleted || page}`
@@ -104,14 +104,14 @@ export default function Recipient() {
       }));
       setRecipientCount(data.count);
       dispatch(loadSuccess(dataFormated));
-      setLoading(false);
+      setRotate(false);
     }
     getRecipients();
   }, [page, deleted, dispatch]);
 
   const renderPage = () => {
-    if (loading) {
-      return <Loading loading={loading} />;
+    if (rotate) {
+      return <Loading rotate={rotate.toString()} />;
     }
     return (
       <>

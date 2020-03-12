@@ -18,7 +18,7 @@ const Container = styled.div`
   align-items: center;
   background: #ffff;
   ${props =>
-    props.loading &&
+    props.rotate === 'true' &&
     css`
       svg {
         margin: 0 auto;

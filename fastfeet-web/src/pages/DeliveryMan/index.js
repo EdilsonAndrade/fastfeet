@@ -25,7 +25,7 @@ export default function DeliveryMan() {
   const totalPages = 6;
   const [deliveryManVisible, setDeliveryManVisible] = useState(0);
   const [deleted, setDeleted] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [rotate, setRotate] = useState(false);
 
   async function handleSearch(e) {
     const response = await api.get(
@@ -89,7 +89,7 @@ export default function DeliveryMan() {
   }
 
   useEffect(() => {
-    setLoading(true);
+    setRotate(true);
     async function getDeliveryMan(pageOnDeleted) {
       const response = await api.get(
         `/deliveryman?limit=${totalPages}&page=${pageOnDeleted || page}`
@@ -98,14 +98,14 @@ export default function DeliveryMan() {
 
       setDeliveryManCount(data.count);
       dispatch(loadSuccess(data.rows));
-      setLoading(false);
+      setRotate(false);
     }
     getDeliveryMan();
   }, [page, dispatch, deleted]);
 
   const renderPage = () => {
-    if (loading) {
-      return <Loading loading={loading} />;
+    if (rotate) {
+      return <Loading rotate={rotate.toString()} />;
     }
     return (
       <>

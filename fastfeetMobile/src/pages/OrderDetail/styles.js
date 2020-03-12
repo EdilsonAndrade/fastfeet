@@ -24,6 +24,8 @@ export const RowDirection = styled.View`
 flex-direction:row;
 margin-bottom:5px;
 width:100%;
+justify-content:center;
+align-items:center;
 
 margin-top: ${props => props.space ? props.space : '0'};
 `;

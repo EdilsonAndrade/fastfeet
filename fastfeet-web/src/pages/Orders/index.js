@@ -30,7 +30,7 @@ export default function Order() {
   const [orderImageUrl, setOrderImageUrl] = useState();
   const [order, setOrder] = useState({});
   const [deleted, setDeleted] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [rotate, setRotate] = useState(false);
   const handleCadastrar = () => {
     dispatch(saveSuccess(''));
     history.push('/orders/orderform');
@@ -114,7 +114,7 @@ export default function Order() {
   }
 
   useEffect(() => {
-    setLoading(true);
+    setRotate(true);
     async function getOrders(onDeletePage) {
       const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
       try {
@@ -156,14 +156,14 @@ export default function Order() {
         dispatch(signOutSuccess());
         history.push('Signin');
       }
-      setLoading(false);
+      setRotate(false);
     }
     getOrders();
   }, [page, deleted, dispatch]);
 
   const renderPage = () => {
-    if (loading) {
-      return <Loading loading={loading} />;
+    if (rotate) {
+      return <Loading rotate={rotate.toString()} />;
     }
     return (
       <>

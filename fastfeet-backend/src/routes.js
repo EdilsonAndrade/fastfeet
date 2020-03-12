@@ -18,6 +18,7 @@ const upload = multer(multerConfig);
 routes.post('/sessions', SessionController.store);
 routes.post('/users', UserController.store);
 routes.get('/deliveryman/:deliveryManId/orders', OrderController.index);
+routes.get('/deliveryman/:deliveryManId/orders/:orderId', OrderController.index);
 routes.put('/deliveryman/:deliveryManId/deliverymanagements/:orderId', DeliveryManagementController.update);
 routes.get('/deliveryman/:deliveryManId', DeliveryManController.index);
 routes.put('/orders/:orderId/enddelivery', upload.single('signature'), DeliveryFinishController.update);
