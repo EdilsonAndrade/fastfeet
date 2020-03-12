@@ -24,37 +24,37 @@ yarn
 
 1. Banco de Dados Postgres
 
-```json
+```
 docker run --name postgresfastfeet -e POSTGRES_PASSWORD=fastfeet -p 5432:5432 -d postgres:11
 ```
 
 2. Redis
 
-```json
+```
 docker run --name redisfastfeet -p 6379:6379 -d -t redis:alpine
 ```
 
 <strong>Por fim inicie as duas imagens com o seguinte comando</strong>
 
-```json
+```
  docker start postgresfastfeet redisfastfeet
 ```
 3. Acesse o banco postgres com algum gerenciador como exemplo postbird, crie o banco com nome de <strong>fastfeet</strong>
 4. Crie um arquivo <b>.env</b> e coloque as configurações conforme arquivo [<b>.env.example</b> link](https://github.com/EdilsonAndrade/fastfeet/blob/master/fastfeet-backend/.env.example)  alterando ip, usuário,password, banco e demais propriedades... conforme definido na criação das imagens e também do banco.
 
 5-Rode a migration
-``json
+``
 yarn sequelize db:migrate
 ```
 7-Rode o seed do usuário adm
-``json
+```
 yarn sequelize db:seed:all
 ```
 6-Rode a aplicação server e queue (cada um em um terminal)
-``json
+```
 yarn dev
 ```
-``json
+```
 yarn queue
 ```
 
@@ -67,7 +67,7 @@ yarn queue
 
 1. Instalação de dependencias
 
-```json
+```
 yarn
 ```
 
@@ -75,7 +75,7 @@ yarn
 2.1. Acesse a pasta no projeto src/services/api.js e modifique a base url para o ip de sua maquina.
 
 3. Rode o projeto
-```json
+```
 yarn start
 ```
 
@@ -90,7 +90,7 @@ yarn start
 
 1. Instalação de dependencias
 
-```json
+```
 yarn
 ```
 1.1. Crie um arquivo .env e coloque um conteúdo como exemplo do arquivo [.env.example deste link](https://github.com/EdilsonAndrade/fastfeet/blob/master/fastfeetMobile/.env.example)
@@ -100,21 +100,21 @@ yarn
 2.1. Connecte o celular via usb liberando acesso para transmissão de arquivo por esta porta ou utilize um emulador de ANDROID. 
 
 3. Rode o comando em uma aba do terminal
-```json
+```
 react-native start
 ```
 4. Rode este outros comando em outra aba do terminal
-```json
+```
 $ adb reverse tcp:8081 tcp:8081
 
 ```
 4.1. Caso utilize o genymotion rode
-```json
+```
 $ adb connect IP_DO_SEU_EMULADOR:5555
 
 ```
 5. Rode o comando para instalar no aparelho / emulador
-```json
+```
 $ react-native run-android
 
 ```
