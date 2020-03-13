@@ -266,10 +266,10 @@ describe('Orders', () => {
 
 
     const response = await request(app)
-      .get('/orders')
-      .send({ orderId: order.id })
+      .get(`/orders/${order.id}`)
       .set('Authorization', `Bearer ${user.generateToken().token}`);
 
+    console.log(JSON.stringify(response));
     expect(response.body.product).toBe(order.product);
   });
   it('should list all orders paged', async () => {

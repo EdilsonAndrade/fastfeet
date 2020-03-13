@@ -7,6 +7,7 @@ module.exports = {
   password: process.env.DB_PWD,
   database: process.env.DB_NAME,
   storage: './__tests__/database.sqlite',
+  logging: !process.env.DB_DIALECT,
   define: {
     timestamp: true,
     underscored: true,

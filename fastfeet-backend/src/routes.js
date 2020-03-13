@@ -44,6 +44,7 @@ routes.post('/orders', OrderController.store);
 routes.put('/orders/:orderId', OrderController.update);
 routes.delete('/orders/:orderId', OrderController.delete);
 routes.get('/orders', OrderController.index);
+routes.get('/orders/:orderId', OrderController.index);
 
 routes.get('/problems', OrderProblemController.index);
 

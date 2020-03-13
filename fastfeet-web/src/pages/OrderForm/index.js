@@ -22,56 +22,59 @@ export default function OrderForm() {
   const [deliveryMans, setDeliveryMans] = useState([]);
   const [editMode, setEditMode] = useState(false);
 
-  const defaultDeliveryMan = {
-    value: order.DeliveryMan && order.DeliveryMan.id,
-    label: order.DeliveryMan && order.DeliveryMan.name,
-  };
-  const defaultRecipient = {
-    value: order.Recipient && order.Recipient.id,
-    label: order.Recipient && order.Recipient.name,
-  };
-  async function handleSearchRecipient(newValue) {
-    const inputValue = newValue.replace(/\W/g, '');
-    const response = await api.get(
-      `recipients?search=${inputValue}&limit=1000000&page=1`
-    );
-    const recipipents = response.data.rows.map(r => ({
-      label: r.name,
-      value: r.id,
-    }));
-    setRecipients(recipipents);
-    return recipients;
-  }
-  async function handleSearchDeliveryMan(newValue) {
-    const inputValue = newValue.replace(/\W/g, '');
-    const response = await api.get(
-      `deliveryman?search=${inputValue}&limit=1000000&page=1`
-    );
-    const deliveryman = response.data.rows.map(r => ({
-      label: r.name,
-      value: r.id,
-    }));
-    setDeliveryMans(deliveryman);
-    return deliveryman;
-  }
-
   const filterRecipients = inputValue => {
-    return recipients.filter(i =>
+    const data = recipients.map(d => ({
+      value: d.id,
+      label: d.name,
+    }));
+    return data.filter(i =>
       i.label.toLowerCase().includes(inputValue.toLowerCase())
     );
   };
 
   const filterDeliveryMan = inputValue => {
-    return deliveryMans.filter(i =>
+    const data = deliveryMans.map(d => ({
+      value: d.id,
+      label: d.name,
+    }));
+    return data.filter(i =>
       i.label.toLowerCase().includes(inputValue.toLowerCase())
     );
   };
 
-  const loadRecipients = (inputValue, callback) => {
-    callback(filterRecipients(inputValue));
+  const loadRecipients = async inputValue => {
+    if (inputValue) {
+      return filterRecipients(inputValue);
+    }
+
+    const response = await api.get('/recipients');
+    setRecipients(response.data);
+
+    return new Promise(resolve => {
+      resolve(
+        response.data.map(d => ({
+          value: d.id,
+          label: d.name,
+        }))
+      );
+    });
   };
-  const loadDeliveryMan = (inputValue, callback) => {
-    callback(filterDeliveryMan(inputValue));
+  const loadDeliveryMan = async inputValue => {
+    if (inputValue) {
+      return filterDeliveryMan(inputValue);
+    }
+
+    const response = await api.get('/deliveryman');
+    setDeliveryMans(response.data);
+
+    return new Promise(resolve => {
+      resolve(
+        response.data.map(d => ({
+          value: d.id,
+          label: d.name,
+        }))
+      );
+    });
   };
 
   useEffect(() => {
@@ -141,10 +144,8 @@ export default function OrderForm() {
               id="recipientId"
               label="Destinatário"
               loadOptions={loadRecipients}
-              onInputChange={handleSearchRecipient}
               cacheOptions
               defaultOptions
-              defaultValue={defaultRecipient}
               name="recipientId"
             />
           </span>
@@ -154,10 +155,8 @@ export default function OrderForm() {
               id="deliverymanId"
               label="Entregador"
               loadOptions={loadDeliveryMan}
-              onInputChange={handleSearchDeliveryMan}
               cacheOptions
               defaultOptions
-              defaultValue={defaultDeliveryMan}
               name="deliverymanId"
             />
           </span>
