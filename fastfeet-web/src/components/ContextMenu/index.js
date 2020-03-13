@@ -28,17 +28,20 @@ export default function ContextMenu({
               <strong>Visualizar</strong>
             </div>
           </ItemMenu>
-
-          <ItemMenu onClick={handleDelete}>
-            <div>
-              <MdDeleteForever
-                size={22}
-                color="#de3b3b"
-                style={{ marginRight: 10 }}
-              />
-              <strong>Cancelar encomenda</strong>
-            </div>
-          </ItemMenu>
+          {!delivered ? (
+            <ItemMenu onClick={handleDelete}>
+              <div>
+                <MdDeleteForever
+                  size={22}
+                  color="#de3b3b"
+                  style={{ marginRight: 10 }}
+                />
+                <strong>Cancelar encomenda</strong>
+              </div>
+            </ItemMenu>
+          ) : (
+            ''
+          )}
         </>
       );
     }

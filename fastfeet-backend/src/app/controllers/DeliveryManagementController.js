@@ -31,7 +31,7 @@ class DeliveryManagementController {
     const actualDate = parseISO(startDate);
 
     const beginOfWork = setSeconds(setMinutes(setHours(new Date(), 8), 0), 0);
-    const endOfWork = setSeconds(setMinutes(setHours(new Date(), 18), 0), 0);
+    const endOfWork = setSeconds(setMinutes(setHours(new Date(), 23), 0), 0);
 
     if (isBefore(actualDate, beginOfWork) || isAfter(actualDate, endOfWork)) {
       return res.status(401).json({ error: 'We are closed for deliveries' });

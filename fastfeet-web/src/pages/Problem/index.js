@@ -94,7 +94,7 @@ export default function Problem() {
             <Grid>
               <thead>
                 <tr>
-                  <th>ID</th>
+                  <th>ID (ENCOMENDA)</th>
                   <th>PROBLEMA</th>
                   <th>AÇÕES</th>
                 </tr>
@@ -104,7 +104,7 @@ export default function Problem() {
                   <tr key={problem.id}>
                     <td>
                       <span canceled={problem.Order.canceledAt}>
-                        {problem.id}
+                        {problem.Order.id}
                       </span>
                     </td>
                     <td>{problem.description}</td>
@@ -113,7 +113,7 @@ export default function Problem() {
                         aria-controls="contextMenu"
                         aria-haspopup="true"
                         onClick={
-                          () => handleClick(problem.id, problem.Order.id)
+                          () => handleClick(problem.Order.id, problem.Order.id)
                           // eslint-disable-next-line react/jsx-curly-newline
                         }
                         type="button"
@@ -124,12 +124,19 @@ export default function Problem() {
                           <li>.</li>
                         </ul>
                         <ContextMenu
+                          delivered={
+                            problem.Order.endDate !== null ||
+                            problem.Order.canceledAt
+                          }
                           larger
                           problem
-                          id={problem.id}
+                          id={problem.Order.id}
                           visible={problemVisible}
                           handleDelete={() => handleDelete()}
-                          handleView={() => handleView(problem.description)}
+                          handleView={
+                            (() => handleView(problem.description),
+                            problem.Order)
+                          }
                         />
                       </button>
                     </td>
