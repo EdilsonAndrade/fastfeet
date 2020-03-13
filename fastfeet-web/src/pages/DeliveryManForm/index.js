@@ -32,7 +32,7 @@ export default function DeliveryManForm() {
   const handleSubmit = async data => {
     try {
       const schema = Yup.object().shape({
-        name: Yup.string().required('Name deve ser informado'),
+        name: Yup.string().required('Nome deve ser informado'),
         email: Yup.string('E-mail deve ser informado')
           .required('E-mail deve ser informado')
           .email('E-mail deve ser informado'),

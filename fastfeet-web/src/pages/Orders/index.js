@@ -168,7 +168,7 @@ export default function Order() {
     return (
       <>
         {orders.length <= 0 ? (
-          <NoData text="Não há encomendas cadastrada, clique em cadastrar" />
+          <NoData text="Não há encomenda cadastrada, clique em cadastrar" />
         ) : (
           <>
             <OrdersTable

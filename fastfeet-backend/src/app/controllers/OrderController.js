@@ -58,17 +58,17 @@ class OrderController {
           [Op.or]: [
             {
               product: {
-                [Op.like]: `%${search.toString().toLowerCase()}%`,
+                [Op.iLike]: `%${search.toString().toLowerCase()}%`,
               },
             },
             {
               product: {
-                [Op.like]: `%${search.toString().toUpperCase()}%`,
+                [Op.iLike]: `%${search.toString().toUpperCase()}%`,
               },
             },
             {
               product: {
-                [Op.like]: `%${search}%`,
+                [Op.iLike]: `%${search}%`,
               },
             },
 

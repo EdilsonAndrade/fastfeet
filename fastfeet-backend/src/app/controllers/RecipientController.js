@@ -59,17 +59,17 @@ class RecipientController {
           [Op.or]: [
             {
               name: {
-                [Op.like]: `%${search.toString().toLowerCase()}%`,
+                [Op.iLike]: `%${search.toString().toLowerCase()}%`,
               },
             },
             {
               name: {
-                [Op.like]: `%${search.toString().toUpperCase()}%`,
+                [Op.iLike]: `%${search.toString().toUpperCase()}%`,
               },
             },
             {
               name: {
-                [Op.like]: `%${search}%`,
+                [Op.iLike]: `%${search}%`,
               },
             },
 

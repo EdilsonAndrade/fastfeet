@@ -76,7 +76,7 @@ export default function DeliveryMan() {
         if (error) {
           if (error.includes('associated')) {
             toast.error(
-              'Entregador não pode ser excluido quanto associado a um pedido'
+              'Entregador não pode ser excluido quando associado a um pedido'
             );
           } else {
             toast.error(error);
