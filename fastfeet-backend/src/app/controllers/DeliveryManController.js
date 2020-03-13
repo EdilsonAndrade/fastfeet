@@ -105,9 +105,24 @@ class DeliveryManController {
 
       return res.json(deliveryMen);
     }
-    const deliveryMen = await DeliveryMan.findAndCountAll({
-      limit: Number(limit),
-      offset: (page - 1) * limit,
+    if (limit && page) {
+      const deliveryMen = await DeliveryMan.findAndCountAll({
+        limit: Number(limit),
+        offset: (page - 1) * limit,
+        order: [
+          ['createdAt', 'ASC'],
+        ],
+        include: [
+          {
+            model: File,
+            as: 'avatar',
+          },
+        ],
+      });
+      return res.json(deliveryMen);
+    }
+
+    const deliveryMen = await DeliveryMan.findAll({
       order: [
         ['createdAt', 'ASC'],
       ],
@@ -118,7 +133,6 @@ class DeliveryManController {
         },
       ],
     });
-
     return res.json(deliveryMen);
   }
 }
