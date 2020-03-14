@@ -80,7 +80,7 @@ export default function OrderDetail({ navigation }) {
             if(error.includes("close")){
               Alert.alert("Erro", `Estamos fechados para retirada`);
             }else{
-              Alert.alert("Erro", `${JSON.stringify(response.data.error)} `);
+              Alert.alert("Erro", "Ocorreu um erro, tente novamente!");
             }
 
           }

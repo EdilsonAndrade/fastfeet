@@ -27,7 +27,7 @@ export default function OrderReportProblem({ route, navigation }) {
   const handleSendProblem = async () => {
     setLoading(true);
     if(!description || description.length < 5){
-      Alert.alert('Erro', 'Descrição deve ser informada com mininmo de 5 caracteres');
+      Alert.alert('Erro', 'Descrição deve ser informada com no mínimo 5 caracteres');
     }else{
       try {
         await api.post(`/orders/${orderId}/problems`,{
@@ -36,7 +36,7 @@ export default function OrderReportProblem({ route, navigation }) {
         Alert.alert("Sucesso", "Problema cadastrado com sucesso!");
         setDescription('');
       } catch (error) {
-        Alert.alert("Erro", `Ocorreu um erro tente novamente mais tard ${error}`);
+        Alert.alert("Erro", `Ocorreu um erro tente novamente!`);
       }
     }
 

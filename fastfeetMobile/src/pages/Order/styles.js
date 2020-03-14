@@ -30,7 +30,6 @@ export const Avatar = styled.Image`
   width:80px;
   height:80px;
   border-radius:40px;
-  background:#7D40E7;
   margin-right:10px;
 
 `;

@@ -35,14 +35,13 @@ export default function Signin({ navigation }) {
         }
 
     } catch (error) {
-
       setLoading(false);
       const {message} = error;
       if(message.includes("timeout"))
       {
         Alert.alert('Erro', 'Tempo de 5 segundos de conexão expirou, verifique sua internet ou a mesma rede wi-fi');
       }else{
-        Alert.alert('Erro', JSON.stringify(error));
+        Alert.alert('Erro', 'Id inválido, tente novamente!');
       }
     }
     setLoading(false);

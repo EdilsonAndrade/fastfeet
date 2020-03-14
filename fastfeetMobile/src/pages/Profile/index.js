@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux'
 import { format, parseISO } from 'date-fns';
 import {signoutRequest} from '~/store/modules/auth/actions';
+import AvatarPng from '~/assets/fakeavatar.png'
 import {
   ProfileContainer,
   Avatar,
@@ -29,7 +30,7 @@ export default function Profile() {
   const formatedDate = deliveryMan
   return (
     <ProfileContainer >
-      <Avatar source={{ uri: deliveryMan.avatar.url }} />
+      <Avatar source={deliveryMan.avatar ? { uri: deliveryMan.avatar.url} : AvatarPng }/>
       <SmallContainer>
         <Label>Nome completo</Label>
         <DeliveryManInfo>

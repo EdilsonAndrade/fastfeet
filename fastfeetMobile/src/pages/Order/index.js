@@ -5,13 +5,13 @@ import { useSelector, useDispatch } from 'react-redux';
 import { format, parseISO } from 'date-fns';
 import Exit from '~/assets/exit.png'
 import { TouchableOpacity } from 'react-native-gesture-handler';
+import AvatarPng from '~/assets/fakeavatar.png';
 import {
   OrderContainer, Header, GroupedAvatar, Avatar, ContentName, WelcomeText, DeliveryManName, ExitImage, SubHeader,
   DeliveryText, FilterContent, PendingText, DeliveredText,
   Deliveries,
   DeliveryContent,
   TopContent,
-  TruckImage,
   DeliveryCountText,
   TrackContent,
   SmallDot,
@@ -56,14 +56,17 @@ export default function Order({ navigation }) {
       } else {
         response = await api.get(`/deliveryman/${deliveryMan.id}/orders?limit=3&page=${page}`)
       }
-      const rows = response.data.rows.map(d => ({
-        ...d,
-        formattedDate: format(parseISO(d.createdAt), 'dd/MM/yy HH:mm:ss')
-      }))
+      if(response.data.rows){
+        const rows = response.data.rows.map(d => ({
+          ...d,
+          formattedDate: format(parseISO(d.createdAt), 'dd/MM/yy HH:mm:ss')
+        }))
 
-      setOrders([...orders, ...rows])
-      setPage(page + 1);
-      setCount(response.data.count)
+        setOrders([...orders, ...rows])
+        setPage(page + 1);
+        setCount(response.data.count)
+      }
+
     }
     setLoading(false);
   }
@@ -146,7 +149,7 @@ export default function Order({ navigation }) {
       <StatusBar barStyle="dark-content" backgroundColor="#fff" />
       <Header>
         <GroupedAvatar>
-          <Avatar source={{ uri: deliveryMan.avatar.url }} ></Avatar>
+          <Avatar source={deliveryMan.avatar ? { uri: deliveryMan.avatar.url} : AvatarPng }/>
           <ContentName>
             <WelcomeText>Bem vindo de volta</WelcomeText>
             <DeliveryManName>{deliveryMan.name}</DeliveryManName>

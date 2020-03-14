@@ -61,7 +61,7 @@ export default function ConfirmDelivery({ route, navigation }) {
         navigation.push('Dashboard')
       }
     } catch (error) {
-      console.tron.warn(`Erro = ${error}`)
+      Alert.alert('Erro', 'Ocorreu um erro ao enviar a foto, tente novamente!')
     }
     setLoading(false);
   }
