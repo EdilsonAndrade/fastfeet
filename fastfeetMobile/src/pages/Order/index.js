@@ -45,7 +45,30 @@ export default function Order({ navigation }) {
   const handleLogout = () => {
     dispatch(signoutRequest())
   }
+
+  const resetList = async () => {
+    let response = null;
+
+    if (filter === 'DELIVERED') {
+      response = await api.get(`/deliveryman/${deliveryMan.id}/orders?limit=3&page=1&done=true`)
+
+    } else {
+      response = await api.get(`/deliveryman/${deliveryMan.id}/orders?limit=3&page=1`)
+    }
+    if (response.data.rows) {
+      const rows = response.data.rows.map(d => ({
+        ...d,
+        formattedDate: format(parseISO(d.createdAt), 'dd/MM/yy HH:mm:ss')
+      }))
+      setOrders(rows)
+      setPage(2);
+      setCount(response.data.count)
+    }
+  }
+
   async function getOrders() {
+    console.tron.warn('merda')
+
     if (count === 0 || count > orders.length) {
       setLoading(true);
       let response = null;
@@ -56,7 +79,7 @@ export default function Order({ navigation }) {
       } else {
         response = await api.get(`/deliveryman/${deliveryMan.id}/orders?limit=3&page=${page}`)
       }
-      if(response.data.rows){
+      if (response.data.rows) {
         const rows = response.data.rows.map(d => ({
           ...d,
           formattedDate: format(parseISO(d.createdAt), 'dd/MM/yy HH:mm:ss')
@@ -112,7 +135,7 @@ export default function Order({ navigation }) {
     return (
       <DeliveryContent key={item.id}>
         <TopContent>
-          <Icon name="local-shipping" size={22} color={item.canceledAt ? "#DE3B3B" : "#7D40E7"}/>
+          <Icon name="local-shipping" size={22} color={item.canceledAt ? "#DE3B3B" : "#7D40E7"} />
           <DeliveryCountText canceled={item.canceledAt}>Encomenda {item.id}</DeliveryCountText>
         </TopContent>
         <TrackContent canceled={item.canceledAt}>
@@ -149,7 +172,7 @@ export default function Order({ navigation }) {
       <StatusBar barStyle="dark-content" backgroundColor="#fff" />
       <Header>
         <GroupedAvatar>
-          <Avatar source={deliveryMan.avatar ? { uri: deliveryMan.avatar.url} : AvatarPng }/>
+          <Avatar source={deliveryMan.avatar ? { uri: deliveryMan.avatar.url } : AvatarPng} />
           <ContentName>
             <WelcomeText>Bem vindo de volta</WelcomeText>
             <DeliveryManName>{deliveryMan.name}</DeliveryManName>
@@ -178,7 +201,7 @@ export default function Order({ navigation }) {
         keyExtractor={item => String(item.id)}
         renderItem={({ item }) => renderList(item)}
         refreshing={loading}
-        onRefresh={getOrders}
+        onRefresh={resetList}
       />
     </OrderContainer>
   );
