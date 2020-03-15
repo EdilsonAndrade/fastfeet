@@ -56,28 +56,26 @@ export default function OrdersTable({
               </StatusContent>
             </td>
             <td style={{ width: 120 }}>
-              {order.canceledAt ? null : (
-                <button
-                  onClick={() => handleClick(order, order.id)}
-                  type="button"
-                >
-                  <ul>
-                    <li>.</li>
-                    <li>.</li>
-                    <li>.</li>
-                  </ul>
-                  <ContextMenu
-                    delivered={order.endDate !== null}
-                    id={order.id}
-                    order={order && order.endDate}
-                    visible={orderVisible}
-                    handleDelete={handleDelete}
-                    handleEdit={handleEdit}
-                    handleView={() => handleView(order.File && order.File.url)}
-                    menuId="contextMenu"
-                  />
-                </button>
-              )}
+              <button
+                onClick={() => handleClick(order, order.id)}
+                type="button"
+              >
+                <ul>
+                  <li>.</li>
+                  <li>.</li>
+                  <li>.</li>
+                </ul>
+                <ContextMenu
+                  delivered={order.endDate !== null || order.canceledAt}
+                  id={order.id}
+                  order={order && (order.endDate || order.canceledAt)}
+                  visible={orderVisible}
+                  handleDelete={handleDelete}
+                  handleEdit={handleEdit}
+                  handleView={() => handleView(order.File && order.File.url)}
+                  menuId="contextMenu"
+                />
+              </button>
             </td>
           </tr>
         ))}

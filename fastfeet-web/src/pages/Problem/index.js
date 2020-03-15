@@ -103,6 +103,7 @@ export default function Problem() {
                 <tr>
                   <th>ID (ENCOMENDA)</th>
                   <th>PROBLEMA</th>
+                  <th />
                   <th>AÇÕES</th>
                 </tr>
               </thead>
@@ -110,15 +111,16 @@ export default function Problem() {
                 {problems.map(problem => (
                   <tr key={problem.id}>
                     <td>
-                      <span>
-                        {problem.isCanceled === true ? (
-                          <span style={{ color: '#DE3B3B' }}>
-                            {` ${problem.Order.id} cancelada`}
-                          </span>
-                        ) : (
-                          problem.Order.id
-                        )}
-                      </span>
+                      <span>{problem.Order.id}</span>
+                    </td>
+                    <td>
+                      {problem.isCanceled === true ? (
+                        <span style={{ color: '#DE3B3B' }}>
+                          encomenda - cancelada
+                        </span>
+                      ) : (
+                        ''
+                      )}
                     </td>
                     <td>{problem.description}</td>
                     <td>
