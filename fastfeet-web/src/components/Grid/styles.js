@@ -18,41 +18,42 @@ export const Content = styled.table`
       text-align: left;
     }
   }
-  tr {
-    line-height: 50px;
-    color: ${props => (props.color ? props.color : '#666666')};
-    :hover {
-      background: #eeee;
-      cursor: pointer;
-    }
-    td {
-      color: ${props => (props.color ? props.color : '#666666')};
-      margin: 0;
-      padding: 10px 5px;
-      border-bottom: 1px solid #979797;
-      span {
-        color: ${props => (props.canceled ? '#de3b3b' : '#666666')};
+  tbody {
+    tr {
+      line-height: 50px;
+
+      :hover {
+        background: #eeee;
+        cursor: pointer;
       }
-      button {
-        border: none;
-        background: none;
-        border-radius: 50%;
-        height: 42px;
-        width: 48px;
-        ul {
-          position: relative;
-          top: -8px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          li {
-            font-weight: bold;
-            font-size: 36px;
-            color: #707070;
-          }
+      td {
+        color: ${props => (props.color ? props.color : '#666666')};
+        margin: 0;
+        padding: 10px 5px;
+        border-bottom: 1px solid #979797;
+        span {
         }
-        :hover {
-          background: #ccc;
+        button {
+          border: none;
+          background: none;
+          border-radius: 50%;
+          height: 42px;
+          width: 48px;
+          ul {
+            position: relative;
+            top: -8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            li {
+              font-weight: bold;
+              font-size: 36px;
+              color: #707070;
+            }
+          }
+          :hover {
+            background: #ccc;
+          }
         }
       }
     }

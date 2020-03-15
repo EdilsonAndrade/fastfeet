@@ -47,8 +47,14 @@ export default function Problem() {
       );
 
       const { data } = response;
+
+      const dataRows = data.rows.map(e => ({
+        ...e,
+        isCanceled: e.Order.canceledAt !== null,
+        delivered: !!(e.Order.endDate !== null || e.Order.canceledAt),
+      }));
       setProblemsCount(data.count);
-      setProblems(data.rows);
+      setProblems(dataRows);
     }
     loadFirstData();
   }, [page, deleted]);
@@ -62,6 +68,7 @@ export default function Problem() {
         await api.delete(`/orders/${orderId}/problems`);
         setPage(!pageOnDelete);
         setDeleted(!deleted);
+        toast.success('Sucesso', 'Entrega cancelada com sucesso!');
       } catch ({ response }) {
         const { error } = response.data;
         if (error) {
@@ -103,8 +110,14 @@ export default function Problem() {
                 {problems.map(problem => (
                   <tr key={problem.id}>
                     <td>
-                      <span canceled={problem.Order.canceledAt}>
-                        {problem.Order.id}
+                      <span>
+                        {problem.isCanceled === true ? (
+                          <span style={{ color: '#DE3B3B' }}>
+                            {` ${problem.Order.id} cancelada`}
+                          </span>
+                        ) : (
+                          problem.Order.id
+                        )}
                       </span>
                     </td>
                     <td>{problem.description}</td>
@@ -124,19 +137,13 @@ export default function Problem() {
                           <li>.</li>
                         </ul>
                         <ContextMenu
-                          delivered={
-                            problem.Order.endDate !== null ||
-                            problem.Order.canceledAt
-                          }
+                          delivered={problem.delivered}
                           larger
                           problem
                           id={problem.Order.id}
                           visible={problemVisible}
                           handleDelete={() => handleDelete()}
-                          handleView={
-                            (() => handleView(problem.description),
-                            problem.Order)
-                          }
+                          handleView={() => handleView(problem.description)}
                         />
                       </button>
                     </td>
