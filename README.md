@@ -41,7 +41,7 @@ docker run --name redisfastfeet -p 6379:6379 -d -t redis:alpine
 ```
 
 3. Acesse o banco postgres com algum gerenciador como exemplo postbird, crie o banco com nome de <strong>fastfeet</strong>
-4. Crie um arquivo <b>.env</b> e coloque as configurações conforme arquivo [<b>.env.example</b> link](https://github.com/EdilsonAndrade/fastfeet/blob/master/fastfeet-backend/.env.example)  alterando ip, usuário,password, banco e demais propriedades... conforme definido na criação das imagens e também do banco.
+4. Crie um arquivo <b>.env</b> e coloque as configurações conforme arquivo [<b>.env.example</b> link](https://github.com/EdilsonAndrade/fastfeet/blob/master/fastfeet-backend/.env.example)  alterando ip (não coloque localhost e sim o ipv4 de sua máquina), usuário,password, banco e demais propriedades... conforme definido na criação das imagens e também do banco.
 
 5-Rode a migration
 
