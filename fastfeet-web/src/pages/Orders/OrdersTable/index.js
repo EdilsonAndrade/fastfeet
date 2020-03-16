@@ -66,7 +66,9 @@ export default function OrdersTable({
                   <li>.</li>
                 </ul>
                 <ContextMenu
-                  delivered={order.endDate !== null || order.canceledAt}
+                  delivered={
+                    order.endDate !== null ? true : order.canceledAt !== null
+                  }
                   id={order.id}
                   order={order && (order.endDate || order.canceledAt)}
                   visible={orderVisible}
