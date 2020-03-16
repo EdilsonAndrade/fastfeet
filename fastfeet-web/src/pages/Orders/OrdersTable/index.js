@@ -29,7 +29,7 @@ export default function OrdersTable({
       <tbody>
         {data.map(order => (
           <tr key={order.id}>
-            <td style={{ width: 50 }}>{order.id}</td>
+            <td style={{ width: 50 }}>#{order.id}</td>
             <td style={{ width: 220 }}>{order.Recipient.name}</td>
             <td>
               <DeliveryAvatar>

@@ -68,7 +68,7 @@ export default function Problem() {
         await api.delete(`/orders/${orderId}/problems`);
         setPage(!pageOnDelete);
         setDeleted(!deleted);
-        toast.success('Sucesso', 'Entrega cancelada com sucesso!');
+        toast.success('Entrega cancelada com sucesso!');
       } catch ({ response }) {
         const { error } = response.data;
         if (error) {
@@ -111,7 +111,7 @@ export default function Problem() {
                 {problems.map(problem => (
                   <tr key={problem.id}>
                     <td>
-                      <span>{problem.Order.id}</span>
+                      <span>#{problem.Order.id}</span>
                     </td>
                     <td>
                       {problem.isCanceled === true ? (

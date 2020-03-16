@@ -50,7 +50,11 @@ export default function ModalDialog({
               </div>
               <hr />
               <strong>Assinatura do cliente</strong>
-              <img src={imageUrl} alt="signature" />
+              {imageUrl ? (
+                <img src={imageUrl} alt="signature" />
+              ) : (
+                <small>Não existe assinatura</small>
+              )}
             </div>
           )}
         </div>

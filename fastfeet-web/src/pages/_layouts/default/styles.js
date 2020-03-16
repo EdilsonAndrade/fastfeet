@@ -6,6 +6,7 @@ export const Wrapper = styled.div`
 export const Container = styled.div`
   max-width: 85%;
   margin: 35px auto;
+
   strong {
     font-size: 24px;
   }

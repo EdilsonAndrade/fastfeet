@@ -1,18 +1,20 @@
 import styled from 'styled-components';
 
 export const Container = styled.div`
-  background: #fff;
   display: flex;
   flex-direction: column;
   border-radius: 4px;
   min-height: 230px;
   border-radius: 6px;
+  background-color: #f5f5f5;
 `;
 export const Content = styled.table`
   width: 95%;
   padding: 12px;
   border-spacing: 0;
-
+  background-color: #f5f5f5;
+  border-collapse: separate;
+  border-spacing: 0 21px;
   thead {
     tr {
       text-align: left;
@@ -22,14 +24,15 @@ export const Content = styled.table`
     tr {
       line-height: 50px;
 
+      background: #fff;
       :hover {
-        background: #eeee;
+        background: #f5f5f5;
         cursor: pointer;
       }
       td {
         color: ${props => (props.color ? props.color : '#666666')};
-        margin: 0;
-        padding: 10px 5px;
+        margin: 32px 15px;
+        padding: 10px 15px;
         border-bottom: 1px solid #979797;
         span {
         }
