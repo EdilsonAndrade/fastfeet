@@ -13,7 +13,7 @@ export default function Header() {
       <Content>
         <nav>
           <div>
-            <HeaderLogo src={Logo} alt="gympoint" />
+            <HeaderLogo src={Logo} alt="fastfeet" />
           </div>
           <NavLink
             activeStyle={{ color: '#000000' }}
